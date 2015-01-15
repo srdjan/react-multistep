@@ -1,2 +1,2 @@
-# Generic Multi step form component
+# React generic multi step form component
 wip
