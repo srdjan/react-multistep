@@ -43,10 +43,8 @@ var Multistep = React.createClass({
   },
 
   handleKeyDown(evt) {
-    console.log(evt.which)
     if(evt.which === 13 && this.state.current <= navStates.length) {
-     console.log(this.state.current)
-      // this.nextNav(this.state.current + 1)
+      this.nextNav(this.state.current + 1)
     }
   },
 
@@ -63,11 +61,9 @@ var Multistep = React.createClass({
           </li>
           )}
         </ol>
-        <form>
-          <fieldset>
-            {this.props.steps[this.state.current].component}
-          </fieldset>
-        </form>
+        <div className="container">
+          {this.props.steps[this.state.current].component}
+        </div>
       </div>
     )}
 })
