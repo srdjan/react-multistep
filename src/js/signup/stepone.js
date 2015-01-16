@@ -9,9 +9,12 @@ var StepOne = React.createClass({
     return (
       <div>
         <h5>Here is Content 1</h5>
+        <h6>Press 'Enter' or click on enumerated steps...</h6>
+
         <input className="six columns" type="date" min="2015-01-01"
                                      valueLink={this.linkState('startDate')}
                                      autoFocus/>
+
       </div>
   )}
 })

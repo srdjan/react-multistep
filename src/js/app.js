@@ -17,7 +17,12 @@ var App = React.createClass({
   render() {
     return (
       <div className="container">
-        <Multistep steps={steps}/>
+        <div>
+          <Multistep steps={steps}/>
+        </div>
+        <footer className="app-footer">
+          <h6>Code is on <a href="https://github.com/Srdjan/react-multistep" target="_blank">Github</a></h6>
+        </footer>
       </div>
     )
   }

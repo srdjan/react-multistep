@@ -2,20 +2,25 @@ var React = require('react/addons')
 var expect = require('expect.js')
 
 function navStates(indx, length) {
-  var navstates = {current: indx, styles: []}
+  var styles = []
   for (var i=0; i<length; i++) {
     if(i < indx) {
-      navstates.styles.push('done')
+      styles.push('done')
     }
     else if(i === indx) {
-      navstates.styles.push('doing')
+      styles.push('doing')
     }
     else {
-      navstates.styles.push('todo')
+      styles.push('todo')
     }
   }
-  return navstates
+  return { current: indx, styles: styles }
 }
+expect(navStates(0, 3).styles).to.eql(['doing','todo','todo'])
+expect(navStates(1, 3).styles).to.eql(['done','doing','todo'])
+expect(navStates(2, 3).styles).to.eql(['done','done','doing'])
+expect(navStates(3, 3).styles).to.eql(['done','done','done'])
+
 expect(navStates(0, 4).styles).to.eql(['doing','todo','todo','todo'])
 expect(navStates(1, 4).styles).to.eql(['done','doing','todo','todo'])
 expect(navStates(2, 4).styles).to.eql(['done','done','doing','todo'])
@@ -31,6 +36,7 @@ var Multistep = React.createClass({
   },
 
   nextNav(nextComp, nextNav) {
+    console.log('nextComp: ' + nextComp + ' nextNav: ' + nextNav)
     if(nextComp < this.props.steps.length) {
       this.setState({compState: nextComp})
     }
@@ -51,7 +57,12 @@ var Multistep = React.createClass({
 
   handleKeyDown(evt) {
     if(evt.which === 13) {
-      this.nextNav(this.state.navState.current + 1, this.state.navState.current + 1)
+      if(this.state.compState < this.props.steps.length) {
+        this.nextNav(this.state.navState.current + 1, this.state.navState.current + 1)
+      }
+      else {
+        this.nextNav(this.state.compState, this.state.navState.current + 1)
+      }
     }
   },
 

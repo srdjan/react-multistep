@@ -271,3 +271,13 @@ table tbody th {
       display: none;
   }
 }
+
+/* footer */
+.app-footer {
+  clear: both;
+  position: absolute;
+  text-align: center;
+  z-index: -1;
+  height: 3em;
+  margin-top: -3em;
+}
