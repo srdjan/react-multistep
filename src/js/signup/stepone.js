@@ -1,21 +1,35 @@
-var React = require('react')
+const React = require('react/addons')
 
-var StepOne = React.createClass({
+const StepOne = React.createClass({
   mixins: [ React.addons.LinkedStateMixin ],
+
   getInitialState() {
-    return { startDate: new Date() }
+    return {
+            firstName: '',
+            lastName: ''
+          }
   },
   render() {
     return (
       <div>
-        <h5>Here is Content 1</h5>
-        <h6>Press 'Enter' or click on enumerated steps...</h6>
-
-        <input className="six columns" type="date" min="2015-01-01"
-                                     valueLink={this.linkState('startDate')}
-                                     autoFocus/>
-
+        <div className="row">
+          <div className="six columns">
+            <label>First Name</label>
+            <input className="u-full-width" placeholder="First Name"
+                                            type="text"
+                                            valueLink={this.linkState('firstName')}
+                                            autoFocus/>
+          </div>
+        </div>
+        <div className="row">
+          <div className="six columns">
+            <label>Last Name</label>
+            <input className="u-full-width" placeholder="Last Name"
+                                            type="text" valueLink={this.linkState('lastName')}/>
+          </div>
+        </div>
       </div>
   )}
 })
+
 module.exports = StepOne

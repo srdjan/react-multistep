@@ -1,9 +1,9 @@
-var React = require('react/addons')
-var expect = require('expect.js')
+const React = require('react/addons')
+const expect = require('expect.js')
 
 function navStates(indx, length) {
-  var styles = []
-  for (var i=0; i<length; i++) {
+  let styles = []
+  for (let i=0; i<length; i++) {
     if(i < indx) {
       styles.push('done')
     }
@@ -27,7 +27,7 @@ expect(navStates(2, 4).styles).to.eql(['done','done','doing','todo'])
 expect(navStates(3, 4).styles).to.eql(['done','done','done','doing'])
 expect(navStates(4, 4).styles).to.eql(['done','done','done','done'])
 
-var Multistep = React.createClass({
+const Multistep = React.createClass({
   getInitialState() {
     return {
         compState: 0,

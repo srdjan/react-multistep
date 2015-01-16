@@ -1,19 +1,27 @@
-var React = require('react')
+var React = require('react/addons')
 
 var StepFour = React.createClass({
   mixins: [ React.addons.LinkedStateMixin ],
-  getInitialState() {
-    return { startDate: new Date() }
-  },
+
   render() {
     return (
       <div>
-        <h5>Here is Content 4</h5>
-        <h6>Press 'Enter' or click on enumerated steps...</h6>
-        <input className="six columns" type="date" min="2015-01-01"
-                                     valueLink={this.linkState('startDate')}
-                                     autoFocus/>
+        <div className="row">
+          <div className="ten columns terms">
+            <span>By clicking "Submit" I agree that:</span>
+            <ul className="docs-terms">
+              <li>I have read and accepted the <a href="#">User Agreement</a></li>
+              <li>I have read and accepted the <a href="#">Privacy Policy</a></li>
+              <li>I am at least 18 years old</li>
+            </ul>
+          </div>
+        </div>
+        <div className="row">
+          <div className="ten columns terms">
+          <input className="button-primary" value="Submit" type="submit"/>
+        </div>
       </div>
+    </div>
   )}
 })
 

@@ -20,6 +20,7 @@ html {
 .required {
   color: #FF6000;
 }
+
 /* value-img */
 .value-img {
   display: block;
@@ -28,6 +29,7 @@ html {
   margin-top: 2.5rem;
   margin-bottom: 2.5rem;
 }
+
 /* docs */
 .docs-section {
   border-top: 1px solid #eee;
@@ -51,7 +53,6 @@ html {
 .legend-section {
   text-transform: uppercase;
   font-size: 1.4rem;
-/*   letter-spacing: .1rem; */
   font-weight: 800;
   border-style:none;
   border-bottom: 1px solid #E1E1E1;
@@ -274,10 +275,8 @@ table tbody th {
 
 /* footer */
 .app-footer {
-  clear: both;
-  position: absolute;
-  text-align: center;
-  z-index: -1;
-  height: 3em;
-  margin-top: -3em;
+  color: silver;
+  position: relative;
+  line-height: 0.1rem;
+  margin-top: 6rem;
 }
