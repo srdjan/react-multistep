@@ -1,3 +1,4 @@
+'use strict'
 const React = require('react')
 const Multistep = require('./components/multistep')
 

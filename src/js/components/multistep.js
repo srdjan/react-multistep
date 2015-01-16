@@ -1,7 +1,8 @@
+'use strict'
 const React = require('react/addons')
 const expect = require('expect.js')
 
-function navStates(indx, length) {
+function getNavStates(indx, length) {
   let styles = []
   for (let i=0; i<length; i++) {
     if(i < indx) {
@@ -16,53 +17,46 @@ function navStates(indx, length) {
   }
   return { current: indx, styles: styles }
 }
-expect(navStates(0, 3).styles).to.eql(['doing','todo','todo'])
-expect(navStates(1, 3).styles).to.eql(['done','doing','todo'])
-expect(navStates(2, 3).styles).to.eql(['done','done','doing'])
-expect(navStates(3, 3).styles).to.eql(['done','done','done'])
+expect(getNavStates(0, 3).styles).to.eql(['doing','todo','todo'])
+expect(getNavStates(1, 3).styles).to.eql(['done','doing','todo'])
+expect(getNavStates(2, 3).styles).to.eql(['done','done','doing'])
+expect(getNavStates(3, 3).styles).to.eql(['done','done','done'])
 
-expect(navStates(0, 4).styles).to.eql(['doing','todo','todo','todo'])
-expect(navStates(1, 4).styles).to.eql(['done','doing','todo','todo'])
-expect(navStates(2, 4).styles).to.eql(['done','done','doing','todo'])
-expect(navStates(3, 4).styles).to.eql(['done','done','done','doing'])
-expect(navStates(4, 4).styles).to.eql(['done','done','done','done'])
+expect(getNavStates(0, 4).styles).to.eql(['doing','todo','todo','todo'])
+expect(getNavStates(1, 4).styles).to.eql(['done','doing','todo','todo'])
+expect(getNavStates(2, 4).styles).to.eql(['done','done','doing','todo'])
+expect(getNavStates(3, 4).styles).to.eql(['done','done','done','doing'])
+expect(getNavStates(4, 4).styles).to.eql(['done','done','done','done'])
 
 const Multistep = React.createClass({
   getInitialState() {
     return {
         compState: 0,
-        navState: navStates(0, this.props.steps.length)
+        navState: getNavStates(0, this.props.steps.length)
       }
   },
 
-  nextNav(nextComp, nextNav) {
-    console.log('nextComp: ' + nextComp + ' nextNav: ' + nextNav)
-    if(nextComp < this.props.steps.length) {
-      this.setState({compState: nextComp})
-    }
-    if(nextComp <= this.props.steps.length) {
-      this.setState({navState: navStates(nextNav, this.props.steps.length)})
+  setNavState(next) {
+    this.setState({navState: getNavStates(next, this.props.steps.length)})
+    if(next < this.props.steps.length) {
+      this.setState({compState: next})
+      this.setState({navState: getNavStates(next, this.props.steps.length)})
     }
   },
 
   handleOnClick(evt) {
-    if(this.state.compState === this.props.steps.length-1 &&
-       this.state.navState.current === this.props.steps.length-1) {
-      this.nextNav(evt.target.value, evt.target.value+1)
+    if(evt.target.value  === this.props.steps.length-1 &&
+       this.state.compState === this.props.steps.length-1) {
+      this.setNavState(this.props.steps.length)
     }
     else {
-      this.nextNav(evt.target.value, evt.target.value)
+      this.setNavState(evt.target.value)
     }
   },
 
   handleKeyDown(evt) {
     if(evt.which === 13) {
-      if(this.state.compState < this.props.steps.length) {
-        this.nextNav(this.state.navState.current + 1, this.state.navState.current + 1)
-      }
-      else {
-        this.nextNav(this.state.compState, this.state.navState.current + 1)
-      }
+      this.setNavState(this.state.compState + 1)
     }
   },
 
