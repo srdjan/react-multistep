@@ -2,7 +2,7 @@
 
 [Working demo](https://dl.dropboxusercontent.com/u/51491957/multistep/index.html)
 
-## instructions
+## Instructions
 
 To install this module run:
 '''sh
