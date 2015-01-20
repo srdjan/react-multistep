@@ -1,6 +1,5 @@
 'use strict'
 const React = require('react/addons')
-const expect = require('expect.js')
 
 function getNavStates(indx, length) {
   let styles = []
@@ -17,16 +16,6 @@ function getNavStates(indx, length) {
   }
   return { current: indx, styles: styles }
 }
-expect(getNavStates(0, 3).styles).to.eql(['doing','todo','todo'])
-expect(getNavStates(1, 3).styles).to.eql(['done','doing','todo'])
-expect(getNavStates(2, 3).styles).to.eql(['done','done','doing'])
-expect(getNavStates(3, 3).styles).to.eql(['done','done','done'])
-
-expect(getNavStates(0, 4).styles).to.eql(['doing','todo','todo','todo'])
-expect(getNavStates(1, 4).styles).to.eql(['done','doing','todo','todo'])
-expect(getNavStates(2, 4).styles).to.eql(['done','done','doing','todo'])
-expect(getNavStates(3, 4).styles).to.eql(['done','done','done','doing'])
-expect(getNavStates(4, 4).styles).to.eql(['done','done','done','done'])
 
 const Multistep = React.createClass({
   getInitialState() {
@@ -77,4 +66,7 @@ const Multistep = React.createClass({
     )}
 })
 
-module.exports = Multistep
+module.exports = {
+  Multistep: Multistep,
+  getNavStates: getNavStates
+}

@@ -1,24 +1,35 @@
 {
-  "name": "gotium-multistep-component",
-  "version": "0.0.1",
-  "description": "Generic multistep form component",
-  "main": "src/app.js",
+  "name": "react-multistep",
+  "version": "1.0.0",
+  "description": "Responsive ReactJS multistep form component",
+  "main": "index.js",
+  "license": "MIT",
+  "author": {
+    "name": "@djidja8",
+    "email": "srdjan@timok.com",
+    "url": "https://github.com/https://github.com/Srdjan"
+  },
   "dependencies": {
     "react": "^0.12.2"
   },
   "devDependencies": {
-    "6to5ify": "^3.1.2",
-    "expect.js": "^0.3.1",
-    "uglifyjs": "latest"
+    "6to5ify": "^3.1.2"
   },
   "scripts": {
-    "watch": "watchify -v ./src/js/app.js -o ./build/js/bundle.js",
-    "build": "browserify ./src/js/app.js -o ./src/js/bundle.js",
-    "publish": "browserify ./src/js/app.js | uglifyjs -cm > ./build/js/bundle.js && cp html+css",
-    "test": "echo \"Todo! no test specified\" && exit 1"
+    "build": "browserify ./example/js/app.js -o ./example/js/bundle.js",
+    "test": "6to5-node.cmd test.js"
   },
-  "author": "@djidja8",
-  "license": "MIT",
+  "keywords": [
+    "reactjs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/https://github.com/Srdjan/react-multistep.git"
+  },
+  "homepage": "https://github.com/https://github.com/Srdjan/react-multistep",
+  "bugs": {
+    "url": "https://github.com/https://github.com/Srdjan/react-multistep/issues"
+  },
   "browserify": {
     "transform": [
       [

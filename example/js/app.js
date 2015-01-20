@@ -1,6 +1,6 @@
 'use strict'
 const React = require('react')
-const Multistep = require('./components/multistep')
+const Multistep = require('../../index').Multistep
 const StepOne = require('./signup/stepone')
 const StepTwo = require('./signup/steptwo')
 const StepThree = require('./signup/stepthree')

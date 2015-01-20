@@ -4,11 +4,31 @@
 
 ## instructions
 
+To install this module run:
+'''sh
+npm install react-multistep
+'''
+next, require it inside of your app:
+'''sh
+var Multistep = require('react-multistep').Multistep
+'''
+
+To build included example:
+'''sh
+npm run build
+'''
+Now open ./example/index.html in your favorite browser
+
+## Dev instructions
+
 First clone the repository and then run:
-#####npm install
+'''sh
+npm install
+'''
 
-next, to build run:
+To test run:
+'''sh
+npm test
+'''
 
-#####npm run build
 
-Finally, open index.html in your favorite browser
