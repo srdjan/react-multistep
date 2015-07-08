@@ -10,9 +10,7 @@
     "url": "https://github.com/https://github.com/Srdjan"
   },
   "dependencies": {
-    "react": "^0.12.2"
-  },
-  "devDependencies": {
+    "react": "^0.12.2",
     "6to5ify": "^3.1.2"
   },
   "scripts": {
