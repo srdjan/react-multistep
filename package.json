@@ -9,8 +9,10 @@
     "email": "srdjan@timok.com",
     "url": "https://github.com/https://github.com/Srdjan"
   },
+  "peerDependencies": {
+    "react": "^0.12.2"
+  },
   "dependencies": {
-    "react": "^0.12.2",
     "6to5ify": "^3.1.2"
   },
   "scripts": {
