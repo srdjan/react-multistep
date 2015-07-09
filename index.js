@@ -42,19 +42,13 @@ const Multistep = React.createClass({
     }
   },
 
-  handleKeyDown(evt) {
-    if(evt.which === 13) {
-      this.next()
-    }
-  },
-
   next() {
     this.setNavState(this.state.compState + 1)
   },
 
   render() {
     return (
-      <div className="container" onKeyDown={this.handleKeyDown}>
+      <div className="container">
         <ol className="progtrckr">{
           this.props.steps.map((s, i) =>
           <li value={i} key={i}
