@@ -44,8 +44,12 @@ const Multistep = React.createClass({
 
   handleKeyDown(evt) {
     if(evt.which === 13) {
-      this.setNavState(this.state.compState + 1)
+      this.next()
     }
+  },
+
+  next() {
+    this.setNavState(this.state.compState + 1)
   },
 
   render() {
