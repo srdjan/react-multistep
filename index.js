@@ -46,6 +46,10 @@ const Multistep = React.createClass({
     this.setNavState(this.state.compState + 1)
   },
 
+  previous() {
+    this.state.compState > 0 && this.setNavState(this.state.compState - 1)
+  },
+
   render() {
     return (
       <div className="container">
