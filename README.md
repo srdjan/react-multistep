@@ -33,4 +33,4 @@ npm test
 
 
 
-[List of forks] (https://github.com/substack/virtual-dom-starter/network/members)
+[List of forks] (https://github.com/srdjan/react-multistep/network/members)
