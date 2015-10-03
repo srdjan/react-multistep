@@ -2,6 +2,9 @@
 
 [Working demo](https://dl.dropboxusercontent.com/u/51491957/multistep/index.html)
 
+[List of forks] (https://github.com/srdjan/react-multistep/network/members)
+
+
 ## Instructions
 
 To install this module run:
@@ -31,6 +34,3 @@ To test run:
 npm test
 ```
 
-
-
-[List of forks] (https://github.com/srdjan/react-multistep/network/members)
