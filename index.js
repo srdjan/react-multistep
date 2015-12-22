@@ -52,19 +52,25 @@ const Multistep = React.createClass({
 
   render() {
     return (
-      <div className="container">
-        <ol className="progtrckr">{
-          this.props.steps.map((s, i) =>
-          <li value={i} key={i}
-                        className={"progtrckr-" + this.state.navState.styles[i]}
-                        onClick={this.handleOnClick}>
-            <em>{i+1}</em>
-            <span>{this.props.steps[i].name}</span>
-          </li>
-          )}
-        </ol>
-        {this.props.steps[this.state.compState].component}
-      </div>
+        React.createElement(
+          "div",
+          { className: "container" },
+          React.createElement(
+            "ol",
+            { className: "progtrckr" },
+            this.props.steps.map(function (s, i) {
+              return React.createElement(
+                "li",
+                { value: i, key: i,
+                  className: "progtrckr-" + this.state.navState.styles[i],
+                  onClick: this.handleOnClick },
+                React.createElement("em", null, i + 1),
+                React.createElement("span", null, this.props.steps[i].name)
+              );
+            })
+          ),
+          this.props.steps[this.state.compState].component
+        );
     )}
 })
 
