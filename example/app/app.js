@@ -1,10 +1,8 @@
 'use strict'
-const React = require('react')
-const Multistep = require('../../index').Multistep
-const StepOne = require('./signup/stepone')
-const StepTwo = require('./signup/steptwo')
-const StepThree = require('./signup/stepthree')
-const StepFour = require('./signup/stepfour')
+import React, { Component, PropTypes } from 'react'
+import ReactDOM from 'react-dom'
+import { Multistep } from '../../src/index'
+import { StepOne, StepTwo, StepThree, StepFour } from './js/signup/index.js'
 
 const steps = [
   {name: 'StepOne', component: <StepOne/>},
@@ -13,7 +11,7 @@ const steps = [
   {name: 'StepFour', component: <StepFour/>}
 ]
 
-const App = React.createClass({
+class App extends React.Component {
   render() {
     return (
       <div className="container">
@@ -27,6 +25,6 @@ const App = React.createClass({
       </div>
     )
   }
-})
+}
 
-React.render(<App/>, document.body)
+ReactDOM.render(<App/>, document.getElementById("app"))

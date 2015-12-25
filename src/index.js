@@ -1,7 +1,7 @@
 'use strict'
-const React = require('react/addons')
+import React, { Component, PropTypes } from 'react'
 
-function getNavStates(indx, length) {
+export function getNavStates(indx, length) {
   let styles = []
   for (let i=0; i<length; i++) {
     if(i < indx) {
@@ -17,7 +17,7 @@ function getNavStates(indx, length) {
   return { current: indx, styles: styles }
 }
 
-const Multistep = React.createClass({
+export const Multistep = React.createClass({
   getInitialState() {
     return {
         compState: 0,
@@ -49,32 +49,23 @@ const Multistep = React.createClass({
   previous() {
     this.state.compState > 0 && this.setNavState(this.state.compState - 1)
   },
-
+  
   render() {
     return (
-        React.createElement(
-          "div",
-          { className: "container" },
-          React.createElement(
-            "ol",
-            { className: "progtrckr" },
-            this.props.steps.map(function (s, i) {
-              return React.createElement(
-                "li",
-                { value: i, key: i,
-                  className: "progtrckr-" + this.state.navState.styles[i],
-                  onClick: this.handleOnClick },
-                React.createElement("em", null, i + 1),
-                React.createElement("span", null, this.props.steps[i].name)
-              );
-            })
-          ),
-          this.props.steps[this.state.compState].component
-        );
+      <div className="container">
+        <ol className="progtrckr">{
+          this.props.steps.map((s, i) =>
+          <li value={i} key={i}
+                        className={"progtrckr-" + this.state.navState.styles[i]}
+                        onClick={this.handleOnClick}>
+            <em>{i+1}</em>
+            <span>{this.props.steps[i].name}</span>
+          </li>
+          )}
+        </ol>
+        {this.props.steps[this.state.compState].component}
+      </div>
     )}
 })
 
-module.exports = {
-  Multistep: Multistep,
-  getNavStates: getNavStates
-}
+export { Multistep, getNavStates }
