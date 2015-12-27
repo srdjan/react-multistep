@@ -31,10 +31,16 @@ export const Multistep = React.createClass({
       this.setState({compState: next})
     }
   },
-
+  
+  handleKeyDown(evt) {
+    if(evt.which === 13) {
+      this.next()
+    }
+  },
+  
   handleOnClick(evt) {
-    if(evt.target.value  === this.props.steps.length-1 &&
-       this.state.compState === this.props.steps.length-1) {
+    if(evt.target.value  === (this.props.steps.length-1) &&
+       this.state.compState === (this.props.steps.length-1))     {
       this.setNavState(this.props.steps.length)
     }
     else {
@@ -47,13 +53,15 @@ export const Multistep = React.createClass({
   },
 
   previous() {
-    this.state.compState > 0 && this.setNavState(this.state.compState - 1)
+    if (this.state.compState > 0) {
+        this.setNavState(this.state.compState - 1)
+    }
   },
   
   render() {
     return (
-      <div className="container">
-        <ol className="progtrckr">{
+      <div className="container" onKeyDown={this.handleKeyDown}>
+        <ol className="progtrckr"> {
           this.props.steps.map((s, i) =>
           <li value={i} key={i}
                         className={"progtrckr-" + this.state.navState.styles[i]}

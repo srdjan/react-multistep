@@ -16,7 +16,7 @@
 			"args": ["${file}", "-o", "${workspaceRoot}/build/bundle.js", "--source-maps"],
 			"taskName": "build",
 			"suppressTaskName": true,
-            "showOutput": "always",
+            "showOutput": "silent",
 			"isBuildCommand": true, // make this the F1 > Task: Run Build Task gesture
             "isTestCommand": false,
 			"isWatching": false 

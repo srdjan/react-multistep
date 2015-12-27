@@ -1,15 +1,18 @@
 'use strict'
 import React, { Component, PropTypes } from 'react'
-import LinkedState from 'react-addons-linked-state-mixin'
 
 export default React.createClass ({
-	mixins: [LinkedState],
 
     getInitialState() {
-        return {
-                firstName: '',
-                lastName: ''
-            }
+        return { firstName: '', lastName: '' }
+    },
+    
+    handleFirstNameChanged(event) {
+      this.setState({firstName: event.target.value})  
+    },
+    
+    handleLastNameChanged(event) {
+      this.setState({lastName: event.target.value})  
     },
     
     render() {
@@ -20,7 +23,8 @@ export default React.createClass ({
                 <label>First Name</label>
                 <input className="u-full-width" placeholder="First Name"
                                                 type="text"
-                                                valueLink={this.linkState('firstName')}
+                                                onChange={this.handleFirstNameChanged} 
+                                                value={this.state.firstName}
                                                 autoFocus/>
             </div>
             </div>
@@ -28,7 +32,9 @@ export default React.createClass ({
             <div className="six columns">
                 <label>Last Name</label>
                 <input className="u-full-width" placeholder="Last Name"
-                                                type="text" valueLink={this.linkState('lastName')}/>
+                                                type="text" 
+                                                onChange={this.handleLastNameChanged} 
+                                                value={this.state.lastName}/>
             </div>
             </div>
         </div>
