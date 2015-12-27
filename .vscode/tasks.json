@@ -1,0 +1,33 @@
+// Available variables which can be used inside of strings.
+// ${workspaceRoot}: the root folder of the team
+// ${file}: the current opened file
+// ${fileBasename}: the current opened file's basename
+// ${fileDirname}: the current opened file's dirname
+// ${fileExtname}: the current opened file's extension
+// ${cwd}: the current working directory of the spawned process
+
+{
+	"version": "0.1.0",
+	"command": "${workspaceRoot}/node_modules/.bin/browserify",
+	// "command": "${workspaceRoot}/node_modules/.bin/babel",
+	"isShellCommand": true,
+	"tasks": [
+		{
+			"args": ["${file}", "-o", "${workspaceRoot}/build/bundle.js", "--source-maps"],
+			"taskName": "build",
+			"suppressTaskName": true,
+            "showOutput": "silent",
+			"isBuildCommand": true, // make this the F1 > Task: Run Build Task gesture
+            "isTestCommand": false,
+			"isWatching": false 
+		},
+        {            
+			"args": ["example/app/app.js", "-o", "./example/app/bundle.js", "--source-maps"],
+			"taskName": "build-app",
+			"suppressTaskName": true,
+			"isBuildCommand": true, // make this the F1 > Task: Run Build Task gesture
+            "isTestCommand": false,
+			"isWatching": false // tell VS Code not wait for this task to finish
+		}
+	]
+}
