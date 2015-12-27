@@ -9,7 +9,7 @@ const StepFour = React.createClass ({
     },
     
     handleCheckedChanged(event) {
-      store.checked = event.target.value
+      store.checked = event.target.checked
       this.setState(store)  
     },
     
@@ -25,7 +25,8 @@ const StepFour = React.createClass ({
                         <li>I am at least 18 years old</li>
                     </ul>
                     <label><input type="checkbox" 
-                                  defaultChecked={this.state.checked} 
+                                //   defaultChecked={this.state.checked} 
+                                  checked={this.state.checked} 
                                   onChange={this.handleCheckedChanged} 
                                   autoFocus/>
                                   <span> Accept </span> </label>
