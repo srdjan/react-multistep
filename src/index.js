@@ -63,15 +63,16 @@ export const Multistep = React.createClass({
       <div className="container" onKeyDown={this.handleKeyDown}>
         <ol className="progtrckr"> {
           this.props.steps.map((s, i) =>
-          <li value={i} key={i}
-                        className={"progtrckr-" + this.state.navState.styles[i]}
-                        onClick={this.handleOnClick}>
-            <em>{i+1}</em>
-            <span>{this.props.steps[i].name}</span>
-          </li>
-          )}
+            <li value={i} key={i}
+                            className={"progtrckr-" + this.state.navState.styles[i]}
+                            onClick={this.handleOnClick}>
+                <em>{i+1}</em>
+                <span>{this.props.steps[i].name}</span>
+            </li>
+          )
+        }
         </ol>
-        {this.props.steps[this.state.compState].component}
+        { this.props.steps[this.state.compState].component }
       </div>
     )}
 })

@@ -2,14 +2,7 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { Multistep } from '../../src/index'
-import { StepOne, StepTwo, StepThree, StepFour } from './js/signup/index.js'
-
-const steps = [
-  {name: 'StepOne', component: <StepOne/>},
-  {name: 'StepTwo', component: <StepTwo/>},
-  {name: 'StepThree', component: <StepThree/>},
-  {name: 'StepFour', component: <StepFour/>}
-]
+import { steps } from './js/signup/index.js'
 
 class App extends React.Component {
   render() {

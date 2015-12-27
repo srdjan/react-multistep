@@ -1,18 +1,21 @@
 'use strict'
 import React, { Component, PropTypes } from 'react'
 
-export default React.createClass ({
+const store = { firstName: '', lastName: '' }
 
+const StepOne = React.createClass ({
     getInitialState() {
-        return { firstName: '', lastName: '' }
+        return store
     },
     
     handleFirstNameChanged(event) {
-      this.setState({firstName: event.target.value})  
+      store.firstName = event.target.value
+      this.setState(store)  
     },
     
     handleLastNameChanged(event) {
-      this.setState({lastName: event.target.value})  
+      store.lastName = event.target.value
+      this.setState(store)  
     },
     
     render() {
@@ -40,3 +43,5 @@ export default React.createClass ({
         </div>
     )}
 })
+
+export { StepOne }

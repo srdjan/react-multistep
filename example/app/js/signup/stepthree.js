@@ -1,16 +1,21 @@
 'use strict'
 import React, { Component, PropTypes } from 'react'
-import LinkedState from 'react-addons-linked-state-mixin'
 
-export default React.createClass ({
-	mixins: [LinkedState],
+const store = { password: '123', passwordConfirm: '' }
 
-
+const StepThree = React.createClass ({
     getInitialState() {
-        return {
-                password: '123',
-                passwordConfirm: ''
-            }
+        return store
+    },
+    
+    handlePasswordChanged(event) {
+      store.password = event.target.value
+      this.setState(store)  
+    },
+    
+    handlePasswordConfirmChanged(event) {
+      store.passwordConfirm = event.target.value
+      this.setState(store)  
     },
 
     render() {
@@ -21,7 +26,8 @@ export default React.createClass ({
                 <label>Password</label>
                 <input className="u-full-width required" placeholder="Password"
                                                 type="password"
-                                                valueLink={this.linkState('password')}
+                                                onChange={this.handlePasswordChanged} 
+                                                value={this.state.password}
                                                 autoFocus/>
                 </div>
             </div>
@@ -30,10 +36,12 @@ export default React.createClass ({
                 <label>Confirm password</label>
                 <input className="u-full-width" placeholder="Confirm Password"
                                                 type="password"
-                                                valueLink={this.linkState('passwordConfirm')}/>
+                                                onChange={this.handlePasswordConfirmChanged} 
+                                                value={this.state.passwordConfirm}/>
                 </div>
             </div>
             </div>
     )}
 })
 
+export { StepThree }

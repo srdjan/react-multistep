@@ -1,11 +1,15 @@
-import StepOne from './stepone'
-import StepTwo from './steptwo'
-import StepThree from './stepthree'
-import StepFour from './stepfour'
+import React, { Component, PropTypes } from 'react'
+import { StepOne } from './stepone'
+import { StepTwo } from './steptwo'
+import { StepThree } from './stepthree'
+import { StepFour } from './stepfour'
 
-export {
-    StepOne, 
-    StepTwo, 
-    StepThree, 
-    StepFour   
-}
+const steps = 
+    [
+      {name: 'StepOne', component: <StepOne/>},
+      {name: 'StepTwo', component: <StepTwo/>},
+      {name: 'StepThree', component: <StepThree/>},
+      {name: 'StepFour', component: <StepFour/>}
+    ]
+
+export { steps }

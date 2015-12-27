@@ -1,15 +1,21 @@
 'use strict'
 import React, { Component, PropTypes } from 'react'
-import LinkedState from 'react-addons-linked-state-mixin'
 
-export default React.createClass ({
-    mixins: [LinkedState],
+const store = { email: '', emailConfirm: '' }
 
+const StepTwo = React.createClass ({
     getInitialState() {
-        return {
-                email: '',
-                emailConfirm: ''
-            }
+        return store
+    },
+    
+    handleEmailChanged(event) {
+      store.email = event.target.value
+      this.setState(store)  
+    },
+    
+    handleEmailConfirmChanged(event) {
+      store.emailConfirm = event.target.value
+      this.setState(store)  
     },
 
     render() {
@@ -20,7 +26,8 @@ export default React.createClass ({
                 <label>Your email</label>
                 <input className="u-full-width required" placeholder="test@mailbox.com"
                                                 type="email"
-                                                valueLink={this.linkState('email')}
+                                                onChange={this.handleEmailChanged} 
+                                                value={this.state.email}
                                                 autoFocus/>
             </div>
             </div>
@@ -29,10 +36,12 @@ export default React.createClass ({
                 <label>Confirm email</label>
                 <input className="u-full-width" placeholder="Confirm email"
                                                 type="email"
-                                                valueLink={this.linkState('emailConfirm')}/>
+                                                onChange={this.handleEmailConfirmChanged} 
+                                                value={this.state.emailConfirm}/>
             </div>
             </div>
         </div>
     )}
 })
 
+export { StepTwo }

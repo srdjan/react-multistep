@@ -1,10 +1,18 @@
 'use strict'
 import React, { Component, PropTypes } from 'react'
-import LinkedState from 'react-addons-linked-state-mixin'
 
-export default React.createClass ({
-	mixins: [LinkedState],
-
+const store = { checked: false }
+ 
+const StepFour = React.createClass ({
+    getInitialState() {
+        return store
+    },
+    
+    handleCheckedChanged(event) {
+      store.checked = event.target.value
+      this.setState(store)  
+    },
+    
     render() {
         return (
         <div>
@@ -16,10 +24,16 @@ export default React.createClass ({
                         <li>I have read and accepted the <a href="#">Privacy Policy</a></li>
                         <li>I am at least 18 years old</li>
                     </ul>
-                    <label><input type="checkbox" autoFocus/><span> Accept </span> </label>
+                    <label><input type="checkbox" 
+                                  defaultChecked={this.state.checked} 
+                                  onChange={this.handleCheckedChanged} 
+                                  autoFocus/>
+                                  <span> Accept </span> </label>
                 </div>
             </div>
         </div>
   )}
 })
+
+export { StepFour }
 
