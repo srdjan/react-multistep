@@ -1,7 +1,7 @@
 'use strict'
 import React, { Component, PropTypes } from 'react'
 
-export function getNavStates(indx, length) {
+function getNavStates(indx, length) {
   let styles = []
   for (let i=0; i<length; i++) {
     if(i < indx) {
@@ -17,7 +17,7 @@ export function getNavStates(indx, length) {
   return { current: indx, styles: styles }
 }
 
-export const Multistep = React.createClass({
+const Multistep = React.createClass({
   getInitialState() {
     return {
         compState: 0,
@@ -58,22 +58,35 @@ export const Multistep = React.createClass({
     }
   },
   
-  render() {
-    return (
-      <div className="container" onKeyDown={this.handleKeyDown}>
-        <ol className="progtrckr"> {
-          this.props.steps.map((s, i) =>
-            <li value={i} key={i}
-                            className={"progtrckr-" + this.state.navState.styles[i]}
-                            onClick={this.handleOnClick}>
-                <em>{i+1}</em>
-                <span>{this.props.steps[i].name}</span>
-            </li>
+  render: function render() {
+    var _this = this
+
+    return React.createElement(
+      'div',
+      { className: 'container', onKeyDown: this.handleKeyDown },
+      React.createElement(
+        'ol',
+        { className: 'progtrckr' }, ' ',
+        this.props.steps.map(function (s, i) {
+          return React.createElement(
+            'li',
+            { value: i, key: i,
+              className: "progtrckr-" + _this.state.navState.styles[i],
+              onClick: _this.handleOnClick },
+            React.createElement(
+              'em',
+              null,
+              i + 1
+            ),
+            React.createElement(
+              'span',
+              null,
+              _this.props.steps[i].name
+            )
           )
-        }
-        </ol>
-        { this.props.steps[this.state.compState].component }
-      </div>
+        })
+      ),
+      this.props.steps[this.state.compState].component
     )}
 })
 
