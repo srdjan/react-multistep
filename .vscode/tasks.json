@@ -8,25 +8,35 @@
 
 {
 	"version": "0.1.0",
-	"command": "${workspaceRoot}/node_modules/.bin/browserify",
-	// "command": "${workspaceRoot}/node_modules/.bin/babel",
+    "name": "npmTask",
+	"command": "npm",
 	"isShellCommand": true,
+    "args": ["run"],    
 	"tasks": [
 		{
-			"args": ["${file}", "-o", "${workspaceRoot}/build/bundle.js", "--source-maps"],
-			"taskName": "build",
-			"suppressTaskName": true,
+			"taskName": "compile",
+			// "args": ["compile"],
+			// "suppressTaskName": true,
             "showOutput": "silent",
 			"isBuildCommand": true, // make this the F1 > Task: Run Build Task gesture
             "isTestCommand": false,
 			"isWatching": false 
 		},
-        {            
-			"args": ["example/app/app.js", "-o", "./example/app/bundle.js", "--source-maps"],
-			"taskName": "build-app",
-			"suppressTaskName": true,
-			"isBuildCommand": true, // make this the F1 > Task: Run Build Task gesture
+		{
+			"taskName": "build",
+			// "args": ["compile"],
+			// "suppressTaskName": true,
+            "showOutput": "silent",
+			"isBuildCommand": false, // make this the F1 > Task: Run Build Task gesture
             "isTestCommand": false,
+			"isWatching": false 
+		},
+        {            
+			"taskName": "test",
+			// "args": ["test"],
+			// "suppressTaskName": true,
+			"isBuildCommand": false, // make this the F1 > Task: Run Build Task gesture
+            "isTestCommand": true,
 			"isWatching": false // tell VS Code not wait for this task to finish
 		}
 	]

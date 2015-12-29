@@ -90,4 +90,4 @@ const Multistep = React.createClass({
     )}
 })
 
-export { Multistep, getNavStates }
+export { Multistep }

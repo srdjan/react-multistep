@@ -14,8 +14,8 @@
   },
   "dependencies": {},
   "scripts": {
-    "compile": "babel ./example/build/app.js -o ./example/app/app.bundle.js",
-    "build": "browserify ./example/build/app.js -o ./example/app/app.bundle.js",
+    "compile": "babel ./example/app/app.js -o ./example/app/bundle.js",
+    "build": "browserify ./example/app/app.js -o ./example/app/bundle.js",
     "test": "mocha"
   },
   "keywords": [
