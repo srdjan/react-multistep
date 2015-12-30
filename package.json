@@ -9,10 +9,9 @@
     "email": "srdjan@timok.com",
     "url": "https://github.com/https://github.com/Srdjan"
   },
-  "peerDependencies": {
-    "react": "^0.14.3"
+  "dependencies": {
+    "react": "^0.14.4"
   },
-  "dependencies": {},
   "scripts": {
     "compile": "babel ./example/app/app.js -o ./example/app/bundle.js",
     "build": "browserify ./example/app/app.js -o ./example/app/bundle.js",
@@ -33,9 +32,19 @@
     "babel": "^6.3.26",
     "babel-cli": "^6.3.17",
     "babelify": "^7.2.0",
-    "browserify": "^12.0.1"
+    "browserify": "^12.0.1",
+    "mocha": "^2.3.4"
   },
   "browserify": {
-    "transform": [["babelify", { "presets": ["es2015"] }]]
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
+    ]
   }
 }
