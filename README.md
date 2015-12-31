@@ -1,4 +1,5 @@
 # Responsive ReactJS multi step form component
+## es2015, React 0.14.4, babel 6, browserify
 
 [Working demo](https://dl.dropboxusercontent.com/u/51491957/multistep/index.html)
 
