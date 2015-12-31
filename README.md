@@ -1,6 +1,11 @@
 # Responsive ReactJS multi step form component
 ## es2015, React 0.14.4, babel 6, browserify
 
+[![version](https://img.shields.io/npm/v/npm-install-loader.svg)](http://npm.im/npm-install-loader)
+[![downloads](https://img.shields.io/npm/dm/npm-install-loader.svg)](http://npm-stat.com/charts.html?package=npm-install-loader)
+[![MIT License](https://img.shields.io/npm/l/npm-install-loader.svg)](http://opensource.org/licenses/MIT)
+
+
 [Working demo](https://dl.dropboxusercontent.com/u/51491957/multistep/index.html)
 
 [List of forks] (https://github.com/srdjan/react-multistep/network/members)
