@@ -12,7 +12,7 @@
 
 # DELTA with original:
 
-* Added `initialStep` property so you can use it to _ask_ the component to browse from its parent component
+* Added `activeStep` property so you can use it to _ask_ the component to browse from its parent component
 * Added `handleKeyDown` property flag to disable steps completion & browsing upon hitting enter key
 
 ## Instructions

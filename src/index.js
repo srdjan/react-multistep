@@ -21,15 +21,15 @@ var Multistep = React.createClass({
   getInitialState(props) {
     props= props || this.props;
     return {
-        compState: props.initialStep,
-        navState: getNavStates(props.initialStep, props.steps.length)
+        compState: props.activeStep,
+        navState: getNavStates(props.activeStep, props.steps.length)
       }
   },
 
   componentWillReceiveProps(nextProps){
     //Asumme the steps components haven't changed and just browse them
     if(nextProps.steps.length == this.props.steps.length){
-      this.setNavState(nextProps.initialStep);
+      this.setNavState(nextProps.activeStep);
     } else{
     //Restart state completely
       this.setState(this.getInitialState(nextProps));
@@ -108,11 +108,11 @@ export default Multistep;
 
 
 Multistep.propTypes = {
-  initialStep: React.PropTypes.number,
+  activeStep: React.PropTypes.number,
   handleKeyDown: React.PropTypes.boolean
 }
 
 Multistep.defaultProps = {
-  initialStep: 0,
+  activeStep: 0,
   handleKeyDown: true
 }
