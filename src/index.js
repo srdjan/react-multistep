@@ -39,7 +39,7 @@ var Multistep = React.createClass({
   setNavState(next) {
     this.setState({navState: getNavStates(next, this.props.steps.length)})
     if(next < this.props.steps.length && next > -1) {
-      this.setState({compState: next})
+      this.setState({compState: next});
     } else{
       console.warn("Attempt to browse out of the Multistep range");
     }
@@ -52,12 +52,15 @@ var Multistep = React.createClass({
   },
 
   handleOnClick(evt) {
-    if(evt.target.value  === (this.props.steps.length-1) &&
-       this.state.compState === (this.props.steps.length-1))     {
-      this.setNavState(this.props.steps.length)
-    }
-    else {
-      this.setNavState(evt.target.value)
+    if(isFinite(evt.target.value)){
+      if(evt.target.value  === (this.props.steps.length-1) &&
+         this.state.compState === (this.props.steps.length-1))     {
+        this.setNavState(this.props.steps.length);
+      }
+      else {
+        this.setNavState(evt.target.value);
+      }
+      this.props.onActiveStepChange(evt.target.value);
     }
   },
 
@@ -109,10 +112,12 @@ export default Multistep;
 
 Multistep.propTypes = {
   activeStep: React.PropTypes.number,
-  handleKeyDown: React.PropTypes.bool
+  handleKeyDown: React.PropTypes.bool,
+  onActiveStepChange: React.PropTypes.func
 }
 
 Multistep.defaultProps = {
   activeStep: 0,
-  handleKeyDown: true
+  handleKeyDown: true,
+  onActiveStepChange: function(newStep){}
 }
