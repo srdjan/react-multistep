@@ -76,7 +76,7 @@ var Multistep = React.createClass({
 
     return React.createElement(
       'div',
-      { className: 'container', onKeyDown: this.handleKeyDown },
+      { className: 'container', onKeyDown: this.props.handleKeyDown && this.handleKeyDown },
       React.createElement(
         'ol',
         { className: 'progtrckr' }, ' ',
@@ -109,8 +109,10 @@ export default Multistep;
 
 Multistep.propTypes = {
   initialStep: React.PropTypes.number,
+  handleKeyDown: React.PropTypes.boolean
 }
 
 Multistep.defaultProps = {
   initialStep: 0,
+  handleKeyDown: true
 }
