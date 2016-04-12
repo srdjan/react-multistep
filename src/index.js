@@ -17,27 +17,40 @@ function getNavStates(indx, length) {
   return { current: indx, styles: styles }
 }
 
-const Multistep = React.createClass({
-  getInitialState() {
+var Multistep = React.createClass({
+  getInitialState(props) {
+    props= props || this.props;
     return {
-        compState: 0,
-        navState: getNavStates(0, this.props.steps.length)
+        compState: props.initialStep,
+        navState: getNavStates(props.initialStep, props.steps.length)
       }
+  },
+
+  componentWillReceiveProps(nextProps){
+    //Asumme the steps components haven't changed and just browse them
+    if(nextProps.steps.length == this.props.steps.length){
+      this.setNavState(nextProps.initialStep);
+    } else{
+    //Restart state completely
+      this.setState(this.getInitialState(nextProps));
+    }
   },
 
   setNavState(next) {
     this.setState({navState: getNavStates(next, this.props.steps.length)})
-    if(next < this.props.steps.length) {
+    if(next < this.props.steps.length && next > -1) {
       this.setState({compState: next})
+    } else{
+      console.warn("Attempt to browse out of the Multistep range");
     }
   },
-  
+
   handleKeyDown(evt) {
     if(evt.which === 13) {
       this.next()
     }
   },
-  
+
   handleOnClick(evt) {
     if(evt.target.value  === (this.props.steps.length-1) &&
        this.state.compState === (this.props.steps.length-1))     {
@@ -57,7 +70,7 @@ const Multistep = React.createClass({
         this.setNavState(this.state.compState - 1)
     }
   },
-  
+
   render: function render() {
     var _this = this
 
@@ -90,4 +103,14 @@ const Multistep = React.createClass({
     )}
 })
 
-export { Multistep }
+export default Multistep;
+
+
+
+Multistep.propTypes = {
+  initialStep: React.PropTypes.number,
+}
+
+Multistep.defaultProps = {
+  initialStep: 0,
+}
