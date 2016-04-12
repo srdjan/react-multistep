@@ -21,7 +21,7 @@ var Multistep = React.createClass({
   getInitialState(props) {
     props= props || this.props;
     return {
-        compState: props.activeStep,
+        compState: props.activeStep || 0,
         navState: getNavStates(props.activeStep, props.steps.length)
       }
   },
@@ -109,7 +109,7 @@ export default Multistep;
 
 Multistep.propTypes = {
   activeStep: React.PropTypes.number,
-  handleKeyDown: React.PropTypes.boolean
+  handleKeyDown: React.PropTypes.bool
 }
 
 Multistep.defaultProps = {
