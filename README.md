@@ -10,6 +10,10 @@
 
 [List of forks] (https://github.com/srdjan/react-multistep/network/members)
 
+# DELTA with original:
+
+* Added `activeStep` property so you can use it to _ask_ the component to browse from its parent component
+* Added `handleKeyDown` property flag to disable steps completion & browsing upon hitting enter key
 
 ## Instructions
 
@@ -28,6 +32,7 @@ npm run build
 ```
 Now open ./example/index.html in your favorite browser
 
+
 ## Dev instructions
 
 First clone the repository and then run:
@@ -39,4 +44,3 @@ To test run:
 ```sh
 npm test
 ```
-

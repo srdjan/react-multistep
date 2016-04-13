@@ -17,34 +17,50 @@ function getNavStates(indx, length) {
   return { current: indx, styles: styles }
 }
 
-const Multistep = React.createClass({
-  getInitialState() {
+var Multistep = React.createClass({
+  getInitialState(props) {
+    props= props || this.props;
     return {
-        compState: 0,
-        navState: getNavStates(0, this.props.steps.length)
+        compState: props.activeStep || 0,
+        navState: getNavStates(props.activeStep, props.steps.length)
       }
+  },
+
+  componentWillReceiveProps(nextProps){
+    //Asumme the steps components haven't changed and just browse them
+    if(nextProps.steps.length == this.props.steps.length){
+      this.setNavState(nextProps.activeStep);
+    } else{
+    //Restart state completely
+      this.setState(this.getInitialState(nextProps));
+    }
   },
 
   setNavState(next) {
     this.setState({navState: getNavStates(next, this.props.steps.length)})
-    if(next < this.props.steps.length) {
-      this.setState({compState: next})
+    if(next < this.props.steps.length && next > -1) {
+      this.setState({compState: next});
+    } else{
+      console.warn("Attempt to browse out of the Multistep range");
     }
   },
-  
+
   handleKeyDown(evt) {
     if(evt.which === 13) {
       this.next()
     }
   },
-  
+
   handleOnClick(evt) {
-    if(evt.target.value  === (this.props.steps.length-1) &&
-       this.state.compState === (this.props.steps.length-1))     {
-      this.setNavState(this.props.steps.length)
-    }
-    else {
-      this.setNavState(evt.target.value)
+    if(isFinite(evt.target.value)){
+      if(evt.target.value  === (this.props.steps.length-1) &&
+         this.state.compState === (this.props.steps.length-1))     {
+        this.setNavState(this.props.steps.length);
+      }
+      else {
+        this.setNavState(evt.target.value);
+      }
+      this.props.onActiveStepChange(evt.target.value);
     }
   },
 
@@ -57,13 +73,13 @@ const Multistep = React.createClass({
         this.setNavState(this.state.compState - 1)
     }
   },
-  
+
   render: function render() {
     var _this = this
 
     return React.createElement(
       'div',
-      { className: 'container', onKeyDown: this.handleKeyDown },
+      { className: 'container', onKeyDown: this.props.handleKeyDown && this.handleKeyDown },
       React.createElement(
         'ol',
         { className: 'progtrckr' }, ' ',
@@ -90,4 +106,18 @@ const Multistep = React.createClass({
     )}
 })
 
-export { Multistep }
+export default Multistep;
+
+
+
+Multistep.propTypes = {
+  activeStep: React.PropTypes.number,
+  handleKeyDown: React.PropTypes.bool,
+  onActiveStepChange: React.PropTypes.func
+}
+
+Multistep.defaultProps = {
+  activeStep: 0,
+  handleKeyDown: true,
+  onActiveStepChange: function(newStep){}
+}
