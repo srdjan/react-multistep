@@ -103,10 +103,6 @@ var Multistep = React.createClass({
     )}
 })
 
-export default Multistep;
-
-
-
 Multistep.propTypes = {
   initialStep: React.PropTypes.number,
 }
@@ -114,3 +110,6 @@ Multistep.propTypes = {
 Multistep.defaultProps = {
   initialStep: 0,
 }
+export {Multistep}
+
+
