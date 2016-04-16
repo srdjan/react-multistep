@@ -10,7 +10,8 @@
     "url": "https://github.com/https://github.com/Srdjan"
   },
   "dependencies": {
-    "react": "^0.14.4"
+    "react": "^0.14.4",
+    "react-dom": "^0.14.4"
   },
   "scripts": {
     "compile": "babel ./example/app/app.js -o ./example/app/bundle.js",
