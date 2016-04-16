@@ -15,7 +15,7 @@
     "react-dom": "^15.0.1"
   },
   "scripts": {
-    "compile": "babel ./example/app/app.js -o ./example/app/bundle.js",
+    "try-babel": "babel ./example/app/app.js -o ./example/app/bundle.js",
     "build": "browserify ./example/app/app.js -o ./example/app/bundle.js",
     "test": "mocha"
   },
