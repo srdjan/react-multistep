@@ -10,11 +10,6 @@
 
 [List of forks] (https://github.com/srdjan/react-multistep/network/members)
 
-# DELTA with original:
-
-* Added `initialStep` property so you can use it to _ask_ the component to browse from its parent component
-* Added `handleKeyDown` property flag to disable steps completion & browsing upon hitting enter key
-
 ## Instructions
 
 To install this module run:
