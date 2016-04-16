@@ -39,7 +39,7 @@
     "browserify": "^12.0.1",
     "mocha": "^2.3.4",
     "react": "^15.0.1",
-    "react-dom": "^0.14.8"
+    "react-dom": "^15.0.1"
   },
   "style": "assets/css/prog-tracker.css",
   "browserify": {
