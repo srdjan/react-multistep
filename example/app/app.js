@@ -9,7 +9,7 @@ class App extends React.Component {
     return (
       <div className="container">
         <div>
-          <Multistep activeStep={1} steps={steps}/>
+          <Multistep steps={steps}/>
         </div>
         <div className="container app-footer">
           <h6>Press 'Enter' or click on progress bar for next step.</h6>
