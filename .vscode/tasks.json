@@ -14,20 +14,11 @@
     "args": ["run"],    
 	"tasks": [
 		{
-			"taskName": "compile",
-			// "args": ["compile"],
-			// "suppressTaskName": true,
-            "showOutput": "silent",
-			"isBuildCommand": true, // make this the F1 > Task: Run Build Task gesture
-            "isTestCommand": false,
-			"isWatching": false 
-		},
-		{
 			"taskName": "build",
 			// "args": ["compile"],
 			// "suppressTaskName": true,
             "showOutput": "silent",
-			"isBuildCommand": false, // make this the F1 > Task: Run Build Task gesture
+			"isBuildCommand": true, // make this the F1 > Task: Run Build Task gesture
             "isTestCommand": false,
 			"isWatching": false 
 		},
