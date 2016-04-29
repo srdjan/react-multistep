@@ -20,6 +20,23 @@ next, require it inside of your app:
 ```sh
 var Multistep = require('react-multistep').Multistep
 ```
+### Configuration:
+```
+showNavigation type: boolean (by default = true)
+```
+```
+steps type: array of objects
+```
+### Example:
+```javascript
+const steps = [
+              {name: 'StepOne', component: <StepOne/>},
+              {name: 'StepTwo', component: <StepTwo/>},
+              {name: 'StepThree', component: <StepThree/>},
+              {name: 'StepFour', component: <StepFour/>}
+            ];
+<Multistep showNavigation={true} steps={steps}/>
+```
 
 To build included example:
 ```sh
