@@ -6,7 +6,7 @@
 [![MIT License](https://img.shields.io/npm/l/npm-install-loader.svg)](http://opensource.org/licenses/MIT)
 
 
-[Working demo](https://dl.dropboxusercontent.com/u/51491957/multistep/index.html)
+[Working demo](https://dl.dropboxusercontent.com/u/51491957/multistep-v2.1.0/index.html)
 
 [List of forks] (https://github.com/srdjan/react-multistep/network/members)
 
