@@ -5,6 +5,7 @@
 [![downloads](https://img.shields.io/npm/dm/npm-install-loader.svg)](http://npm-stat.com/charts.html?package=react-multistep)
 [![MIT License](https://img.shields.io/npm/l/npm-install-loader.svg)](http://opensource.org/licenses/MIT)
 
+![alt tag](https://dl.dropboxusercontent.com/u/51491957/multistep-v2.1.0/react-multistep.JPG)
 
 [Working demo](https://dl.dropboxusercontent.com/u/51491957/multistep-v2.1.0/index.html)
 
