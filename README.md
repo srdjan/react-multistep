@@ -8,7 +8,7 @@
 
 
 -------------
-<img src="https://dl.dropboxusercontent.com/u/51491957/multistep-v2.1.0/react-multistep.png" alt="Drawing" style="width: 200px;"/>
+<img src="https://dl.dropboxusercontent.com/u/51491957/multistep-v2.1.0/react-multistep.png"/>
 -------------
 
 
