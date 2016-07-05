@@ -70,12 +70,12 @@ export default class MultiStep extends Component {
   }
 
   handleOnClick(evt) {
-    if (evt.target.value === (this.props.steps.length - 1) &&
+    if (evt.currentTarget.value === (this.props.steps.length - 1) &&
       this.state.compState === (this.props.steps.length - 1)) {
       this.setNavState(this.props.steps.length)
     }
     else {
-      this.setNavState(evt.target.value)
+      this.setNavState(evt.currentTarget.value)
     }
   }
 
