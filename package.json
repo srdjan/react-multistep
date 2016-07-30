@@ -10,8 +10,8 @@
     "url": "https://github.com/https://github.com/Srdjan"
   },
   "dependencies": {
-    "react": "^15.0.1",
-    "react-dom": "^15.0.1"
+    "react": "^15.3.x",
+    "react-dom": "15.3.x"
   },
   "scripts": {
     "try-babel": "babel ./example/app/app.js -o ./example/app/bundle.js",
@@ -37,9 +37,7 @@
     "babel-preset-react": "6.11.x",
     "babelify": "7.3.x",
     "browserify": "13.1.x",
-    "mocha": "2.5.x",
-    "react": "15.3.x",
-    "react-dom": "15.3.x"
+    "mocha": "2.5.x"
   },
   "style": "assets/css/prog-tracker.css",
   "browserify": {
