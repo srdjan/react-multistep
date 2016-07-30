@@ -8,11 +8,11 @@
 
 
 -------------
-<img src="https://dl.dropboxusercontent.com/u/51491957/multistep-v2.1.0/react-multistep.png"/>
+<img src="https://dl.dropboxusercontent.com/u/51491957/multistep-v2.1.1/react-multistep.png"/>
 -------------
 
 
-[Working demo](https://dl.dropboxusercontent.com/u/51491957/multistep-v2.1.0/index.html)
+[Working demo](https://dl.dropboxusercontent.com/u/51491957/multistep-v2.1.1/index.html)
 
 
 
