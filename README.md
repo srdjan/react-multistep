@@ -16,7 +16,8 @@
 
 
 
-[List of forks] (https://github.com/srdjan/react-multistep/network/members)
+[List of forks] 
+(https://github.com/srdjan/react-multistep/network/members)
 
 ## Instructions
 
