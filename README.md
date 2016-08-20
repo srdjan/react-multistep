@@ -1,5 +1,5 @@
 # Responsive ReactJS multi step form component
-## React 15.3.0 - Babel 6.5.0
+## React 15.3.1 - Babel 6.5.0
 
 [![version](https://img.shields.io/npm/v/npm-install-loader.svg)](http://npm.im/react-multistep)
 [![downloads](https://img.shields.io/npm/dm/npm-install-loader.svg)](http://npm-stat.com/charts.html?package=react-multistep)
