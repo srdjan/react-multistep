@@ -39,7 +39,6 @@
     "browserify": "13.1.x",
     "mocha": "2.5.x"
   },
-  "style": "assets/css/prog-tracker.css",
   "browserify": {
     "transform": [
       [
