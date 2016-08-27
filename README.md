@@ -1,7 +1,7 @@
 # Responsive ReactJS multi step form component
 ## React 15.3.1 - Babel 6.5.0 - Browserify 13.1.1 
 
-###(initial Webpack version here: https://github.com/Srdjan/react-multistep-with-webpack)
+###(initial Webpack version is here: https://github.com/Srdjan/react-multistep-with-webpack)
 
 [![version](https://img.shields.io/npm/v/npm-install-loader.svg)](http://npm.im/react-multistep)
 [![downloads](https://img.shields.io/npm/dm/npm-install-loader.svg)](http://npm-stat.com/charts.html?package=react-multistep)
