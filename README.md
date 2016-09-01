@@ -1,4 +1,4 @@
-# Responsive ReactJS multi step form component
+# Responsive React multistep form component built using Browserify
 ## React 15.3.1 - Babel 6.5.0 - Browserify 13.1.1 
 
 ###(initial Webpack version is here: https://github.com/Srdjan/react-multistep-with-webpack)
