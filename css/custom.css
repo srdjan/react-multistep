@@ -1,0 +1,282 @@
+/* forcing vertical scroll */
+html {
+  overflow-y: scroll;
+}
+/* Shared */
+.button {
+  border-radius: 100px;
+}
+
+/* Sections */
+.section {
+  padding: 2rem 0 2rem;
+  text-align: center;
+}
+.section-heading,
+.section-description {
+  margin-bottom: 3rem;
+}
+
+.required {
+  color: #FF6000;
+}
+
+/* value-img */
+.value-img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+/* docs */
+.docs-section {
+  border-top: 1px solid #eee;
+  margin-top: 30px;
+  margin-bottom: 0;
+}
+.docs-terms {
+  font-size: 1.2rem;
+  letter-spacing: .2rem;
+  font-weight: 800;
+}
+
+.fieldset-section {
+  width: 90%;
+  margin-left: 10px;
+  margin-top: 10px;
+  margin:0;
+}
+
+/* legend --- ---- --- */
+.legend-section {
+  text-transform: uppercase;
+  font-size: 1.4rem;
+  font-weight: 800;
+  border-style:none;
+  border-bottom: 1px solid #E1E1E1;
+  background-color: #fff;
+  color: black;
+  width:100%;
+  margin-bottom:8px;
+}
+.legend-action {
+  border-bottom: 4px solid #E1E1E1;
+  background-color: #fff;
+  position: relative;
+  float: right;
+  margin-left:5px;
+}
+.legend-action:hover {
+  background-color: #f6f6f6;
+  color: #33C3F0;
+}
+.legend-action.active {
+  color: #33C3F0;
+}
+@media (min-width: 650px) {
+  .legend-section {
+    font-size: 1.6rem;
+    letter-spacing: .2rem;
+    margin-bottom:18px;
+  }
+}
+
+/* navbar --- ---- */
+.navbar {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  height: 3rem;
+  border-bottom: 4px solid #EEE;
+}
+.navbar + .docs-section {
+  border-top-width: 0;
+}
+.navbar-list {
+  list-style: none;
+  margin-bottom: 0;
+}
+.navbar-item {
+  position: relative;
+  float: left;
+  text-transform: uppercase;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-right: .8rem;
+  margin-left: 0;
+  margin-bottom: 0;
+  line-height: 4.2rem;
+  border-style:none;
+}
+.navbar-item.right {
+  float: right;
+  margin-right: 0;
+  margin-left: .8rem;
+}
+.navbar-link {
+  text-decoration: none;
+  color: #222;
+  border-style:none;
+}
+.navbar-link.active {
+  background-color: #f6f6f6;
+  border: 0;
+  border-bottom: 4px solid #33C3F0;
+  color: #33C3F0;
+}
+.navbar-link:hover {
+  background-color: #f6f6f6;
+  border-bottom: 4px solid #33C3F0;
+  color: #33C3F0;
+}
+@media (min-width: 550px) {
+  .navbar {
+    height: 4rem;
+    width: 80%;
+  }
+  .navbar-item {
+    font-size: 2rem;
+    line-height: 5.6rem;
+    margin-right: 2rem;
+  }
+}
+
+/* Content link */
+.content-link {
+  background: #eee;
+  text-transform: uppercase;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: .1rem;
+  margin: 5px;
+  text-decoration: none;
+  color: #33C3F0;
+}
+.content-link:hover {
+  color: #33C3F0;
+  border-bottom: 2px solid #33C3F0;
+}
+@media (min-width: 550px) {
+  .content-link {
+    font-size: 1.8rem;
+  }
+  .content-link:hover {
+    border-bottom: 3px solid #33C3F0;
+  }
+}
+
+/* table */
+table {
+    border-style: none;
+    border-top-width: 0;
+    width: auto;
+}
+table tr {
+    border-style: none;
+    border-bottom-width: 0;
+}
+table th, table td {
+    border-style: none;
+    padding-right: 1rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    text-align: left;
+    min-width: 50px;
+    vertical-align: top;
+}
+table th.tool, table td.tool {
+    padding: 0 1rem;
+}
+table th + th, table th + td, table td + th, table td + td {
+    border-left-width: 1px;
+}
+table thead tr:last-child {
+    border-bottom-width: 2px;
+}
+table thead th, table tr.index th {
+    font-size: 1.13333em;
+    line-height: 1.41176rem;
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    line-height: 1.25;
+    text-transform: uppercase;
+}
+table thead th {
+    border-bottom: 1px solid;
+    padding-bottom: .25rem;
+}
+table tr.index th {
+    font-size: 1.33333em;
+    line-height: 1.2rem;
+}
+table tbody:first-of-type tr.index th {
+    padding-top: 1rem;
+}
+table tbody th {
+    font-weight: normal;
+}
+@media (max-width: 47.9375rem) {
+/* @media (max-width: 550px) { */
+  table {
+      border: 0;
+      border-bottom-width: 0.0625rem;
+      border-bottom-style: solid;
+      padding-bottom: 1.4375rem;
+      padding-bottom: 0;
+      display: block;
+      width: 100%;
+      /*
+   * make everything display block so it
+   * aligns vertically
+   */
+      /* Labeling
+   * adding a data-title attribute to the cells
+   * lets us add text before the content to provide
+   * the missing context
+   *
+   * Markup:
+   *   <td data-title="Column Header">Content Here</td>
+   *
+   * Display:
+   *   Column Header: Content Here
+   */
+  }
+  table caption {
+      display: block;
+  }
+  table thead {
+      display: none;
+      visibility: hidden;
+  }
+  table tbody, table tr, table th, table td {
+      border: 0;
+      display: block;
+      padding: 0;
+      text-align: left;
+      white-space: normal;
+  }
+  table tr {
+      margin-bottom: 1.5rem;
+  }
+  table th[data-title]:before, table td[data-title]:before {
+      content: attr(data-title) ": ";
+      font-weight: bold;
+  }
+  table th:not([data-title]) {
+      display: none;
+      font-weight: bold;
+  }
+  table td:empty {
+      display: none;
+  }
+}
+
+/* footer */
+.app-footer {
+  color: silver;
+  position: relative;
+  line-height: 0.1rem;
+  margin-top: 6rem;
+}
