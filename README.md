@@ -16,7 +16,7 @@
 
 =========================================
 
-[Working demo](https://dl.dropboxusercontent.com/u/51491957/multistep-v2.1.1/index.html)
+[Working demo](http://srdjan.github.io/react-multistep/)
 
 [List of forks] 
 (https://github.com/srdjan/react-multistep/network/members)
