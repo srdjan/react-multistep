@@ -35,7 +35,7 @@ export default class MultiStep extends Component {
   }
 
   checkNavState(currentStep){
-    if(currentStep > 0 && currentStep !== this.props.steps.length - 1){
+    if(currentStep > 0 && currentStep < this.props.steps.length - 1){
       this.setState({
         showPreviousBtn: true,
         showNextBtn: true
