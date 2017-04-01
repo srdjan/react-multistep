@@ -1,19 +1,12 @@
 # Responsive React multistep form component
-## React 15.4.1 - Babel 6.5.2 - Browserify 13.1.1 
+## React 15.4.2 - Babel 6.23.0 - Browserify 14.1.0 
+### [Working demo](http://srdjan.github.io/react-multistep/)
 
-#####(Webpack version is here: https://github.com/Srdjan/react-multistep-with-webpack)
-
-[![version](https://img.shields.io/npm/v/npm-install-loader.svg)](http://npm.im/react-multistep)
-[![downloads](https://img.shields.io/npm/dm/npm-install-loader.svg)](http://npm-stat.com/charts.html?package=react-multistep)
-[![MIT License](https://img.shields.io/npm/l/npm-install-loader.svg)](http://opensource.org/licenses/MIT)
+##### (Webpack version is here: https://github.com/Srdjan/react-multistep-with-webpack)
 
 [![NPM](https://nodei.co/npm/react-multistep.png?downloads=true&stars=true)](https://nodei.co/rnpm/react-multistep/)
 
-
-<img src="https://github.com/srdjan/react-multistep/tree/master/assets/react-multistep.png"/>
-
-
-[Working demo](http://srdjan.github.io/react-multistep/)
+<img src="https://raw.githubusercontent.com/srdjan/react-multistep/master/assets/react-multistep.png"/>
 
 [List of forks] 
 (https://github.com/srdjan/react-multistep/network/members)
@@ -30,10 +23,12 @@ var Multistep = require('react-multistep').Multistep
 ```
 ### Configuration:
 ```
-showNavigation type: boolean (by default = true)
+showNavigation 
+type: boolean (default = true)
 ```
 ```
-steps type: array of objects
+steps 
+type: array of objects pointing to React components
 ```
 ### Example:
 ```javascript
