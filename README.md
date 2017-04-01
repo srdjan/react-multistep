@@ -10,10 +10,8 @@
 [![NPM](https://nodei.co/npm/react-multistep.png?downloads=true&stars=true)](https://nodei.co/rnpm/react-multistep/)
 
 
+<img src="https://github.com/srdjan/react-multistep/tree/master/assets/react-multistep.png"/>
 
-<img src="https://dl.dropboxusercontent.com/u/51491957/multistep-v2.1.1/react-multistep.png"/>
-
-=========================================
 
 [Working demo](http://srdjan.github.io/react-multistep/)
 
