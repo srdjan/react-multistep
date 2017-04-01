@@ -4,6 +4,7 @@
 ### [Try it now](http://srdjan.github.io/react-multistep/)
 #
 [![NPM](https://nodei.co/npm/react-multistep.png?downloads=true&stars=true)](https://nodei.co/rnpm/react-multistep/)
+
 #### React 15.4.2 - Babel 6.23.0 - Browserify 14.1.0 ([Webpack version (wip)](https://github.com/Srdjan/react-multistep-with-webpack/))
 #### [List of forks](https://github.com/srdjan/react-multistep/network/members/)
 # 
