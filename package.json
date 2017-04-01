@@ -1,24 +1,24 @@
 {
   "name": "react-multistep",
-  "version": "2.2.9",
+  "version": "2.2.10",
   "description": "Responsive ReactJS multistep form component",
   "main": "src/index.js",
   "license": "MIT",
   "author": {
     "name": "@djidja8",
     "email": "srdjan@timok.com",
-    "url": "https://github.com/https://github.com/Srdjan"
+    "url": "https://github.com/srdjan"
   },
   "keywords": [
     "react, reactjs, responsive, component"
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/https://github.com/Srdjan/react-multistep.git"
+    "url": "https://github.com/srdjan/react-multistep"
   },
-  "homepage": "https://github.com/https://github.com/Srdjan/react-multistep",
+  "homepage": "https://github.com/srdjan/react-multistep",
   "bugs": {
-    "url": "https://github.com/https://github.com/Srdjan/react-multistep/issues"
+    "url": "https://github.com/srdjan/react-multistep/issues"
   },
   "dependencies": {
     "react": "^15.4.x",
