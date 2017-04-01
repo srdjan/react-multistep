@@ -1,8 +1,8 @@
 'use strict'
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import Multistep from 'react-multistep'
-import { steps } from './js/signup/index.js'
+import Multistep from '../../src/index.js'
+import { steps } from './src/signup/index.js'
 
 class App extends React.Component {
   render() {
