@@ -1,6 +1,6 @@
 {
   "name": "react-multistep",
-  "version": "2.2.11",
+  "version": "2.2.12",
   "description": "Responsive ReactJS multistep form component",
   "main": "src/index.js",
   "license": "MIT",
@@ -32,7 +32,7 @@
     "babel-preset-es2017": "^6.x.x",
     "babel-preset-react": "^6.x.x",
     "babelify": "^7.3.0",
-    "browserify": "^14.x.x",
+    "browserify": "^14.4.x",
     "mocha": "^3.2.x"
   },
   "scripts": {
