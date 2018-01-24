@@ -1,7 +1,7 @@
 'use strict'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Multistep from '../src/index.js'
+import MultiStep from '../src/index.js'
 import { steps } from './src/index.js'
 
 class App extends React.Component {
@@ -9,7 +9,7 @@ class App extends React.Component {
     return (
       <div className="container">
         <div>
-          <Multistep steps={steps}/>
+          <MultiStep steps={steps}/>
         </div>
         <div className="container app-footer">
           <h6>Press 'Enter' or click on progress bar for next step.</h6>

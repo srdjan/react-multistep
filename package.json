@@ -36,7 +36,7 @@
     "mocha": "^5.x.x"
   },
   "scripts": {
-    "build": "browserify ./example/app.js -o ./example/bundle.js",
+    "build": "browserify ./example/index.js -o ./example/bundle.js",
     "test": "todo... mocha"
   },
   "browserify": {
