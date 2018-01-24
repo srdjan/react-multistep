@@ -1,8 +1,8 @@
-import React, { Component, PropTypes } from 'react'
-import { StepOne } from './stepone'
-import { StepTwo } from './steptwo'
-import { StepThree } from './stepthree'
-import { StepFour } from './stepfour'
+import React from 'react'
+import { StepOne } from './StepOne'
+import { StepTwo } from './StepTwo'
+import { StepThree } from './StepThree'
+import { StepFour } from './StepFour'
 
 const steps = 
     [

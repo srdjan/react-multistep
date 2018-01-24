@@ -1,6 +1,6 @@
-import React, { Component, PropTypes } from 'react';
+import React from 'react';
 
-export default class MultiStep extends Component {
+export default class MultiStep extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

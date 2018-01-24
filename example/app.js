@@ -1,15 +1,15 @@
 'use strict'
-import React, { Component, PropTypes } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
-import Multistep from '../../src/index.js'
-import { steps } from './src/signup/index.js'
+import Multistep from '../src/index.js'
+import { steps } from './src/index.js'
 
 class App extends React.Component {
   render() {
     return (
       <div className="container">
         <div>
-          <Multistep initialStep={1} steps={steps}/>
+          <Multistep steps={steps}/>
         </div>
         <div className="container app-footer">
           <h6>Press 'Enter' or click on progress bar for next step.</h6>

@@ -1,6 +1,6 @@
 {
   "name": "react-multistep",
-  "version": "2.2.12",
+  "version": "2.3.0",
   "description": "Responsive ReactJS multistep form component",
   "main": "src/index.js",
   "license": "MIT",
@@ -21,8 +21,8 @@
     "url": "https://github.com/srdjan/react-multistep/issues"
   },
   "dependencies": {
-    "react": "^15.6.x",
-    "react-dom": "^15.6.x"
+    "react": "^16.x.x",
+    "react-dom": "^16.x.x"
   },
   "devDependencies": {
     "babel": "^6.x.x",
@@ -31,12 +31,12 @@
     "babel-preset-es2015": "^6.x.x",
     "babel-preset-es2017": "^6.x.x",
     "babel-preset-react": "^6.x.x",
-    "babelify": "^7.3.0",
-    "browserify": "^14.4.x",
-    "mocha": "^3.2.x"
+    "babelify": "^8.x.x",
+    "browserify": "^15.x.x",
+    "mocha": "^5.x.x"
   },
   "scripts": {
-    "build": "browserify ./example/app/app.js -o ./example/app/bundle.js",
+    "build": "browserify ./example/app.js -o ./example/bundle.js",
     "test": "todo... mocha"
   },
   "browserify": {
