@@ -8,7 +8,7 @@
 #
 [![NPM](https://nodei.co/npm/react-multistep.png?downloads=true&stars=true)](https://nodei.co/npm/react-multistep/)
 [![Known Vulnerabilities](https://snyk.io/test/github/srdjan/react-multistep/badge.svg)](https://snyk.io/test/github/srdjan/react-multistep)
-#### React 15.4.2 - Babel 6.23.0 - Browserify 14.1.0 ([Webpack version (wip)](https://github.com/Srdjan/react-multistep-with-webpack/))
+#### React 16.2.0 - Babel 6.23.0 - Browserify 15.2.0 ([Webpack version (wip)](https://github.com/Srdjan/react-multistep-with-webpack/))
 #### [List of forks](https://github.com/srdjan/react-multistep/network/members/)
 # 
 ## Instructions
