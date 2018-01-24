@@ -1,5 +1,8 @@
 # Responsive React multistep form component
-<img src="https://raw.githubusercontent.com/srdjan/react-multistep/master/assets/react-multistep.png"/>
+
+
+<img width="60%" height="auto" src="https://raw.githubusercontent.com/srdjan/react-multistep/master/assets/react-multistep.png"/>
+
 
 ### [Try it now](http://srdjan.github.io/react-multistep/)
 #
