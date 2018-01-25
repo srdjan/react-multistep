@@ -1,4 +1,4 @@
-# Responsive React multistep form component
+# Responsive React multistep form component, v3.0.0
 
 
 <img width="60%" height="auto" src="https://raw.githubusercontent.com/srdjan/react-multistep/master/assets/react-multistep.png"/>
