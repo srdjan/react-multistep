@@ -1,6 +1,6 @@
 {
   "name": "react-multistep",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Responsive ReactJS multistep form component",
   "main": "src/index.js",
   "license": "MIT",
@@ -9,6 +9,14 @@
     "email": "srdjan@timok.com",
     "url": "https://github.com/srdjan"
   },
+  "contributors": [
+    "Jaime Agudo <@jaimeagudo> (https://github.com/jaimeagudo)",
+    "contra <@contra> (https://github.com/contra)",
+    "Artur Kudeł <@kaadash> (https://github.com/kaadash)",
+    "David Gruebl <me@davidgruebl.com> (https://github.com/davidgruebl)",
+    "Salomão Rodrigues <http://www.salomao.me> (https://github.com/salomao-rodrigues)",
+    "Matt Parrilla <matthew.parrilla@gmail.com> (https://github.com/mattparrilla)"    
+  ],
   "keywords": [
     "react, reactjs, responsive, component"
   ],
