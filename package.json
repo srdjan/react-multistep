@@ -41,7 +41,7 @@
     "babel-preset-react": "^6.24.1",
     "babelify": "^8.x.x",
     "browserify": "^15.x.x",
-    "brace-expansion": "1.1.7",
+    "brace-expansion": "^1.x.x",
     "mocha": "^5.x.x"
   },
   "scripts": {
