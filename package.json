@@ -15,7 +15,7 @@
     "Artur Kudeł <@kaadash> (https://github.com/kaadash)",
     "David Gruebl <me@davidgruebl.com> (https://github.com/davidgruebl)",
     "Salomão Rodrigues <http://www.salomao.me> (https://github.com/salomao-rodrigues)",
-    "Matt Parrilla <matthew.parrilla@gmail.com> (https://github.com/mattparrilla)"    
+    "Matt Parrilla <matthew.parrilla@gmail.com> (https://github.com/mattparrilla)"
   ],
   "keywords": [
     "react, reactjs, responsive, component"
@@ -34,11 +34,11 @@
   },
   "devDependencies": {
     "babel": "^6.x.x",
-    "babel-cli": "^6.x.x",
-    "babel-plugin-transform-react-jsx": "^6.x.x",
-    "babel-preset-es2015": "^6.x.x",
-    "babel-preset-es2017": "^6.x.x",
-    "babel-preset-react": "^6.x.x",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2017": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
     "babelify": "^8.x.x",
     "browserify": "^15.x.x",
     "mocha": "^5.x.x"
