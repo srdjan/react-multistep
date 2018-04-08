@@ -1,5 +1,5 @@
 {
-  "plugins": ["transform-react-jsx"],
-  "presets": ["es2015"]
+  "plugins": ["transform-react-jsx", "transform-class-properties"],
+  "presets": ["es2015", "es2017"]
 }
 

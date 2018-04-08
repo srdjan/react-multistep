@@ -29,6 +29,7 @@
     "url": "https://github.com/srdjan/react-multistep/issues"
   },
   "dependencies": {
+    "babel-plugin-transform-class-properties": "^6.24.1",
     "eslint": "^4.19.1",
     "react": "^16.3.1",
     "react-dom": "^16.3.1"
