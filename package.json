@@ -1,6 +1,6 @@
 {
   "name": "react-multistep",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Responsive ReactJS multistep form component",
   "main": "src/index.js",
   "license": "MIT",
@@ -30,9 +30,8 @@
   },
   "dependencies": {
     "babel-plugin-transform-class-properties": "^6.24.1",
-    "eslint": "^4.19.1",
-    "react": "^16.3.1",
-    "react-dom": "^16.3.1"
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2"
   },
   "devDependencies": {
     "babel": "^6.23.0",
@@ -42,9 +41,8 @@
     "babel-preset-es2017": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "babelify": "^8.0.0",
-    "brace-expansion": "^1.1.11",
-    "browserify": "^16.1.1",
-    "mocha": "^5.0.5",
+    "browserify": "^16.2.0",
+    "eslint": "^4.19.1",
     "standard": "^11.0.1"
   },
   "scripts": {
