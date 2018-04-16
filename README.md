@@ -10,7 +10,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/srdjan/react-multistep/badge.svg)](https://snyk.io/test/github/srdjan/react-multistep)
 #### React 16.3.1 - Babel 6.23.0
 
-#### Example uses Browserify 16.1.1 ([Webpack, Parcel versions soon]
+#### Example uses Browserify 16.1.1 (Webpack, Parcel versions soon)
 
 #### [List of forks](https://github.com/srdjan/react-multistep/network/members/)
 # 
