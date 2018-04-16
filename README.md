@@ -1,4 +1,4 @@
-# Responsive React multistep form component, v3.0.1
+# Responsive React multistep form component
 
 
 <img width="60%" height="auto" src="https://raw.githubusercontent.com/srdjan/react-multistep/master/assets/react-multistep.png"/>
@@ -8,7 +8,10 @@
 #
 [![NPM](https://nodei.co/npm/react-multistep.png?downloads=true&stars=true)](https://nodei.co/npm/react-multistep/)
 [![Known Vulnerabilities](https://snyk.io/test/github/srdjan/react-multistep/badge.svg)](https://snyk.io/test/github/srdjan/react-multistep)
-#### React 16.2.0 - Babel 6.23.0 - Browserify 15.2.0 ([Webpack version (wip)](https://github.com/Srdjan/react-multistep-with-webpack/))
+#### React 16.3.1 - Babel 6.23.0
+
+#### Example uses Browserify 16.1.1 (Webpack, Parcel versions soon)
+
 #### [List of forks](https://github.com/srdjan/react-multistep/network/members/)
 # 
 ## Instructions
