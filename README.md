@@ -8,9 +8,9 @@
 #
 [![NPM](https://nodei.co/npm/react-multistep.png?downloads=true&stars=true)](https://nodei.co/npm/react-multistep/)
 [![Known Vulnerabilities](https://snyk.io/test/github/srdjan/react-multistep/badge.svg)](https://snyk.io/test/github/srdjan/react-multistep)
-#### React 16.3.1 - Babel 6.23.0
+#### React 16.3.2
 
-#### Example uses Browserify 16.1.1 (Webpack, Parcel versions soon)
+#### Examples showcase Browserify or Webpack builds
 
 #### [List of forks](https://github.com/srdjan/react-multistep/network/members/)
 # 
@@ -20,9 +20,9 @@ To install this module run:
 ```sh
 npm install react-multistep
 ```
-next, require it inside of your app:
+next, require/import it inside of your app:
 ```sh
-var Multistep = require('react-multistep').Multistep
+const MultiStep = import from ('react-multistep')
 ```
 ### Configuration:
 ```
@@ -44,12 +44,17 @@ const steps = [
 <Multistep showNavigation={true} steps={steps}/>
 ```
 
-To build included example:
+To build included example with Browserify:
 ```sh
 npm run build
 ```
 Now open ./example/index.html in your favorite browser
 
+To build included example with Webpack:
+```sh
+npm run build-with-webpack
+```
+Now open ./example/index.html in your favorite browser
 
 ## Dev instructions
 
