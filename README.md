@@ -24,7 +24,7 @@ next, require/import it inside of your app:
 ```sh
 const MultiStep = import from ('react-multistep')
 ```
-### Configuration:
+### Props:
 ```
 showNavigation 
 type: boolean (default = true)
