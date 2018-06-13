@@ -44,16 +44,16 @@ const steps = [
 <Multistep showNavigation={true} steps={steps}/>
 ```
 
-To build included example with Browserify:
+### To build included example with Browserify:
 ```sh
 npm run build
 ```
-Now open ./example/index.html in your favorite browser
 
-To build included example with Webpack:
+### or, with Webpack:
 ```sh
 npm run build-with-webpack
 ```
+
 Now open ./example/index.html in your favorite browser
 
 ## Dev instructions
