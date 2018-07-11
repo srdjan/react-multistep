@@ -1,5 +1,3 @@
-//todo
-
 var assert = require('assert');
 
 describe('Empty test', function() {
