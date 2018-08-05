@@ -7,10 +7,12 @@
 ### Try it [here](http://srdjan.github.io/react-multistep/)
 #
 [![NPM](https://nodei.co/npm/react-multistep.png?downloads=true&stars=true)](https://nodei.co/npm/react-multistep/)
+
 [![Known Vulnerabilities](https://snyk.io/test/github/srdjan/react-multistep/badge.svg)](https://snyk.io/test/github/srdjan/react-multistep)
+
 #### React 16.3.2
 
-#### Examples showcase Browserify or Webpack builds
+#### Examples showcase both Browserify and Webpack builds
 
 #### [List of forks](https://github.com/srdjan/react-multistep/network/members/)
 # 
