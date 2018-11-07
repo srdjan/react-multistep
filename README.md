@@ -10,7 +10,7 @@
 
 [![Known Vulnerabilities](https://snyk.io/test/github/srdjan/react-multistep/badge.svg)](https://snyk.io/test/github/srdjan/react-multistep)
 
-#### React 16.3.2
+#### React 16.6.0
 
 #### Examples showcase both Browserify and Webpack builds
 
