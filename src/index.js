@@ -1,6 +1,6 @@
-import React from 'react'
+import React, {useState} from 'react'
 
-const getNavStates = (indx, length) => {
+const getStyles = (indx, length) => {
   let styles = []
   for (let i = 0; i < length; i++) {
     if (i < indx) {
@@ -11,10 +11,10 @@ const getNavStates = (indx, length) => {
       styles.push('todo')
     }
   }
-  return { current: indx, styles: styles }
+  return styles
 }
 
-const checkNavState = (currentStep, stepsLength) => {
+const getButtonsState = (currentStep, stepsLength) => {
   if (currentStep > 0 && currentStep < stepsLength - 1) {
     return {
       showPreviousBtn: true,
@@ -33,94 +33,85 @@ const checkNavState = (currentStep, stepsLength) => {
   }
 }
 
-export default class MultiStep extends React.Component {
-  state = {
-    showPreviousBtn: false,
-    showNextBtn: true,
-    compState: 0,
-    navState: getNavStates(0, this.props.steps.length)
+const getCompState = (state, nextStep, stepsLength) => {
+  if (nextStep < stepsLength) {
+    return {value: nextStep}
+  }
+  return {value: state}
+}
+
+export default function MultiStep(props) {
+  const [stylesState, setStylesState] = useState(getStyles(0, props.steps.length))
+  const [compState, setCompState] = useState({value: 0})
+  const [buttonsState, setButtonsState] = useState(getButtonsState(0, props.steps.length))
+  
+  function setNavState(next) {
+    setStylesState(getStyles(next, props.steps.length))
+    setCompState(getCompState(compState.value, next, props.steps.length))
+    setButtonsState(getButtonsState(next, props.steps.length))
   }
 
-  setNavState = next => {
-    this.setState({
-      navState: getNavStates(next, this.props.steps.length)
-    })
-    if (next < this.props.steps.length) {
-      this.setState({ compState: next })
+  function next() {
+    setNavState(compState.value + 1)
+  }
+  
+  function previous() {
+    if (compState.value > 0) {
+      setNavState(compState.value - 1)
     }
-    this.setState(checkNavState(next, this.props.steps.length))
   }
 
-  handleKeyDown = evt => {
+  function handleKeyDown(evt) {
     if (evt.which === 13) {
-      this.next()
+      next(props.steps.length)
     }
   }
 
-  handleOnClick = evt => {
-    if (
-      evt.currentTarget.value === this.props.steps.length - 1 &&
-      this.state.compState === this.props.steps.length - 1
-    ) {
-      this.setNavState(this.props.steps.length)
+  function handleOnClick(evt) {
+    if (evt.currentTarget.value === props.steps.length - 1 && compState.value === props.steps.length - 1) {
+      setNavState(props.steps.length)
     } else {
-      this.setNavState(evt.currentTarget.value)
+      setNavState(evt.currentTarget.value)
     }
   }
 
-  next = () => {
-    this.setNavState(this.state.compState + 1)
-  }
-
-  previous = () => {
-    if (this.state.compState > 0) {
-      this.setNavState(this.state.compState - 1)
-    }
-  }
-
-  getClassName = (className, i) => {
-    return className + '-' + this.state.navState.styles[i]
-  }
-
-  renderSteps = () => {
-    return this.props.steps.map((s, i) => (
+  function renderSteps() {
+    return props.steps.map((s, i) => (
       <li
-        className={this.getClassName('progtrckr', i)}
-        onClick={this.handleOnClick}
+        className={'progtrckr-' + stylesState[i]}
+        onClick={handleOnClick}
         key={i}
         value={i}
       >
         <em>{i + 1}</em>
-        <span>{this.props.steps[i].name}</span>
+        <span>{props.steps[i].name}</span>
       </li>
     ))
   }
 
-  render () {
-    return (
-      <div className='container' onKeyDown={this.handleKeyDown}>
+  return (
+      <div className='container' onKeyDown={handleKeyDown}>
         <ol className='progtrckr'>
-          {this.renderSteps()}
+          {renderSteps()}
         </ol>
-        {this.props.steps[this.state.compState].component}
-        <div style={this.props.showNavigation ? {} : { display: 'none' }}>
+        {props.steps[compState.value].component}
+        <div style={props.showNavigation ? {} : { display: 'none' }}>
           <button
-            style={this.state.showPreviousBtn ? {} : { display: 'none' }}
-            onClick={this.previous}
+            style={buttonsState.showPreviousBtn ? {} : { display: 'none' }}
+            onClick={previous}
           >
             Previous
           </button>
 
           <button
-            style={this.state.showNextBtn ? {} : { display: 'none' }}
-            onClick={this.next}
+            style={buttonsState.showNextBtn ? {} : { display: 'none' }}
+            onClick={next}
           >
             Next
           </button>
         </div>
       </div>
-    )
-  }
+  )
 }
 
 MultiStep.defaultProps = {
