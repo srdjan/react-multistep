@@ -8,9 +8,7 @@
 #
 [![NPM](https://nodei.co/npm/react-multistep.png?downloads=true&stars=true)](https://nodei.co/npm/react-multistep/)
 
-[![Known Vulnerabilities](https://snyk.io/test/github/srdjan/react-multistep/badge.svg)](https://snyk.io/test/github/srdjan/react-multistep)
-
-#### React 16.6.0
+#### React 16.8.1 . (Hooks!!!)
 
 #### Examples showcase both Browserify and Webpack builds
 
