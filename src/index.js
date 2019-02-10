@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 
-const getStyles = (indx, length) => {
+const getNavStyles = (indx, length) => {
   let styles = []
   for (let i = 0; i < length; i++) {
     if (i < indx) {
@@ -14,13 +14,13 @@ const getStyles = (indx, length) => {
   return styles
 }
 
-const getButtonsState = (currentStep, stepsLength) => {
-  if (currentStep > 0 && currentStep < stepsLength - 1) {
+const getButtonsState = (indx, length) => {
+  if (indx > 0 && indx < length - 1) {
     return {
       showPreviousBtn: true,
       showNextBtn: true
     }
-  } else if (currentStep === 0) {
+  } else if (indx === 0) {
     return {
       showPreviousBtn: false,
       showNextBtn: true
@@ -33,31 +33,31 @@ const getButtonsState = (currentStep, stepsLength) => {
   }
 }
 
-const getCompState = (state, nextStep, stepsLength) => {
-  if (nextStep < stepsLength) {
-    return {value: nextStep}
+const getCompState = (state, indx, length) => {
+  if (indx < length) {
+    return {value: indx}
   }
   return {value: state}
 }
 
 export default function MultiStep(props) {
-  const [stylesState, setStylesState] = useState(getStyles(0, props.steps.length))
-  const [compState, setCompState] = useState({value: 0})
-  const [buttonsState, setButtonsState] = useState(getButtonsState(0, props.steps.length))
+  const [stylesState, setStyles] = useState(getNavStyles(0, props.steps.length))
+  const [compState, setComp] = useState({value: 0})
+  const [buttonsState, setButtons] = useState(getButtonsState(0, props.steps.length))
   
-  function setNavState(next) {
-    setStylesState(getStyles(next, props.steps.length))
-    setCompState(getCompState(compState.value, next, props.steps.length))
-    setButtonsState(getButtonsState(next, props.steps.length))
+  function setState(indx) {
+    setStyles(getNavStyles(indx, props.steps.length))
+    setComp(getCompState(compState.value, indx, props.steps.length))
+    setButtons(getButtonsState(indx, props.steps.length))
   }
 
   function next() {
-    setNavState(compState.value + 1)
+    setState(compState.value + 1)
   }
   
   function previous() {
     if (compState.value > 0) {
-      setNavState(compState.value - 1)
+      setState(compState.value - 1)
     }
   }
 
@@ -69,9 +69,9 @@ export default function MultiStep(props) {
 
   function handleOnClick(evt) {
     if (evt.currentTarget.value === props.steps.length - 1 && compState.value === props.steps.length - 1) {
-      setNavState(props.steps.length)
+      setState(props.steps.length)
     } else {
-      setNavState(evt.currentTarget.value)
+      setState(evt.currentTarget.value)
     }
   }
 

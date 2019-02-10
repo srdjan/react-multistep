@@ -6,10 +6,10 @@ import { StepFour } from './StepFour'
 
 const steps = 
     [
-      {name: 'StepOne', component: <StepOne/>},
-      {name: 'StepTwo', component: <StepTwo/>},
-      {name: 'StepThree', component: <StepThree/>},
-      {name: 'StepFour', component: <StepFour/>}
+      {name: 'Name', component: <StepOne/>},
+      {name: 'Email', component: <StepTwo/>},
+      {name: 'Password', component: <StepThree/>},
+      {name: 'Agreement', component: <StepFour/>}
     ]
 
 export { steps }
