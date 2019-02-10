@@ -33,50 +33,33 @@ const getButtonsState = (indx, length) => {
   }
 }
 
-const getCompState = (state, indx, length) => {
-  if (indx < length) {
-    return {value: indx}
-  }
-  return {value: state}
-}
-
 export default function MultiStep(props) {
   const [stylesState, setStyles] = useState(getNavStyles(0, props.steps.length))
-  const [compState, setComp] = useState({value: 0})
+  const [compState, setComp] = useState(0)
   const [buttonsState, setButtons] = useState(getButtonsState(0, props.steps.length))
   
-  function setState(indx) {
+  function setStepState(indx) {
     setStyles(getNavStyles(indx, props.steps.length))
-    setComp(getCompState(compState.value, indx, props.steps.length))
+    setComp(indx < props.steps.length? indx : compState)
     setButtons(getButtonsState(indx, props.steps.length))
   }
 
-  function next() {
-    setState(compState.value + 1)
-  }
+  const next = () => setStepState(compState + 1)
   
-  function previous() {
-    if (compState.value > 0) {
-      setState(compState.value - 1)
-    }
-  }
+  const previous = () => setStepState((compState > 0) ? compState - 1 : compState)
 
-  function handleKeyDown(evt) {
-    if (evt.which === 13) {
-      next(props.steps.length)
-    }
-  }
+  const handleKeyDown = (evt) => evt.which === 13 ? next(props.steps.length) : {}
 
-  function handleOnClick(evt) {
-    if (evt.currentTarget.value === props.steps.length - 1 && compState.value === props.steps.length - 1) {
-      setState(props.steps.length)
+  const handleOnClick = (evt) => {
+    if (evt.currentTarget.value === props.steps.length - 1 && compState === props.steps.length - 1) {
+      setStepState(props.steps.length)
     } else {
-      setState(evt.currentTarget.value)
+      setStepState(evt.currentTarget.value)
     }
   }
 
-  function renderSteps() {
-    return props.steps.map((s, i) => (
+  const renderSteps = () => 
+    props.steps.map((s, i) => (
       <li
         className={'progtrckr-' + stylesState[i]}
         onClick={handleOnClick}
@@ -87,14 +70,13 @@ export default function MultiStep(props) {
         <span>{props.steps[i].name}</span>
       </li>
     ))
-  }
 
   return (
       <div className='container' onKeyDown={handleKeyDown}>
         <ol className='progtrckr'>
           {renderSteps()}
         </ol>
-        {props.steps[compState.value].component}
+        {props.steps[compState].component}
         <div style={props.showNavigation ? {} : { display: 'none' }}>
           <button
             style={buttonsState.showPreviousBtn ? {} : { display: 'none' }}
