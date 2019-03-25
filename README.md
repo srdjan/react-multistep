@@ -31,8 +31,8 @@ type: boolean (default = true)
 #### If you want to try the example, easiest is to clone the repo locally and explore:
 
 ```sh
-git clone https://github.com/srdjan/react-multistep.git //clone the repo
-cd react-multistep  //navigate to the project folder
+git clone https://github.com/srdjan/react-multistep.git   //clone the repo
+cd react-multistep                                        //navigate to the project folder
 npm install
 ```
 
@@ -58,7 +58,7 @@ npm run build-with-webpack
 
 #### To open the example in your favorite browser:
 ```sh
-cd examples  /navigate to the examples folder
-open ./example/index.html
+cd examples                 //navigate to the examples folder
+open ./example/index.html   //open index.html
 ```
 
