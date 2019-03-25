@@ -56,6 +56,9 @@ npm run build
 npm run build-with-webpack
 ```
 
-#### Now open ./example/index.html in your favorite browser
-
+#### To open the example in your favorite browser:
+```sh
+cd examples  /navigate to the examples folder
+open ./example/index.html
+```
 
