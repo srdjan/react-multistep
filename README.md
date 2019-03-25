@@ -29,6 +29,14 @@ type: boolean (default = true)
 ```
 
 ### If you want to try the example, easiest is to clone the repo locally and explore:
+
+```sh
+git clone https://github.com/srdjan/react-multistep.git //clone the repo
+cd react-multistep  //navigate to the project folder
+npm install
+```
+
+### Included example showcases both Browserify and Webpack builds
 ```javascript
 const steps = [
               {name: 'StepOne', component: <StepOne/>},
@@ -39,13 +47,6 @@ const steps = [
 <Multistep showNavigation={true} steps={steps}/>
 ```
 
-```sh
-git clone https://github.com/srdjan/react-multistep.git //clone the repo
-cd react-multistep  //navigate to the project folder
-npm install
-```
-
-### Included example showcases both Browserify and Webpack builds
 #### To build included example with Browserify:
 ```sh
 npm run build
