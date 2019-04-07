@@ -1,3 +1,5 @@
+"use strict";
+
 import React, {useState} from 'react'
 
 const getNavStyles = (indx, length) => {
@@ -33,7 +35,7 @@ const getButtonsState = (indx, length) => {
   }
 }
 
-function MultiStep(props) {
+export default function MultiStep(props) {
   const [stylesState, setStyles] = useState(getNavStyles(0, props.steps.length))
   const [compState, setComp] = useState(0)
   const [buttonsState, setButtons] = useState(getButtonsState(0, props.steps.length))
@@ -99,6 +101,3 @@ function MultiStep(props) {
 MultiStep.defaultProps = {
   showNavigation: true
 }
-
-
-export {MultiStep}

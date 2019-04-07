@@ -1,7 +1,7 @@
 'use strict'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import MultiStep from '../../dist/bundle'
+import MultiStep from '../../dist/lib'
 import { steps } from './steps'
 
 console.log(MultiStep)

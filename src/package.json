@@ -33,8 +33,8 @@
     "babel-loader": "^8.0.5"
   },
   "scripts": {
-    "dev": "webpack --mode development index.js -o ../dist/bundle.js",
-    "build": "webpack --mode production index.js -o ../dist/bundle.js",
+    "dev": "webpack --mode development index.js -o ../dist/lib.js",
+    "build": "webpack --mode production index.js -o ../dist/lib.js",
     "test": "todo... mocha"
   }
 }
