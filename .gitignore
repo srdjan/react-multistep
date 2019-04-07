@@ -1,7 +1,4 @@
-/node_modules/
-/build/
-bundle.js
-*.log
+node_modules/
+example/node_modules/
+dist/
 .DS_Store
-todo
-package-lock.json

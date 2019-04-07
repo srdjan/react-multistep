@@ -33,7 +33,7 @@ const getButtonsState = (indx, length) => {
   }
 }
 
-export default function MultiStep(props) {
+function MultiStep(props) {
   const [stylesState, setStyles] = useState(getNavStyles(0, props.steps.length))
   const [compState, setComp] = useState(0)
   const [buttonsState, setButtons] = useState(getButtonsState(0, props.steps.length))
@@ -99,3 +99,6 @@ export default function MultiStep(props) {
 MultiStep.defaultProps = {
   showNavigation: true
 }
+
+
+export {MultiStep}

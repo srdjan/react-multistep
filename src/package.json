@@ -2,21 +2,13 @@
   "name": "react-multistep",
   "version": "3.4.0",
   "description": "Responsive ReactJS multistep form component",
-  "main": "./dist/bundle.js",
+  "main": "index.js",
   "license": "MIT",
   "author": {
     "name": "@djidja8",
     "email": "srdjan@timok.com",
     "url": "https://github.com/srdjan"
   },
-  "contributors": [
-    "Jaime Agudo <@jaimeagudo> (https://github.com/jaimeagudo)",
-    "contra <@contra> (https://github.com/contra)",
-    "Artur Kudeł <@kaadash> (https://github.com/kaadash)",
-    "David Gruebl <me@davidgruebl.com> (https://github.com/davidgruebl)",
-    "Salomão Rodrigues <http://www.salomao.me> (https://github.com/salomao-rodrigues)",
-    "Matt Parrilla <matthew.parrilla@gmail.com> (https://github.com/mattparrilla)"
-  ],
   "keywords": [
     "react, reactjs, responsive, component"
   ],
@@ -27,5 +19,22 @@
   "homepage": "https://github.com/srdjan/react-multistep",
   "bugs": {
     "url": "https://github.com/srdjan/react-multistep/issues"
+  },
+  "dependencies": {
+    "react": "16.8.6",
+    "react-dom": "16.8.6"
+  },
+  "devDependencies": {
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.5"
+  },
+  "scripts": {
+    "dev": "webpack --mode development index.js -o ../dist/bundle.js",
+    "build": "webpack --mode production index.js -o ../dist/bundle.js",
+    "test": "todo... mocha"
   }
 }

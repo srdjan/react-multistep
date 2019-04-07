@@ -1,15 +1,25 @@
+'use strict'
 import React from 'react'
-import { StepOne } from './StepOne'
-import { StepTwo } from './StepTwo'
-import { StepThree } from './StepThree'
-import { StepFour } from './StepFour'
+import ReactDOM from 'react-dom'
+import MultiStep from '../../dist/bundle'
+import { steps } from './steps'
 
-const steps = 
-    [
-      {name: 'Name', component: <StepOne/>},
-      {name: 'Email', component: <StepTwo/>},
-      {name: 'Password', component: <StepThree/>},
-      {name: 'Agreement', component: <StepFour/>}
-    ]
+console.log(MultiStep)
 
-export { steps }
+class App extends React.Component {
+  render() {
+    return (
+      <div className="container">
+        <div>
+          <MultiStep steps={steps}/>
+        </div>
+        <div className="container app-footer">
+          <h6>Press 'Enter' or click on progress bar for next step.</h6>
+           Code is on <a href="https://github.com/Srdjan/react-multistep" target="_blank">github</a>
+        </div>
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(<App/>, document.getElementById("app"))
