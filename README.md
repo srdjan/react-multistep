@@ -18,7 +18,7 @@ To use this module in your app run:
 ```sh
 npm install react-multistep
 ```
-next, require/import it inside of your app:
+next, import it inside of your app:
 ```sh
 const MultiStep = import from ('react-multistep')
 ```
@@ -28,15 +28,7 @@ prop=showNavigation
 type: boolean (default = true)
 ```
 
-#### If you want to try the example, easiest is to clone the repo locally and explore:
-
-```sh
-git clone https://github.com/srdjan/react-multistep.git   //clone the repo
-cd react-multistep                                        //navigate to the project folder
-npm install
-```
-
-#### Included example showcases both Browserify and Webpack builds
+#### It takes an array of objects representing individual steps: 
 ```javascript
 const steps = [
               {name: 'StepOne', component: <StepOne/>},
@@ -47,18 +39,23 @@ const steps = [
 <Multistep showNavigation={true} steps={steps}/>
 ```
 
-#### To build included example with Browserify:
+#### If you want to try the example, easiest is to clone the repo locally and explore:
+
 ```sh
-npm run build
-```
-#### or, with Webpack:
-```sh
-npm run build-with-webpack
+git clone https://github.com/srdjan/react-multistep.git   //clone the repo
+cd react-multistep                                        //navigate to the project folder
+
+cd src
+npm install
+npm run dev
+
+cd ../example
+npm install
+npm run dev
 ```
 
 #### To open the example in your favorite browser:
 ```sh
-cd examples                 //navigate to the examples folder
 open ./example/index.html   //open index.html
 ```
 
