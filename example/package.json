@@ -7,8 +7,7 @@
   "license": "ISC",
   "dependencies": {
     "react": "16.8.6",
-    "react-dom": "16.8.6",
-    "react-multistep": "3.5.0"
+    "react-dom": "16.8.6"
   },
   "devDependencies": {
     "webpack": "^4.29.6",
@@ -18,9 +17,13 @@
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.5"
   },
+  "peerDependencies": {
+    "react": "16.8.6",
+    "react-dom": "16.8.6"
+  },
   "scripts": {
-    "dev": "webpack --mode development ./src/index.js -o ./bundle.js",
-    "build": "webpack --mode production ./src/index.js -o ./bundle.js",
+    "dev": "webpack --mode development ./index.js -o ./bundle.js",
+    "build": "webpack --mode production ./index.js -o ./bundle.js",
     "test": "todo... mocha"
   }
 }
