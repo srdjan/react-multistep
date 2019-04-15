@@ -1,8 +1,8 @@
 'use strict'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import MultiStep from '../dist/lib'
 import { steps } from './src/steps'
+import MultiStep from 'react-multistep'
 
 const App = () => (
   <div className='container'>
