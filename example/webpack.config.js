@@ -5,7 +5,10 @@ module.exports = {
     './index.js'
   ],
   resolve: {
-    modules: ['./node_modules']
+    alias: {
+      React: path.resolve(__dirname, './node_modules/react/'),
+      ReactDOM: path.resolve(__dirname, './node_modules/react-dom/')
+    }
   },
   module: {
     rules: [

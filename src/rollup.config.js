@@ -10,7 +10,7 @@ export default {
   input: "./index.js",
   output: {
     file: outputFile,
-    format: "cjs"
+    format: "esm"
   },
   plugins: [
     replace({

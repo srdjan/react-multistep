@@ -11,6 +11,11 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
+        external: ['react', 'react-dom'],
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM'
+        },
         loader: 'babel-loader',
         options: {
           presets: ['@babel/preset-env', '@babel/react']

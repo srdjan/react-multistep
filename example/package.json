@@ -2,7 +2,7 @@
   "name": "react-multistep-example",
   "version": "1.0.0",
   "description": "",
-  "main": "./src/index.js",
+  "main": "index.js",
   "author": "djidja8",
   "license": "ISC",
   "dependencies": {
@@ -10,7 +10,7 @@
     "react-dom": "16.8.6"
   },
   "devDependencies": {
-    "webpack": "^4.29.6",
+    "webpack": "^4.30.0",
     "webpack-cli": "^3.3.0",
     "@babel/core": "^7.4.3",
     "@babel/preset-env": "^7.4.3",

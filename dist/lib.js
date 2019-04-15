@@ -1,9 +1,4 @@
-'use strict';
-
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var React = require('react');
-var React__default = _interopDefault(React);
+import React, { useState } from 'react';
 
 function _slicedToArray(arr, i) {
   return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
@@ -79,17 +74,17 @@ var getButtonsState = function getButtonsState(indx, length) {
 };
 
 function MultiStep(props) {
-  var _useState = React.useState(getNavStyles(0, props.steps.length)),
+  var _useState = useState(getNavStyles(0, props.steps.length)),
       _useState2 = _slicedToArray(_useState, 2),
       stylesState = _useState2[0],
       setStyles = _useState2[1];
 
-  var _useState3 = React.useState(0),
+  var _useState3 = useState(0),
       _useState4 = _slicedToArray(_useState3, 2),
       compState = _useState4[0],
       setComp = _useState4[1];
 
-  var _useState5 = React.useState(getButtonsState(0, props.steps.length)),
+  var _useState5 = useState(getButtonsState(0, props.steps.length)),
       _useState6 = _slicedToArray(_useState5, 2),
       buttonsState = _useState6[0],
       setButtons = _useState6[1];
@@ -122,30 +117,30 @@ function MultiStep(props) {
 
   var renderSteps = function renderSteps() {
     return props.steps.map(function (s, i) {
-      return React__default.createElement("li", {
+      return React.createElement("li", {
         className: 'progtrckr-' + stylesState[i],
         onClick: handleOnClick,
         key: i,
         value: i
-      }, React__default.createElement("em", null, i + 1), React__default.createElement("span", null, props.steps[i].name));
+      }, React.createElement("em", null, i + 1), React.createElement("span", null, props.steps[i].name));
     });
   };
 
-  return React__default.createElement("div", {
+  return React.createElement("div", {
     className: "container",
     onKeyDown: handleKeyDown
-  }, React__default.createElement("ol", {
+  }, React.createElement("ol", {
     className: "progtrckr"
-  }, renderSteps()), props.steps[compState].component, React__default.createElement("div", {
+  }, renderSteps()), props.steps[compState].component, React.createElement("div", {
     style: props.showNavigation ? {} : {
       display: 'none'
     }
-  }, React__default.createElement("button", {
+  }, React.createElement("button", {
     style: buttonsState.showPreviousBtn ? {} : {
       display: 'none'
     },
     onClick: previous
-  }, "Previous"), React__default.createElement("button", {
+  }, "Previous"), React.createElement("button", {
     style: buttonsState.showNextBtn ? {} : {
       display: 'none'
     },
@@ -156,4 +151,4 @@ MultiStep.defaultProps = {
   showNavigation: true
 };
 
-module.exports = MultiStep;
+export default MultiStep;
