@@ -1,6 +1,6 @@
 {
   "name": "react-multistep",
-  "version": "3.6.0",
+  "version": "3.6.1",
   "description": "Responsive ReactJS multistep form component",
   "main": "./dist/bundle.js",
   "license": "MIT",
@@ -9,6 +9,9 @@
     "email": "srdjan@timok.com",
     "url": "https://github.com/srdjan"
   },
+  "files": [
+    "./dist/index.js"
+   ],
   "contributors": [
     "Jaime Agudo <@jaimeagudo> (https://github.com/jaimeagudo)",
     "contra <@contra> (https://github.com/contra)",
