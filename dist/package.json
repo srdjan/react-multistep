@@ -42,8 +42,7 @@
   },
   "scripts": {
     "build:dev": "NODE_ENV=development rollup -c && cp -f ../dist/* ../example/node_modules/react-multistep/",
-    "build:prod": "NODE_ENV=production rollup -c && cp -f package.json ../dist/",
-    "publish": "npm  publish ../dist"
+    "build:prod": "NODE_ENV=production rollup -c && cp -f package.json ../dist/"
   },
   "dependencies": {
   }

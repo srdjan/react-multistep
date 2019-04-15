@@ -1,9 +1,0 @@
-.DS_Store
-.vscode
-assets/
-example/
-src/
-test/
-.gitignore
-.npmignore
-package.json

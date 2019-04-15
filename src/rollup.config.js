@@ -7,20 +7,6 @@ import resolve from 'rollup-plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 
 const EXTENSIONS = ['.ts', '.tsx', '.js', '.jsx'];
-const CODES = [
-  'THIS_IS_UNDEFINED',
-  'MISSING_GLOBAL_NAME',
-  'CIRCULAR_DEPENDENCY',
-];
-
-const discardWarning = warning => {
-  if (CODES.includes(warning.code)) {
-    return;
-  }
-
-  console.error(warning);
-};
-
 const env = process.env.NODE_ENV;
 
 const commonPlugins = () => [
@@ -45,7 +31,6 @@ const commonPlugins = () => [
 
 export default [
   {
-    onwarn: discardWarning,
     input: './index.js',
     output: {
       esModule: false,
@@ -59,11 +44,10 @@ export default [
     plugins: [...commonPlugins(), env === 'production' && terser()],
   },
   {
-    onwarn: discardWarning,
     input: './index.js', 
     output: [
       { dir: '../dist', format: 'esm', sourcemap: true },
-      // { dir: 'cjs', format: 'cjs', exports: 'named', sourcemap: true },
+      // { dir: '../dist', format: 'cjs', exports: 'named', sourcemap: true },
     ],
     plugins: commonPlugins(),
   },
