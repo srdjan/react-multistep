@@ -37,7 +37,6 @@
     "webpack": "^4.30.0"
   },
   "peerDependencies": {
-    "rollup": "^1.11.2",
     "react": "16.8.6"
   },
   "scripts": {
@@ -45,6 +44,5 @@
     "build:prod": "NODE_ENV=production rollup -c && cp -f package.json ../dist/",
     "publish": "npm  publish ../dist"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

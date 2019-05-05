@@ -37,7 +37,6 @@
     "webpack": "^4.30.0"
   },
   "peerDependencies": {
-    "rollup": "^1.11.2",
     "react": "16.8.6"
   },
   "scripts": {
