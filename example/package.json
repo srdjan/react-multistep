@@ -19,8 +19,8 @@
     "babel-loader": "^8.0.5"
   },
   "scripts": {
-    "dev": "webpack --mode development ./index.js -o ./bundle.js",
-    "build": "webpack --mode production ./index.js -o ./bundle.js",
+    "build:dev": "webpack --mode development ./index.js -o ./bundle.js",
+    "build:prod": "webpack --mode production ./index.js -o ./bundle.js",
     "test": "todo... mocha"
   }
 }

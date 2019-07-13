@@ -44,18 +44,27 @@ const steps = [
 ```sh
 git clone https://github.com/srdjan/react-multistep.git   //clone the repo
 cd react-multistep                                        //navigate to the project folder
-
-cd src
-npm install
-npm run dev
-
-cd ../example
-npm install
-npm run dev
 ```
 
-#### To open the example in your favorite browser:
+#### Next, cnavigate to 'src' directory and build the component:
+
 ```sh
-open ./example/index.html   //open index.html
+cd src
+npm install
+npm run build:dev
+```
+
+#### On succesful build, component is packaged in the './dist' folder. Navigate to the example and build it:
+
+```sh
+cd ../example
+npm install
+npm run build:dev
+```
+
+#### Now you can open the example in your favorite browser:
+
+```sh
+open index.html
 ```
 
