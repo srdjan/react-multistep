@@ -1,6 +1,6 @@
 {
   "name": "react-multistep",
-  "version": "3.6.6",
+  "version": "3.6.7",
   "description": "Responsive ReactJS multistep form component",
   "main": "index.js",
   "license": "MIT",
