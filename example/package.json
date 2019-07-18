@@ -8,7 +8,7 @@
   "dependencies": {
     "react": "16.8.6",
     "react-dom": "16.8.6",
-    "react-multistep": "^3.6.5"
+    "react-multistep": "3.6.6"
   },
   "devDependencies": {
     "webpack": "4.35.3",
