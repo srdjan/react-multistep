@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function _slicedToArray(arr, i) {
   return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
@@ -118,6 +118,10 @@ function MultiStep(props) {
       setStepState(evt.currentTarget.value);
     }
   };
+
+  useEffect(function () {
+    setStepState(compState);
+  }, [props.steps.length]);
 
   var renderSteps = function renderSteps() {
     return props.steps.map(function (s, i) {
