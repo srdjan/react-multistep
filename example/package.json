@@ -19,7 +19,7 @@
     "babel-loader": "8.0.6"
   },
   "scripts": {
-    "build": "webpack --mode production ./index.js -o ./bundle.js",
+    "build:dev": "webpack --mode production ./index.js -o ./bundle.js",
     "test": "todo..."
   }
 }
