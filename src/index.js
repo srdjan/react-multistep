@@ -1,6 +1,6 @@
 "use strict";
 
-import React, {useState} from 'react'
+import React, {useState, useEffect } from 'react'
 
 const getNavStyles = (indx, length) => {
   let styles = []
@@ -59,6 +59,10 @@ export default function MultiStep(props) {
       setStepState(evt.currentTarget.value)
     }
   }
+  
+  useEffect(() => {
+    setStepState(compState);
+  }, [props.steps.length]);
 
   const renderSteps = () => 
     props.steps.map((s, i) => (
