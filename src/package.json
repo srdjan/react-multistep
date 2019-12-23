@@ -1,6 +1,6 @@
 {
   "name": "react-multistep",
-  "version": "3.6.14",
+  "version": "3.6.16",
   "description": "Responsive ReactJS multistep form component",
   "main": "index.umd.js",
   "module": "index.esm.js",
@@ -26,7 +26,7 @@
     "@babel/preset-env": "7.7.1",
     "@babel/preset-react": "7.7.0",
     "babel-loader": "8.0.6",
-    "react": "16.11.0",
+    "react": "16.12.0",
     "rollup": "1.26.3",
     "rollup-plugin-babel": "4.3.3",
     "rollup-plugin-commonjs": "10.1.0",
@@ -37,11 +37,10 @@
     "rollup-plugin-json": "4.0.0"
   },
   "peerDependencies": {
-    "react": "16.11.0"
+    "react": "16.12.0"
   },
   "scripts": {
-    "build:dev": "NODE_ENV=development rollup -c && cp -f ../dist/* ../example/node_modules/react-multistep/",
-    "build:prod": "NODE_ENV=production rollup -c && cp -f package.json ../dist/",
+    "build": "NODE_ENV=production rollup -c && cp -f package.json ../dist/",
     "publish": "npm  publish ../dist"
   },
   "dependencies": {}

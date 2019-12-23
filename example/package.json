@@ -6,9 +6,9 @@
   "author": "djidja8",
   "license": "ISC",
   "dependencies": {
-    "react": "16.11.0",
-    "react-dom": "16.11.0",
-    "react-multistep": "3.6.14"
+    "react": "16.12.0",
+    "react-dom": "16.12.0",
+    "react-multistep": "3.6.16"
   },
   "devDependencies": {
     "webpack": "4.41.2",

@@ -51,7 +51,7 @@ cd react-multistep                                        //navigate to the proj
 ```sh
 cd src
 npm install
-npm run build:dev
+npm run build
 ```
 
 #### On succesful build, component is packaged in the './dist' folder. Navigate to the example and build it:
@@ -59,7 +59,7 @@ npm run build:dev
 ```sh
 cd ../example
 npm install
-npm run build:dev
+npm run build
 ```
 
 #### Now you can open the example in your favorite browser:
