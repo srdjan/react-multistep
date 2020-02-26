@@ -3,3 +3,5 @@ example/node_modules/
 example/bundle.js
 .DS_Store
 dist/
+dist/package.json
+dist/README.md
