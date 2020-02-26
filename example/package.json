@@ -8,7 +8,7 @@
   "dependencies": {
     "react": "16.12.0",
     "react-dom": "16.12.0",
-    "react-multistep": "file:../dist/react-multistep-3.6.17.tgz"
+    "react-multistep": "file:./react-multistep.tgz"
   },
   "devDependencies": {
     "webpack": "4.41.6",
@@ -19,7 +19,7 @@
     "babel-loader": "8.0.6"
   },
   "scripts": {
-    "build": "webpack --mode production ./index.js -o ./bundle.js",
+    "build": "npm pack ../dist/ && mv ./react-multistep-*.tgz ./react-multistep.tgz && webpack ./index.js -o ./bundle.js",
     "test": "todo..."
   }
 }

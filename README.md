@@ -39,14 +39,15 @@ const steps = [
 <Multistep showNavigation={true} steps={steps}/>
 ```
 
-#### If you want to try the example, easiest is to clone the repo locally and explore:
+#### If you want to try the included example, easiest is to clone the repo locally and explore:
 
 ```sh
+//--step 1
 git clone https://github.com/srdjan/react-multistep.git   //clone the repo
 cd react-multistep                                        //navigate to the project folder
 ```
 
-#### Next, cnavigate to 'src' directory and build the component:
+#### Next, navigate to 'src' directory and build the component:
 
 ```sh
 cd src
@@ -54,7 +55,7 @@ npm install
 npm run build
 ```
 
-#### On succesful build, component is packaged in the './dist' folder. Navigate to the example and build it:
+#### On succesful build, component is packaged in the './dist' folder. Navigate to the example and build itthe app:
 
 ```sh
 cd ../example

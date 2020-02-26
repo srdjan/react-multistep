@@ -1,6 +1,6 @@
 {
   "name": "react-multistep",
-  "version": "3.6.17",
+  "version": "3.6.18",
   "description": "Responsive ReactJS multistep form component",
   "main": "index.umd.js",
   "module": "index.esm.js",
@@ -42,7 +42,7 @@
   },
   "scripts": {
     "build": "NODE_ENV=production rollup -c && cp -f package.json ../dist/",
-    "publish": "npm  publish ../dist"
+    "publish": "npm publish ../dist --dry-run"
   },
   "dependencies": {}
 }
