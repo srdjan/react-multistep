@@ -32,7 +32,7 @@ export default [
   {
     input: './index.js',
     output: {
-      esModule: false,
+      esModule: true,
       format: 'umd',
       name: 'react-multistep',
       exports: 'named',
@@ -45,8 +45,8 @@ export default [
   {
     input: './index.js', 
     output: [
-      { dir: '../dist', format: 'esm', sourcemap: true },
-      // { dir: '../dist', format: 'cjs', exports: 'named', sourcemap: true },
+      { dir: './dist', format: 'esm', sourcemap: true },
+      // { dir: './dist', format: 'cjs', exports: 'named', sourcemap: true },
     ],
     plugins: commonPlugins(),
   },
