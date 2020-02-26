@@ -1,6 +1,6 @@
-"use strict";
+'use strict'
 
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 
 const getNavStyles = (indx, length) => {
   let styles = []
@@ -35,32 +35,38 @@ const getButtonsState = (indx, length) => {
   }
 }
 
-export default function MultiStep(props) {
+export default function MultiStep (props) {
   const [stylesState, setStyles] = useState(getNavStyles(0, props.steps.length))
   const [compState, setComp] = useState(0)
-  const [buttonsState, setButtons] = useState(getButtonsState(0, props.steps.length))
-  
-  function setStepState(indx) {
+  const [buttonsState, setButtons] = useState(
+    getButtonsState(0, props.steps.length)
+  )
+
+  function setStepState (indx) {
     setStyles(getNavStyles(indx, props.steps.length))
-    setComp(indx < props.steps.length? indx : compState)
+    setComp(indx < props.steps.length ? indx : compState)
     setButtons(getButtonsState(indx, props.steps.length))
   }
 
   const next = () => setStepState(compState + 1)
-  
-  const previous = () => setStepState((compState > 0) ? compState - 1 : compState)
 
-  const handleKeyDown = (evt) => evt.which === 13 ? next(props.steps.length) : {}
+  const previous = () => setStepState(compState > 0 ? compState - 1 : compState)
 
-  const handleOnClick = (evt) => {
-    if (evt.currentTarget.value === props.steps.length - 1 && compState === props.steps.length - 1) {
+  const handleKeyDown = evt =>
+    evt.which === 13 ? next(props.steps.length) : {}
+
+  const handleOnClick = evt => {
+    if (
+      evt.currentTarget.value === props.steps.length - 1 &&
+      compState === props.steps.length - 1
+    ) {
       setStepState(props.steps.length)
     } else {
       setStepState(evt.currentTarget.value)
     }
   }
 
-  const renderSteps = () => 
+  const renderSteps = () =>
     props.steps.map((s, i) => (
       <li
         className={'progtrckr-' + stylesState[i]}
@@ -74,27 +80,25 @@ export default function MultiStep(props) {
     ))
 
   return (
-      <div className='container' onKeyDown={handleKeyDown}>
-        <ol className='progtrckr'>
-          {renderSteps()}
-        </ol>
-        {props.steps[compState].component}
-        <div style={props.showNavigation ? {} : { display: 'none' }}>
-          <button
-            style={buttonsState.showPreviousBtn ? {} : { display: 'none' }}
-            onClick={previous}
-          >
-            Previous
-          </button>
+    <div className='container' onKeyDown={handleKeyDown}>
+      <ol className='progtrckr'>{renderSteps()}</ol>
+      {props.steps[compState].component}
+      <div style={props.showNavigation ? {} : { display: 'none' }}>
+        <button
+          style={buttonsState.showPreviousBtn ? {} : { display: 'none' }}
+          onClick={previous}
+        >
+          Previous
+        </button>
 
-          <button
-            style={buttonsState.showNextBtn ? {} : { display: 'none' }}
-            onClick={next}
-          >
-            Next
-          </button>
-        </div>
+        <button
+          style={buttonsState.showNextBtn ? {} : { display: 'none' }}
+          onClick={next}
+        >
+          Next
+        </button>
       </div>
+    </div>
   )
 }
 

@@ -1,8 +1,8 @@
 import React from 'react'
-import { StepOne } from './StepOne'
-import { StepTwo } from './StepTwo'
-import { StepThree } from './StepThree'
-import { StepFour } from './StepFour'
+import StepOne from './stepOne'
+import StepTwo from './stepTwo'
+import StepThree from './stepThree'
+import StepFour from './stepFour'
 
 const steps = 
     [
