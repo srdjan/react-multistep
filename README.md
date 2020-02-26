@@ -8,7 +8,7 @@
 #
 [![NPM](https://nodei.co/npm/react-multistep.png?downloads=true&stars=true)](https://nodei.co/npm/react-multistep/)
 
-#### React 16.11.x 
+#### React 16.12.x 
 
 #### [List of forks](https://github.com/srdjan/react-multistep/network/members/)
 # 
@@ -22,13 +22,16 @@ next, import it inside of your app:
 ```sh
 const MultiStep = import from ('react-multistep')
 ```
-#### Component has only one Prop, 'showNavigation', which controls if the navigation buttons should be visable:
+
+Component has only one Prop, 'showNavigation', which controls if the navigation buttons should be visable:
+
 ```sh
 prop=showNavigation 
 type: boolean (default = true)
 ```
 
-#### It takes an array of objects representing individual steps: 
+It takes an array of objects representing individual steps: 
+
 ```javascript
 const steps = [
               {name: 'StepOne', component: <StepOne/>},
@@ -39,7 +42,9 @@ const steps = [
 <Multistep showNavigation={true} steps={steps}/>
 ```
 
-#### If you want to try the included example, easiest is to clone the repo locally and explore:
+#### If you want to explore try the included example...
+
+1) Start by cloning the repo locally:
 
 ```sh
 //--step 1
@@ -47,15 +52,14 @@ git clone https://github.com/srdjan/react-multistep.git   //clone the repo
 cd react-multistep                                        //navigate to the project folder
 ```
 
-#### Next, navigate to 'src' directory and build the component:
+2)  Next, install dependencies and build the component:
 
 ```sh
-cd src
 npm install
 npm run build
 ```
 
-#### On succesful build, component is packaged in the './dist' folder. Navigate to the example and build itthe app:
+3) On a succesful build, component is packaged in the './dist' folder, navigate to the example folder and build it:
 
 ```sh
 cd ../example
@@ -63,7 +67,7 @@ npm install
 npm run build
 ```
 
-#### Now you can open the example in your favorite browser:
+4) Now you can open the example in your favorite browser:
 
 ```sh
 open index.html
