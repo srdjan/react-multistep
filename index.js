@@ -83,9 +83,10 @@ export default function MultiStep (props) {
     <div className='container' onKeyDown={handleKeyDown}>
       <ol className='progtrckr'>{renderSteps()}</ol>
       {props.steps[compState].component}
-      <div style={props.showNavigation ? {} : { display: 'none' }}>
+      <div className="btns" style={props.showNavigation ? {} : { display: 'none' }}>
         <button
           style={buttonsState.showPreviousBtn ? {} : { display: 'none' }}
+          className="prev-btn"
           onClick={previous}
         >
           Previous
@@ -93,6 +94,7 @@ export default function MultiStep (props) {
 
         <button
           style={buttonsState.showNextBtn ? {} : { display: 'none' }}
+          className="next-btn"
           onClick={next}
         >
           Next
