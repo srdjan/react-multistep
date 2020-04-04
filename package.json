@@ -1,6 +1,6 @@
 {
   "name": "react-multistep",
-  "version": "3.7.5",
+  "version": "3.7.6",
   "description": "Responsive ReactJS multistep form component",
   "main": "index.umd.js",
   "module": "index.esm.js",
