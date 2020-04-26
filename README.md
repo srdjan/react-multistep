@@ -20,7 +20,7 @@ npm install react-multistep
 ```
 next, import it inside of your app:
 ```sh
-const MultiStep = import from ('react-multistep')
+const MultiStep = import from 'react-multistep'
 ```
 
 Component has only one Prop, 'showNavigation', which controls if the navigation buttons should be visable:
@@ -59,7 +59,7 @@ npm install
 npm run build
 ```
 
-3) On a succesful build, component is packaged in the './dist' folder, navigate to the example folder and build it:
+3) On a succesful build, navigate to the example folder and build it:
 
 ```sh
 cd ../example
