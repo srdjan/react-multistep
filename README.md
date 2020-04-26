@@ -8,7 +8,7 @@
 #
 [![NPM](https://nodei.co/npm/react-multistep.png?downloads=true&stars=true)](https://nodei.co/npm/react-multistep/)
 
-#### React 16.12.x 
+#### React 16.13.x 
 
 #### [List of forks](https://github.com/srdjan/react-multistep/network/members/)
 # 
