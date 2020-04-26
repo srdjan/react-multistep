@@ -1,4 +1,3 @@
-'use strict'
 import React, { useState } from 'react'
 
 export default () => {

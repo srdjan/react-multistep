@@ -1,4 +1,3 @@
-'use strict'
 import React, { useState } from 'react'
 
 export default () => {
@@ -6,7 +5,7 @@ export default () => {
   const [lastName, setLastName] = useState('')
 
   return (
-    <>
+    <div>
       <div className='row'>
         <div className='six columns'>
           <label>First Name</label>
@@ -32,6 +31,6 @@ export default () => {
           />
         </div>
       </div>
-    </>
+    </div>
   )
 }

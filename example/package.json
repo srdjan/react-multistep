@@ -1,25 +1,14 @@
 {
   "name": "react-multistep-example",
-  "version": "1.1.3",
-  "description": "",
-  "main": "index.js",
-  "author": "djidja8",
-  "license": "ISC",
-  "dependencies": {
-    "react": "16.13.1",
-    "react-dom": "16.13.1",
-    "react-multistep": "file:./react-multistep.tgz"
-  },
-  "devDependencies": {
-    "webpack": "4.42.1",
-    "webpack-cli": "3.3.11",
-    "@babel/core": "7.9.0",
-    "@babel/preset-env": "7.9.0",
-    "@babel/preset-react": "7.9.4",
-    "babel-loader": "8.1.0"
-  },
+  "homepage": "https://srdjan.github.io/react-multistep",
+  "version": "1.0.0",
+  "license": "MIT",
   "scripts": {
-    "build": "npm pack ../dist/ && mv ./react-multistep-*.tgz ./react-multistep.tgz && webpack ./index.js -o ./bundle.js",
-    "test": "todo..."
-  }
+    "start": "parcel index.html"
+  },
+  "alias": {
+    "react": "../node_modules/react",
+    "react-dom": "../node_modules/react-dom/profiling"
+  },
+  "dependencies": {}
 }
