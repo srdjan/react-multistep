@@ -33,8 +33,8 @@
     "react-dom": "16.13.1"
   },
   "scripts": {
-    "build": "esbuild react-multistep.js '--define:process.env.NODE_ENV=\"development\"' --bundle --format=cjs --loader:.js=jsx --outfile=index.js",
-    "build:prod": "esbuild react-multistep.js '--define:process.env.NODE_ENV=\"production\"' --bundle --minify --format=cjs --loader:.js=jsx --outfile=index.js",
+    "build": "esbuild react-multistep.js '--define:process.env.NODE_ENV=\"development\"' --external:'react,react-dom' --bundle --format=cjs --loader:.js=jsx --outfile=index.js",
+    "build:prod": "esbuild react-multistep.js '--define:process.env.NODE_ENV=\"production\"' --external:'react,react-dom' --bundle --minify --format=cjs --loader:.js=jsx --outfile=index.js",
     "pub:dry": "npm publish ./ --dry-run",
     "pub": "npm publish ./"
   }
