@@ -1,6 +1,6 @@
 {
   "name": "react-multistep",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "description": "Responsive ReactJS multistep form component",
   "main": "index.umd.js",
   "module": "index.esm.js",
@@ -26,16 +26,15 @@
   },
   "devDependencies": {
     "csstype": "^2.6.10",
-    "esbuild": "^0.1.16",
-    "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "esbuild": "^0.1.16"
   },
   "peerDependencies": {
     "react": "16.13.1",
     "react-dom": "16.13.1"
   },
   "scripts": {
-    "build": "NODE_ENV=production esbuild --bundle --format=cjs --loader:.js=jsx react-multistep.js --outfile=index.js",
+    "build": "esbuild react-multistep.js '--define:process.env.NODE_ENV=\"development\"' --bundle --format=cjs --loader:.js=jsx --outfile=index.js",
+    "build:prod": "esbuild react-multistep.js '--define:process.env.NODE_ENV=\"production\"' --bundle --minify --format=cjs --loader:.js=jsx --outfile=index.js",
     "pub:dry": "npm publish ./ --dry-run",
     "pub": "npm publish ./"
   }

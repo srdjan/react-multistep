@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "npx parcel index.html"
+    "start": "parcel index.html"
   },
   "alias": {
     "react": "../node_modules/react",
@@ -12,5 +12,8 @@
   },
   "dependencies": {
     "react-multistep": "file:.."
+  },
+  "devDependencies": {
+    "parcel": "1.12.4"
   }
 }
