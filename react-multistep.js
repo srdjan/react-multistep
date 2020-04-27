@@ -80,7 +80,7 @@ const getButtonsState = (indx, length) => {
   }
 }
 
-const MultiStep = (props) => {
+export default function MultiStep(props) {
   let showNavigation = true
   if(props.showNavigation && props.showNavigation)showNavigation = props.showNavigation
 
@@ -151,5 +151,3 @@ const MultiStep = (props) => {
     </div>
   )
 }
-
-export default MultiStep
