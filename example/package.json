@@ -7,10 +7,10 @@
     "start": "parcel index.html"
   },
   "alias": {
-    "react": "../node_modules/react",
-    "react-dom": "../node_modules/react-dom/profiling"
+    "react": "../node_modules/react"
   },
   "dependencies": {
+    "react-dom": "16.13.1",
     "react-multistep": "file:.."
   },
   "devDependencies": {
