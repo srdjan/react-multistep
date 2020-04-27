@@ -1,6 +1,6 @@
 {
   "name": "react-multistep",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Responsive ReactJS multistep form component",
   "main": "index.umd.js",
   "module": "index.esm.js",
@@ -36,7 +36,7 @@
   },
   "scripts": {
     "build": "NODE_ENV=production esbuild --bundle react-multistep.jsx --outfile=index.js --loader:.js=jsx",
-    "pub:dry": "npm publish ./dist --dry-run",
-    "pub": "npm publish ./dist"
+    "pub:dry": "npm publish ./ --dry-run",
+    "pub": "npm publish ./"
   }
 }
