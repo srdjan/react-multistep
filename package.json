@@ -1,6 +1,6 @@
 {
   "name": "react-multistep",
-  "version": "5.0.6",
+  "version": "5.0.7",
   "description": "Responsive ReactJS multistep form component",
   "main": "index.umd.js",
   "module": "index.esm.js",
@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "csstype": "2.6.10",
-    "esbuild": "0.1.21",
+    "esbuild": "0.2.10",
     "react": "16.13.1"
   },
   "peerDependencies": {
