@@ -1,6 +1,4 @@
 import React, { useState } from 'react'
-
-//-- css
 import { css, styled, setPragma } from 'goober'
 setPragma(React.createElement)
 
@@ -46,7 +44,6 @@ const LiClass = props => css`
     padding: 0 1.5rem;
   }
 `
-//-- code 
 const getNavStyles = (indx, length) => {
   let styles = []
   for (let i = 0; i < length; i++) {
@@ -95,11 +92,8 @@ export default function MultiStep(props) {
   }
 
   const next = () => setStepState(compState + 1)
-
   const previous = () => setStepState(compState > 0 ? compState - 1 : compState)
-
-  const handleKeyDown = evt =>
-    evt.which === 13 ? next(props.steps.length) : {}
+  const handleKeyDown = evt => evt.which === 13 ? next(props.steps.length) : {}
 
   const handleOnClick = evt => {
     if (

@@ -8,7 +8,7 @@
 #
 [![NPM](https://nodei.co/npm/react-multistep.png?downloads=true&stars=true)](https://nodei.co/npm/react-multistep/)
 
-#### React 16.13.x 
+#### React 16.13.1 
 
 #### [List of forks](https://github.com/srdjan/react-multistep/network/members/)
 # 
@@ -56,15 +56,15 @@ cd react-multistep                                        //navigate to the proj
 
 ```sh
 npm install
-npm run build
+npm run build // (or, `npm run build:prod` for optimized build)
 ```
 
-3) On a succesful build, navigate to the example folder and build it:
+3) On a succesful build, navigate to the example folder and try it:
 
 ```sh
 cd ../example
 npm install
-npm run build
+npm start
 ```
 
 4) Now you can open the example in your favorite browser:
