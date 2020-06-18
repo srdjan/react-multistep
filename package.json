@@ -22,7 +22,7 @@
     "url": "https://github.com/srdjan/react-multistep/issues"
   },
   "dependencies": {
-    "goober": "1.8.0"
+    "goober": "^2.0.0"
   },
   "devDependencies": {
     "csstype": "2.6.10",

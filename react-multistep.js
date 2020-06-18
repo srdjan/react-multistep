@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { css, styled, setPragma } from 'goober'
-setPragma(React.createElement)
+import { css, styled, setup } from 'goober'
+setup(React.createElement)
 
 const Ol = styled('ol')`
   margin: 0;
