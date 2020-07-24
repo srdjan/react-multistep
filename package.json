@@ -1,6 +1,6 @@
 {
   "name": "react-multistep",
-  "version": "5.0.10",
+  "version": "5.1.0",
   "description": "Responsive ReactJS multistep form component",
   "main": "index.umd.js",
   "module": "index.esm.js",
@@ -22,7 +22,7 @@
     "url": "https://github.com/srdjan/react-multistep/issues"
   },
   "dependencies": {
-    "goober": "2.0.0"
+    "goober": "2.0.3"
   },
   "devDependencies": {
     "csstype": "2.6.11",

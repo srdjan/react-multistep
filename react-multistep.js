@@ -44,7 +44,7 @@ const LiClass = props => css`
     padding: 0 1.5rem;
   }
 `
-const getNavStyles = (indx, length) => {
+const getTopNavStyles = (indx, length) => {
   let styles = []
   for (let i = 0; i < length; i++) {
     if (i < indx) {
@@ -78,15 +78,21 @@ const getButtonsState = (indx, length) => {
 }
 
 export default function MultiStep(props) {
-  let showNavigation = true
-  if(props.showNavigation && props.showNavigation)showNavigation = props.showNavigation
+  let showNav = true
+  if (props.showNavigation) showNav = props.showNavigation
 
-  const [stylesState, setStyles] = useState(getNavStyles(0, props.steps.length))
+  let prevStyle = {}
+  if (props.prevStyle) prevStyle = props.prevStyle
+
+  let nextStyle = {}
+  if (props.nextStyle) nextStyle = props.nextStyle
+
+  const [stylesState, setStyles] = useState(getTopNavStyles(0, props.steps.length))
   const [compState, setComp] = useState(0)
   const [buttonsState, setButtons] = useState(getButtonsState(0, props.steps.length))
 
   const setStepState = (indx) => {
-    setStyles(getNavStyles(indx, props.steps.length))
+    setStyles(getTopNavStyles(indx, props.steps.length))
     setComp(indx < props.steps.length ? indx : compState)
     setButtons(getButtonsState(indx, props.steps.length))
   }
@@ -118,18 +124,18 @@ export default function MultiStep(props) {
         </li>
     ))
 
-  const renderNav = show =>
+  const renderNav = (show) =>
     show && (
       <div>
         <button
-          style={buttonsState.showPreviousBtn ? {} : { display: 'none' }}
+          style={buttonsState.showPreviousBtn ? props.prevStyle : { display: 'none' }}
           onClick={previous}
         >
           Prev
         </button>
 
         <button
-          style={buttonsState.showNextBtn ? {} : { display: 'none' }}
+          style={buttonsState.showNextBtn ? props.nextStyle : { display: 'none' }}
           onClick={next}
         >
           Next
@@ -141,7 +147,7 @@ export default function MultiStep(props) {
     <div onKeyDown={handleKeyDown}>
       <Ol>{renderSteps()}</Ol>
       <div>{props.steps[compState].component}</div>
-      <div>{renderNav(showNavigation)}</div>
+      <div>{renderNav(showNav)}</div>
     </div>
   )
 }

@@ -16,9 +16,12 @@ const steps = [
   { component: <StepFour /> }
 ]
 
+const prevStyle = {'background': '#33c3f0', 'border-width': '2px'}
+const nextStyle = {'background': '#33c3f0',  'border-width': '2px'}
+
 const App = () => (
   <div className='container'>
-    <MultiStep steps={steps} />
+    <MultiStep steps={steps} prevStyle={prevStyle} nextStyle={nextStyle}/>
     <div className='container app-footer'>
       <h6>Press 'Enter' or click on progress bar for next step.</h6>
       Code is on{' '}
