@@ -22,12 +22,13 @@
     "url": "https://github.com/srdjan/react-multistep/issues"
   },
   "dependencies": {
-    "goober": "2.0.3"
+    "goober": "2.0.5"
   },
   "devDependencies": {
-    "csstype": "2.6.11",
-    "esbuild": "0.6.5",
-    "react": "16.13.1"
+    "csstype": "^2.6.2",
+    "esbuild": "0.7.1",
+    "react": "16.13.1",
+    "node-forge": ">=0.10.0"
   },
   "peerDependencies": {
     "react": "16.13.1"

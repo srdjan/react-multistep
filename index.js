@@ -1,16 +1,16 @@
-var p=Object.defineProperty,z=Object.prototype.hasOwnProperty,A=a=>p(a,"__esModule",{value:!0}),L=(a,c)=>{A(a);for(var e in c)p(a,e,{get:c[e],enumerable:!0})},M=(a,c)=>{A(a);if(typeof c==="object"||typeof c==="function")for(let e in c)z.call(c,e)&&!z.call(a,e)&&e!=="default"&&p(a,e,{get:()=>c[e],enumerable:!0});return a},N=a=>a&&a.__esModule?a:M(p({},"default",{value:a,enumerable:!0}),a);let C={data:""},D=a=>{try{let c=a?a.querySelector("#_goober"):self._goober;return c||(c=(a||document.head).appendChild(document.createElement("style")),c.innerHTML=" ",c.id="_goober"),c.firstChild}catch(c){}return C},E=/(?:([a-z0-9-%@]+) *:? *([^{;]+?);|([^;}{]*?) *{)|(})/gi,F=/\/\*[\s\S]*?\*\/|\s{2,}|\n/gm,l=(a,c,e)=>{let h="",g="",i="";for(let d in a){let b=a[d];if("object"==typeof b){let f=c+" "+d;/&/g.test(d)&&(f=d.replace(/&/g,c)),"@"==d[0]&&(f=c,"f"==d[1]&&(f=d)),/@k/.test(d)?g+=d+"{"+l(b,"","")+"}":g+=l(b,f,f==c?d:e||"")}else/^@i/.test(d)?h=d+" "+b+";":i+=l.p?l.p(d.replace(/[A-Z]/g,"-$&").toLowerCase(),b):d.replace(/[A-Z]/g,"-$&").toLowerCase()+":"+b+";"}if(i[0]){let d=c+"{"+i+"}";return e?g+e+"{"+d+"}":h+d+g}return h+g},n={},G=(a,c,e,h)=>{let g=a.toLowerCase?a:function d(b){let f="";for(let m in b)f+=m+("object"==typeof b[m]?d(b[m]):b[m]);return f}(a),i=n[g]||(n[g]=".go"+g.split("").reduce((d,b)=>101*d+b.charCodeAt(0)>>>0,11));return((d,b,f)=>{b.data.indexOf(d)<0&&(b.data=f?d+b.data:b.data+d)})(n[i]||(n[i]=l(a[0]?(d=>{let b,f=[{}];for(;b=E.exec(d.replace(F,""));)b[4]&&f.shift(),b[3]?f.unshift(f[0][b[3]]=f[0][b[3]]||{}):b[4]||(f[0][b[1]]=b[2]);return f[0]})(a):a,e?"":i)),c,h),i.slice(1)},H=(a,c,e)=>a.reduce((h,g,i)=>{let d=c[i];if(d&&d.call){let b=d(e),f=b&&b.props&&b.props.className||/^go/.test(b)&&b;d=f?"."+f:b&&b.props?"":b}return h+g+(null==d?"":d)},"");function o(a){let c=this||{},e=a.call?a(c.p):a;return G(e.map?H(e,[].slice.call(arguments,1),c.p):e,D(c.target),c.g,c.o)}let u,s,T=o.bind({g:1});function v(a,c,e){l.p=c,u=a,s=e}function w(a,c){let e=this||{};return function(){let h=arguments;function g(i,d){let b=Object.assign({},i),f=b.className||g.className;return e.p=Object.assign({theme:s&&s()},b),e.o=/\s*go[0-9]+/g.test(f),b.className=o.apply(e,h)+(f?" "+f:""),c&&(b.ref=d),u(b.as||a,b)}return c?c(g):g}}L(exports,{default:()=>K});const V=N(require("react"));v(V.default.createElement);const I=w("ol")`
+var f=Object.defineProperty,F=Object.prototype.hasOwnProperty,p=t=>f(t,"__esModule",{value:!0}),T=(t,s)=>{p(t);for(var n in s)f(t,n,{get:s[n],enumerable:!0})},E=(t,s)=>{if(p(t),typeof s=="object"||typeof s=="function")for(let n in s)!F.call(t,n)&&n!=="default"&&f(t,n,{get:()=>s[n],enumerable:!0});return t},_=t=>t&&t.__esModule?t:E(f({},"default",{value:t,enumerable:!0}),t);let D={data:""},K=t=>{try{let s=t?t.querySelector("#_goober"):self._goober;return s||(s=(t||document.head).appendChild(document.createElement("style")),s.innerHTML=" ",s.id="_goober"),s.firstChild}catch(s){}return t||D},M=/(?:([a-z0-9-%@]+) *:? *([^{;]+?);|([^;}{]*?) *{)|(})/gi,Z=/\/\*[\s\S]*?\*\/|\s{2,}|\n/gm,d=(t,s,n)=>{let a,r="",i="",o="";for(let e in t){let l=t[e];typeof l=="object"?(a=s.replace(/([^,])+/g,"$& "+e)||e,/&/g.test(e)&&(a=e.replace(/&/g,s)),i+=e[0]=="@"?e[1]=="f"?d(l,e):e+"{"+d(l,e[1]=="k"?"":s)+"}":d(l,a,n)):e[0]=="@"&&e[1]=="i"?r=e+" "+l+";":o+=d.p?d.p(e.replace(/[A-Z]/g,"-$&").toLowerCase(),l):e.replace(/[A-Z]/g,"-$&").toLowerCase()+":"+l+";"}return o[0]?(a=s+"{"+o+"}",n?i+n+"{"+(n[0]=="@"?a:s+o)+"}":r+a+i):r+i},m={},S=t=>{let s="";for(let n in t)s+=n+(typeof t[n]=="object"?S(t[n]):t[n]);return s},q=(t,s,n,a)=>{let r=t.toLowerCase?t:S(t),i=m[r]||(m[r]="go"+r.split("").reduce((o,e)=>101*o+e.charCodeAt(0)>>>0,11));return((o,e,l)=>{e.data.indexOf(o)<0&&(e.data=l?o+e.data:e.data+o)})(m[i]||(m[i]=d(t[0]?(o=>{let e,l=[{}];for(;e=M.exec(o.replace(Z,""));)e[4]&&l.shift(),e[3]?l.unshift(l[0][e[3]]=l[0][e[3]]||{}):e[4]||(l[0][e[1]]=e[2]);return l[0]})(t):t,n?"":"."+i)),s,a),i},z=(t,s,n)=>t.reduce((a,r,i)=>{let o=s[i];if(o&&o.call){let e=o(n),l=e&&e.props&&e.props.className||/^go/.test(e)&&e;o=l?"."+l:e&&e.props?"":e}return a+r+(o??"")},"");function v(t){let s=this||{},n=t.call?t(s.p):t;return q(n.map?z(n,[].slice.call(arguments,1),s.p):n,K(s.target),s.g,s.o)}let w,y,Q=v.bind({g:1});function C(t,s,n){d.p=s,w=t,y=n}function N(t,s){let n=this||{};return function(){let a=arguments;function r(i,o){let e=Object.assign({},i),l=e.className||r.className;return n.p=Object.assign({theme:y&&y()},e),n.o=/\s*go[0-9]+/g.test(l),e.className=v.apply(n,a)+(l?" "+l:""),s&&(e.ref=o),w(e.as||t,e)}return s?s(r):r}}T(exports,{default:()=>$});const c=_(require("react"));C(c.default.createElement);const H=N("ol")`
   margin: 0;
   padding-bottom: 2.2rem;
   list-style-type: none;
-`,J=a=>o`
+`,G=t=>v`
   display: inline-block;
   text-align: center;
   line-height: 4.5rem;
   padding: 0 0.7rem;
   cursor: pointer;
 
-  color: ${a.state==="todo"?"silver":"black"};
-  border-bottom: 4px solid ${a.state==="todo"?"silver":"#33C3F0"};
+  color: ${t.state==="todo"?"silver":"black"};
+  border-bottom: 4px solid ${t.state==="todo"?"silver":"#33C3F0"};
 
   &:before {
     position: relative;
@@ -18,12 +18,12 @@ var p=Object.defineProperty,z=Object.prototype.hasOwnProperty,A=a=>p(a,"__esModu
     float: left;
     left: 50%;
 
-    ${a.state==="todo"?'content: "Ο";':a.state==="doing"?'content: "•";':'content: "✓";'}
-    color: ${a.state==="todo"?"silver":"white"};
-    background-color: ${a.state==="todo"?"white":"#33C3F0"};  
+    ${t.state==="todo"?'content: "Ο";':t.state==="doing"?'content: "•";':'content: "✓";'}
+    color: ${t.state==="todo"?"silver":"white"};
+    background-color: ${t.state==="todo"?"white":"#33C3F0"};  
     width: 1.2em;
-    line-height: ${a.state==="todo"?"1.2em":"1.4em"};
-    border-radius: ${a.state==="todo"?"0":"1.2em"};
+    line-height: ${t.state==="todo"?"1.2em":"1.4em"};
+    border-radius: ${t.state==="todo"?"0":"1.2em"};
   }
   &:hover,
   &::before {
@@ -35,4 +35,4 @@ var p=Object.defineProperty,z=Object.prototype.hasOwnProperty,A=a=>p(a,"__esModu
   span {
     padding: 0 1.5rem;
   }
-`,x=(a,c)=>{let e=[];for(let h=0;h<c;h++)h<a?e.push("done"):h===a?e.push("doing"):e.push("todo");return e},y=(a,c)=>a>0&&a<c-1?{showPreviousBtn:!0,showNextBtn:!0}:a===0?{showPreviousBtn:!1,showNextBtn:!0}:{showPreviousBtn:!0,showNextBtn:!1};function K(a){let c=!0;a.showNavigation&&(c=a.showNavigation);let e={};a.prevStyle&&(e=a.prevStyle);let h={};a.nextStyle&&(h=a.nextStyle);const[g,i]=V.useState(x(0,a.steps.length)),[d,b]=V.useState(0),[f,m]=V.useState(y(0,a.steps.length)),q=j=>{i(x(j,a.steps.length)),b(j<a.steps.length?j:d),m(y(j,a.steps.length))},B=()=>q(d+1),O=()=>q(d>0?d-1:d),P=j=>j.which===13?B(a.steps.length):{},Q=j=>{j.currentTarget.value===a.steps.length-1&&d===a.steps.length-1?q(a.steps.length):q(j.currentTarget.value)},R=()=>a.steps.map((j,r)=>V.default.createElement("li",{className:J({state:g[r]}),onClick:Q,key:r,value:r},V.default.createElement("span",null,r+1))),S=j=>j&&V.default.createElement("div",null,V.default.createElement("button",{style:f.showPreviousBtn?a.prevStyle:{display:"none"},onClick:O},"Prev"),V.default.createElement("button",{style:f.showNextBtn?a.nextStyle:{display:"none"},onClick:B},"Next"));return V.default.createElement("div",{onKeyDown:P},V.default.createElement(I,null,R()),V.default.createElement("div",null,a.steps[d].component),V.default.createElement("div",null,S(c)))}
+`,x=(t,s)=>{let n=[];for(let a=0;a<s;a++)a<t?n.push("done"):a===t?n.push("doing"):n.push("todo");return n},B=(t,s)=>t>0&&t<s-1?{showPreviousBtn:!0,showNextBtn:!0}:t===0?{showPreviousBtn:!1,showNextBtn:!0}:{showPreviousBtn:!0,showNextBtn:!1};function $(t){let s=!0;t.showNavigation&&(s=t.showNavigation);let n={};t.prevStyle&&(n=t.prevStyle);let a={};t.nextStyle&&(a=t.nextStyle);const[r,i]=c.useState(x(0,t.steps.length)),[o,e]=c.useState(0),[l,k]=c.useState(B(0,t.steps.length)),g=u=>{i(x(u,t.steps.length)),e(u<t.steps.length?u:o),k(B(u,t.steps.length))},b=()=>g(o+1),O=()=>g(o>0?o-1:o),L=u=>u.which===13?b(t.steps.length):{},P=u=>{u.currentTarget.value===t.steps.length-1&&o===t.steps.length-1?g(t.steps.length):g(u.currentTarget.value)},j=()=>t.steps.map((u,h)=>c.default.createElement("li",{className:G({state:r[h]}),onClick:P,key:h,value:h},c.default.createElement("span",null,h+1))),A=u=>u&&c.default.createElement("div",null,c.default.createElement("button",{style:l.showPreviousBtn?t.prevStyle:{display:"none"},onClick:O},"Prev"),c.default.createElement("button",{style:l.showNextBtn?t.nextStyle:{display:"none"},onClick:b},"Next"));return c.default.createElement("div",{onKeyDown:L},c.default.createElement(H,null,j()),c.default.createElement("div",null,t.steps[o].component),c.default.createElement("div",null,A(s)))}
