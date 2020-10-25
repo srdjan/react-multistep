@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import MultiStep from '../react-multistep'
+import MultiStep from 'react-multistep'
 import './css/custom.css'
 import './css/normilize.css'
 import './css/skeleton.css'
