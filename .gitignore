@@ -5,3 +5,4 @@ public/bundle*
 dist
 example/.cache
 example-old
+yarn.lock

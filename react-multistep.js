@@ -79,6 +79,7 @@ const getButtonsState = (indx, length) => {
 
 export default function MultiStep(props) {
   let showNav = true
+  const { activeComponentClassName, inactiveComponentClassName } = props;
   if (props.showNavigation) showNav = props.showNavigation
 
   let prevStyle = {}
@@ -146,7 +147,14 @@ export default function MultiStep(props) {
   return (
     <div onKeyDown={handleKeyDown}>
       <Ol>{renderSteps()}</Ol>
-      <div>{props.steps[compState].component}</div>
+      {inactiveComponentClassName ?
+        props.steps.map((step, index) => {
+          const className = index === compState ? activeComponentClassName : inactiveComponentClassName
+          return (<div className={className}>{step.component}</div>)
+        }) :
+        <div>{props.steps[compState].component}</div>
+      }
+      
       <div>{renderNav(showNav)}</div>
     </div>
   )
