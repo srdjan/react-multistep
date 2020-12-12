@@ -4,11 +4,11 @@
 <img width="60%" height="auto" src="https://raw.githubusercontent.com/srdjan/react-multistep/master/assets/react-multistep.png"/>
 
 
-#### Try it [here](http://srdjan.github.io/react-multistep/)
+#### Take it for a spin [here](http://srdjan.github.io/react-multistep/)
 #
-[![NPM](https://nodei.co/npm/react-multistep.png?downloads=true&stars=true)](https://nodei.co/npm/react-multistep/)
+or, install it from [NPM](https://nodei.co/npm/react-multistep/)
 
-#### React 16.13.1 
+#### React 17.0.1 
 
 #### [List of forks](https://github.com/srdjan/react-multistep/network/members/)
 # 
