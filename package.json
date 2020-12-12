@@ -25,10 +25,9 @@
     "goober": "2.0.10"
   },
   "devDependencies": {
-    "csstype": "3.0.4",
-    "esbuild": "0.7.19",
-    "react": "17.0.1",
-    "node-forge": ">=0.10.0"
+    "csstype": "3.0.5",
+    "esbuild": "0.8.21",
+    "react": "17.0.1"
   },
   "peerDependencies": {
     "react": "17.0.1"

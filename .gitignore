@@ -6,3 +6,5 @@ dist
 example/.cache
 example-old
 yarn.lock
+index.tar
+index.js
