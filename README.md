@@ -24,14 +24,15 @@ const MultiStep = import from 'react-multistep'
 ```
 
 Component accepts following, optional Props: 
-'showNavigation': controls if the navigation buttons should be visable:
+
+ - 'showNavigation': controls if the navigation buttons should be visable:
 
 ```sh
 prop=showNavigation 
 type: boolean (default = true)
 ```
 
-'prevStyle' & 'nextStyle': control style of the navigation buttons
+- 'prevStyle' & 'nextStyle': control style of the navigation buttons
 
 
 Finlly, as required Prop, it takes an array of objects representing individual steps: 
