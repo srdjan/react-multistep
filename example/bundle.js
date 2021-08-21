@@ -20619,7 +20619,7 @@ var require_example = __commonJS({
         onClick: handleOnClick,
         key: i2,
         value: i2
-      }, /* @__PURE__ */ import_react6.default.createElement("span", null, i2 + 1)));
+      }, /* @__PURE__ */ import_react6.default.createElement("em", null, i2 + 1), /* @__PURE__ */ import_react6.default.createElement("span", null, s2)));
       const renderNav = (show) => show && /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("button", {
         style: buttonsState.showPreviousBtn ? props.prevStyle : { display: "none" },
         onClick: previous

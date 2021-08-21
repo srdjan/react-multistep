@@ -1,11 +1,5 @@
 .DS_Store
 node_modules
 package-lock.json
-public/bundle*
 dist
-example/.cache
-example-old
-yarn.lock
-index.tar
-index.js
-react-multistep*.tgz
+example/bundle.js
