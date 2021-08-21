@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { css, styled, setup } from 'goober'
+
 setup(React.createElement)
 
 const Ol = styled('ol')`
@@ -15,18 +16,16 @@ const LiClass = props => css`
   padding: 0 0.7rem;
   cursor: pointer;
 
-  color: ${props.state === 'todo' ? 'silver': 'black'};
+  color: ${props.state === 'todo' ? 'silver' : 'black'};
   border-bottom: 4px solid ${props.state === 'todo' ? 'silver' : '#33C3F0'};
 
-  &:before {
+  &::before {
     position: relative;
     bottom: -3.99rem;
     float: left;
     left: 50%;
 
-    ${props.state === 'todo' ? 'content: "\u039F";' : 
-                       props.state === 'doing' ? 'content: "\u2022";' : 
-                      'content: "\u2713";'}
+    ${props.state === 'todo' ? 'content: "\u039F";' : props.state === 'doing' ? 'content: "\u2022";' : 'content: "\u2713";'}
     color: ${props.state === 'todo' ? 'silver' : 'white'};
     background-color: ${props.state === 'todo' ? 'white' : '#33C3F0'};  
     width: 1.2em;
@@ -34,7 +33,7 @@ const LiClass = props => css`
     border-radius: ${props.state === 'todo' ? '0' : '1.2em'};
   }
   &:hover,
-  &::before {
+  &:before {
     color: #0FA0CE;
   }
   &:after {
@@ -45,7 +44,7 @@ const LiClass = props => css`
   }
 `
 const getTopNavStyles = (indx, length) => {
-  let styles = []
+  const styles = []
   for (let i = 0; i < length; i++) {
     if (i < indx) {
       styles.push('done')
@@ -77,16 +76,10 @@ const getButtonsState = (indx, length) => {
   }
 }
 
-export default function MultiStep(props) {
+export default function MultiStep (props) {
   let showNav = true
-  const { activeComponentClassName, inactiveComponentClassName } = props;
+  const { activeComponentClassName, inactiveComponentClassName } = props
   if (props.showNavigation) showNav = props.showNavigation
-
-  let prevStyle = {}
-  if (props.prevStyle) prevStyle = props.prevStyle
-
-  let nextStyle = {}
-  if (props.nextStyle) nextStyle = props.nextStyle
 
   const [stylesState, setStyles] = useState(getTopNavStyles(0, props.steps.length))
   const [compState, setComp] = useState(0)
@@ -115,14 +108,14 @@ export default function MultiStep(props) {
 
   const renderSteps = () =>
     props.steps.map((s, i) => (
-        <li
-          className={LiClass({state: stylesState[i]})} 
-          onClick={handleOnClick}
-          key={i}
-          value={i}
-        >
-          <span>{i+1}</span>
-        </li>
+      <li
+        className={LiClass({ state: stylesState[i] })}
+        onClick={handleOnClick}
+        key={i}
+        value={i}
+      >
+        <span>{i + 1}</span>
+      </li>
     ))
 
   const renderNav = (show) =>
@@ -147,14 +140,12 @@ export default function MultiStep(props) {
   return (
     <div onKeyDown={handleKeyDown}>
       <Ol>{renderSteps()}</Ol>
-      {inactiveComponentClassName ?
-        props.steps.map((step, index) => {
-          const className = index === compState ? activeComponentClassName : inactiveComponentClassName
-          return (<div className={className}>{step.component}</div>)
-        }) :
-        <div>{props.steps[compState].component}</div>
-      }
-      
+      {inactiveComponentClassName
+        ? props.steps.map((step, index) => {
+            const className = index === compState ? activeComponentClassName : inactiveComponentClassName
+            return (<div className={className} key={index}>{step.component}</div>)
+          })
+        : <div>{props.steps[compState].component}</div>}
       <div>{renderNav(showNav)}</div>
     </div>
   )

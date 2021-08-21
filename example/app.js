@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import MultiStep from 'react-multistep'
+import MultiStep from './index'
 import './css/custom.css'
 import './css/normilize.css'
 import './css/skeleton.css'
@@ -16,20 +16,21 @@ const steps = [
   { component: <StepFour /> }
 ]
 
-const prevStyle = {'background': '#33c3f0', 'border-width': '2px'}
-const nextStyle = {'background': '#33c3f0',  'border-width': '2px'}
+// custom styles
+const prevStyle = { background: '#33c3f0' }
+const nextStyle = { background: '#33c3f0' }
 
 const App = () => (
   <div className='container'>
-    <MultiStep steps={steps} prevStyle={prevStyle} nextStyle={nextStyle}/>
+    <MultiStep steps={steps} prevStyle={prevStyle} nextStyle={nextStyle} />
     <div className='container app-footer'>
       <h6>Press 'Enter' or click on progress bar for next step.</h6>
       Code is on{' '}
-      <a href='https://github.com/Srdjan/react-multistep' target='_blank'>
+      <a href='https://github.com/Srdjan/react-multistep' target='_blank' rel='noreferrer'>
         github
       </a>
     </div>
   </div>
 )
 
-ReactDOM.render(<App />, document.getElementById('app'))
+ReactDOM.render(<App />, document.getElementById('root'))

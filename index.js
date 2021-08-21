@@ -1,32 +1,139 @@
-var _=Object.create,b=Object.defineProperty,D=Object.getPrototypeOf,K=Object.prototype.hasOwnProperty,M=Object.getOwnPropertyNames,Z=Object.getOwnPropertyDescriptor,w=e=>b(e,"__esModule",{value:!0}),q=(e,t)=>{w(e);for(var s in t)b(e,s,{get:t[s],enumerable:!0})},z=(e,t,s)=>{if(w(e),t&&typeof t=="object"||typeof t=="function")for(let a of M(t))!K.call(e,a)&&a!=="default"&&b(e,a,{get:()=>t[a],enumerable:!(s=Z(t,a))||s.enumerable});return e},H=e=>e&&e.__esModule?e:z(b(e!=null?_(D(e)):{},"default",{value:e,enumerable:!0}),e);q(exports,{default:()=>j});var i=H(require("react")),G={data:""},I=e=>{try{let t=e?e.querySelector("#_goober"):self._goober;return t||(t=(e||document.head).appendChild(document.createElement("style")),t.innerHTML=" ",t.id="_goober"),t.firstChild}catch(t){}return e||G},J=/(?:([a-z0-9-%@]+) *:? *([^{;]+?);|([^;}{]*?) *{)|(})/gi,Q=/\/\*[\s\S]*?\*\/|\s{2,}|\n/gm,f=(e,t)=>{let s,a="",d="",c="";for(let o in e){let n=e[o];typeof n=="object"?(s=t?t.replace(/([^,])+/g,l=>o.replace(/([^,])+/g,r=>/&/g.test(r)?r.replace(/&/g,l):l?l+" "+r:r)):o,d+=o[0]=="@"?o[1]=="f"?f(n,o):o+"{"+f(n,o[1]=="k"?"":t)+"}":f(n,s)):o[0]=="@"&&o[1]=="i"?a=o+" "+n+";":c+=f.p?f.p(o.replace(/[A-Z]/g,"-$&").toLowerCase(),n):o.replace(/[A-Z]/g,"-$&").toLowerCase()+":"+n+";"}return c[0]?(s=t?t+"{"+c+"}":c,a+s+d):a+d},h={},C=e=>{let t="";for(let s in e)t+=s+(typeof e[s]=="object"?C(e[s]):e[s]);return t},U=(e,t,s,a,d)=>{let c=typeof e=="object"?C(e):e,o=h[c]||(h[c]="go"+c.split("").reduce((n,l)=>101*n+l.charCodeAt(0)>>>0,11));if(!h[o]){let n=typeof e=="object"?e:(l=>{let r,g=[{}];for(;r=J.exec(l.replace(Q,""));)r[4]&&g.shift(),r[3]?g.unshift(g[0][r[3]]=g[0][r[3]]||{}):r[4]||(g[0][r[1]]=r[2]);return g[0]})(e);h[o]=f(d?{["@keyframes "+o]:n}:n,s?"":"."+o)}return((n,l,r)=>{l.data.indexOf(n)<0&&(l.data=r?n+l.data:l.data+n)})(h[o],t,a),o},V=(e,t,s)=>e.reduce((a,d,c)=>{let o=t[c];if(o&&o.call){let n=o(s),l=n&&n.props&&n.props.className||/^go/.test(n)&&n;o=l?"."+l:n&&typeof n=="object"?n.props?"":f(n,""):n}return a+d+(o??"")},"");function y(e){let t=this||{},s=e.call?e(t.p):e;return U(s.map?V(s,[].slice.call(arguments,1),t.p):s,I(t.target),t.g,t.o,t.k)}var N,p,ee=y.bind({g:1}),te=y.bind({k:1});function k(e,t,s){f.p=t,N=e,p=s}function x(e,t){let s=this||{};return function(){let a=arguments;function d(c,o){let n=Object.assign({},c),l=n.className||d.className;return s.p=Object.assign({theme:p&&p()},n),s.o=/\s*go[0-9]+/g.test(l),n.className=y.apply(s,a)+(l?" "+l:""),t&&(n.ref=o),N(n.as||e,n)}return t?t(d):d}}k(i.default.createElement);var W=x("ol")`
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __markAsModule = (target) => __defProp(target, "__esModule", { value: true });
+var __export = (target, all) => {
+  __markAsModule(target);
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __reExport = (target, module2, desc) => {
+  if (module2 && typeof module2 === "object" || typeof module2 === "function") {
+    for (let key of __getOwnPropNames(module2))
+      if (!__hasOwnProp.call(target, key) && key !== "default")
+        __defProp(target, key, { get: () => module2[key], enumerable: !(desc = __getOwnPropDesc(module2, key)) || desc.enumerable });
+  }
+  return target;
+};
+var __toModule = (module2) => {
+  return __reExport(__markAsModule(__defProp(module2 != null ? __create(__getProtoOf(module2)) : {}, "default", module2 && module2.__esModule && "default" in module2 ? { get: () => module2.default, enumerable: true } : { value: module2, enumerable: true })), module2);
+};
+
+// react-multistep.js
+__export(exports, {
+  default: () => MultiStep
+});
+var import_react = __toModule(require("react"));
+
+// node_modules/goober/dist/goober.modern.js
+var e = { data: "" };
+var t = (t2) => typeof window == "object" ? ((t2 ? t2.querySelector("#_goober") : window._goober) || Object.assign((t2 || document.head).appendChild(document.createElement("style")), { innerHTML: " ", id: "_goober" })).firstChild : t2 || e;
+var l = /(?:([\u0080-\uFFFF\w-%@]+) *:? *([^{;]+?);|([^;}{]*?) *{)|(})/g;
+var a = /\/\*[^]*?\*\/|\s\s+|\n/g;
+var o = (e2, t2) => {
+  let r, l2 = "", a2 = "", n2 = "";
+  for (let c2 in e2) {
+    let s2 = e2[c2];
+    typeof s2 == "object" ? (r = t2 ? t2.replace(/([^,])+/g, (e3) => c2.replace(/([^,])+/g, (t3) => /&/.test(t3) ? t3.replace(/&/g, e3) : e3 ? e3 + " " + t3 : t3)) : c2, a2 += c2[0] == "@" ? c2[1] == "f" ? o(s2, c2) : c2 + "{" + o(s2, c2[1] == "k" ? "" : t2) + "}" : o(s2, r)) : c2[0] == "@" && c2[1] == "i" ? l2 = c2 + " " + s2 + ";" : (c2 = c2.replace(/[A-Z]/g, "-$&").toLowerCase(), n2 += o.p ? o.p(c2, s2) : c2 + ":" + s2 + ";");
+  }
+  return n2[0] ? (r = t2 ? t2 + "{" + n2 + "}" : n2, l2 + r + a2) : l2 + a2;
+};
+var n = {};
+var c = (e2) => {
+  let t2 = "";
+  for (let r in e2)
+    t2 += r + (typeof e2[r] == "object" ? c(e2[r]) : e2[r]);
+  return t2;
+};
+var s = (e2, t2, r, s2, i2) => {
+  let p2 = typeof e2 == "object" ? c(e2) : e2, u2 = n[p2] || (n[p2] = ((e3) => {
+    let t3 = 0, r2 = 11;
+    for (; t3 < e3.length; )
+      r2 = 101 * r2 + e3.charCodeAt(t3++) >>> 0;
+    return "go" + r2;
+  })(p2));
+  if (!n[u2]) {
+    let t3 = typeof e2 == "object" ? e2 : ((e3) => {
+      let t4, r2 = [{}];
+      for (; t4 = l.exec(e3.replace(a, "")); )
+        t4[4] && r2.shift(), t4[3] ? r2.unshift(r2[0][t4[3]] = r2[0][t4[3]] || {}) : t4[4] || (r2[0][t4[1]] = t4[2]);
+      return r2[0];
+    })(e2);
+    n[u2] = o(i2 ? { ["@keyframes " + u2]: t3 } : t3, r ? "" : "." + u2);
+  }
+  return ((e3, t3, r2) => {
+    t3.data.indexOf(e3) == -1 && (t3.data = r2 ? e3 + t3.data : t3.data + e3);
+  })(n[u2], t2, s2), u2;
+};
+var i = (e2, t2, r) => e2.reduce((e3, l2, a2) => {
+  let n2 = t2[a2];
+  if (n2 && n2.call) {
+    let e4 = n2(r), t3 = e4 && e4.props && e4.props.className || /^go/.test(e4) && e4;
+    n2 = t3 ? "." + t3 : e4 && typeof e4 == "object" ? e4.props ? "" : o(e4, "") : e4;
+  }
+  return e3 + l2 + (n2 == null ? "" : n2);
+}, "");
+function p(e2) {
+  let r = this || {}, l2 = e2.call ? e2(r.p) : e2;
+  return s(l2.unshift ? l2.raw ? i(l2, [].slice.call(arguments, 1), r.p) : l2.reduce((e3, t2) => t2 ? Object.assign(e3, t2.call ? t2(r.p) : t2) : e3, {}) : l2, t(r.target), r.g, r.o, r.k);
+}
+var u;
+var f;
+var d;
+var g = p.bind({ g: 1 });
+var b = p.bind({ k: 1 });
+function h(e2, t2, r, l2) {
+  o.p = t2, u = e2, f = r, d = l2;
+}
+function j(e2, t2) {
+  let r = this || {};
+  return function() {
+    let l2 = arguments;
+    function a2(o2, n2) {
+      let c2 = Object.assign({}, o2), s2 = c2.className || a2.className;
+      r.p = Object.assign({ theme: f && f() }, c2), r.o = / *go\d+/.test(s2), c2.className = p.apply(r, l2) + (s2 ? " " + s2 : ""), t2 && (c2.ref = n2);
+      let i2 = c2.as || e2;
+      return delete c2.as, d && i2[0] && d(c2), u(i2, c2);
+    }
+    return t2 ? t2(a2) : a2;
+  };
+}
+
+// react-multistep.js
+h(import_react.default.createElement);
+var Ol = j("ol")`
   margin: 0;
   padding-bottom: 2.2rem;
   list-style-type: none;
-`,X=e=>y`
+`;
+var LiClass = (props) => p`
   display: inline-block;
   text-align: center;
   line-height: 4.5rem;
   padding: 0 0.7rem;
   cursor: pointer;
 
-  color: ${e.state==="todo"?"silver":"black"};
-  border-bottom: 4px solid ${e.state==="todo"?"silver":"#33C3F0"};
+  color: ${props.state === "todo" ? "silver" : "black"};
+  border-bottom: 4px solid ${props.state === "todo" ? "silver" : "#33C3F0"};
 
-  &:before {
+  &::before {
     position: relative;
     bottom: -3.99rem;
     float: left;
     left: 50%;
 
-    ${e.state==="todo"?'content: "\u039F";':e.state==="doing"?'content: "\u2022";':'content: "\u2713";'}
-    color: ${e.state==="todo"?"silver":"white"};
-    background-color: ${e.state==="todo"?"white":"#33C3F0"};  
+    ${props.state === "todo" ? 'content: "\u039F";' : props.state === "doing" ? 'content: "\u2022";' : 'content: "\u2713";'}
+    color: ${props.state === "todo" ? "silver" : "white"};
+    background-color: ${props.state === "todo" ? "white" : "#33C3F0"};  
     width: 1.2em;
-    line-height: ${e.state==="todo"?"1.2em":"1.4em"};
-    border-radius: ${e.state==="todo"?"0":"1.2em"};
+    line-height: ${props.state === "todo" ? "1.2em" : "1.4em"};
+    border-radius: ${props.state === "todo" ? "0" : "1.2em"};
   }
   &:hover,
-  &::before {
+  &:before {
     color: #0FA0CE;
   }
   &:after {
@@ -35,4 +142,81 @@ var _=Object.create,b=Object.defineProperty,D=Object.getPrototypeOf,K=Object.pro
   span {
     padding: 0 1.5rem;
   }
-`,B=(e,t)=>{let s=[];for(let a=0;a<t;a++)a<e?s.push("done"):a===e?s.push("doing"):s.push("todo");return s},$=(e,t)=>e>0&&e<t-1?{showPreviousBtn:!0,showNextBtn:!0}:e===0?{showPreviousBtn:!1,showNextBtn:!0}:{showPreviousBtn:!0,showNextBtn:!1};function j(e){let t=!0,{activeComponentClassName:s,inactiveComponentClassName:a}=e;e.showNavigation&&(t=e.showNavigation);let d={};e.prevStyle&&(d=e.prevStyle);let c={};e.nextStyle&&(c=e.nextStyle);let[o,n]=i.useState(B(0,e.steps.length)),[l,r]=i.useState(0),[g,O]=i.useState($(0,e.steps.length)),v=u=>{n(B(u,e.steps.length)),r(u<e.steps.length?u:l),O($(u,e.steps.length))},S=()=>v(l+1),P=()=>v(l>0?l-1:l),A=u=>u.which===13?S(e.steps.length):{},F=u=>{u.currentTarget.value===e.steps.length-1&&l===e.steps.length-1?v(e.steps.length):v(u.currentTarget.value)},L=()=>e.steps.map((u,m)=>i.default.createElement("li",{className:X({state:o[m]}),onClick:F,key:m,value:m},i.default.createElement("span",null,m+1))),T=u=>u&&i.default.createElement("div",null,i.default.createElement("button",{style:g.showPreviousBtn?e.prevStyle:{display:"none"},onClick:P},"Prev"),i.default.createElement("button",{style:g.showNextBtn?e.nextStyle:{display:"none"},onClick:S},"Next"));return i.default.createElement("div",{onKeyDown:A},i.default.createElement(W,null,L()),a?e.steps.map((u,m)=>{let E=m===l?s:a;return i.default.createElement("div",{className:E},u.component)}):i.default.createElement("div",null,e.steps[l].component),i.default.createElement("div",null,T(t)))}
+`;
+var getTopNavStyles = (indx, length) => {
+  const styles = [];
+  for (let i2 = 0; i2 < length; i2++) {
+    if (i2 < indx) {
+      styles.push("done");
+    } else if (i2 === indx) {
+      styles.push("doing");
+    } else {
+      styles.push("todo");
+    }
+  }
+  return styles;
+};
+var getButtonsState = (indx, length) => {
+  if (indx > 0 && indx < length - 1) {
+    return {
+      showPreviousBtn: true,
+      showNextBtn: true
+    };
+  } else if (indx === 0) {
+    return {
+      showPreviousBtn: false,
+      showNextBtn: true
+    };
+  } else {
+    return {
+      showPreviousBtn: true,
+      showNextBtn: false
+    };
+  }
+};
+function MultiStep(props) {
+  let showNav = true;
+  const { activeComponentClassName, inactiveComponentClassName } = props;
+  if (props.showNavigation)
+    showNav = props.showNavigation;
+  const [stylesState, setStyles] = (0, import_react.useState)(getTopNavStyles(0, props.steps.length));
+  const [compState, setComp] = (0, import_react.useState)(0);
+  const [buttonsState, setButtons] = (0, import_react.useState)(getButtonsState(0, props.steps.length));
+  const setStepState = (indx) => {
+    setStyles(getTopNavStyles(indx, props.steps.length));
+    setComp(indx < props.steps.length ? indx : compState);
+    setButtons(getButtonsState(indx, props.steps.length));
+  };
+  const next = () => setStepState(compState + 1);
+  const previous = () => setStepState(compState > 0 ? compState - 1 : compState);
+  const handleKeyDown = (evt) => evt.which === 13 ? next(props.steps.length) : {};
+  const handleOnClick = (evt) => {
+    if (evt.currentTarget.value === props.steps.length - 1 && compState === props.steps.length - 1) {
+      setStepState(props.steps.length);
+    } else {
+      setStepState(evt.currentTarget.value);
+    }
+  };
+  const renderSteps = () => props.steps.map((s2, i2) => /* @__PURE__ */ import_react.default.createElement("li", {
+    className: LiClass({ state: stylesState[i2] }),
+    onClick: handleOnClick,
+    key: i2,
+    value: i2
+  }, /* @__PURE__ */ import_react.default.createElement("span", null, i2 + 1)));
+  const renderNav = (show) => show && /* @__PURE__ */ import_react.default.createElement("div", null, /* @__PURE__ */ import_react.default.createElement("button", {
+    style: buttonsState.showPreviousBtn ? props.prevStyle : { display: "none" },
+    onClick: previous
+  }, "Prev"), /* @__PURE__ */ import_react.default.createElement("button", {
+    style: buttonsState.showNextBtn ? props.nextStyle : { display: "none" },
+    onClick: next
+  }, "Next"));
+  return /* @__PURE__ */ import_react.default.createElement("div", {
+    onKeyDown: handleKeyDown
+  }, /* @__PURE__ */ import_react.default.createElement(Ol, null, renderSteps()), inactiveComponentClassName ? props.steps.map((step, index) => {
+    const className = index === compState ? activeComponentClassName : inactiveComponentClassName;
+    return /* @__PURE__ */ import_react.default.createElement("div", {
+      className,
+      key: index
+    }, step.component);
+  }) : /* @__PURE__ */ import_react.default.createElement("div", null, props.steps[compState].component), /* @__PURE__ */ import_react.default.createElement("div", null, renderNav(showNav)));
+}
