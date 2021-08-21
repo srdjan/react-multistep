@@ -114,8 +114,7 @@ export default function MultiStep (props) {
         key={i}
         value={i}
       >
-        <em>{i + 1}</em>
-        <span>{s}</span>
+        <span>{i + 1}</span>
       </li>
     ))
 
