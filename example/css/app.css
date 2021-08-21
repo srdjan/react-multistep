@@ -6,7 +6,6 @@ html {
 /* footer */
 .app-footer {
   color: silver;
-  position: relative;
   line-height: 0.1rem;
-  margin-top: 6rem;
+  margin-top: 8rem;
 }

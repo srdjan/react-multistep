@@ -6,7 +6,7 @@
   "scripts": {
     "debug": "esbuild app.js --bundle --format=cjs --outfile=bundle.js --loader:.js=jsx --sourcemap --preserve-symlinks",
     "build": "esbuild app.js --bundle --format=cjs --outfile=bundle.js --loader:.js=jsx",
-    "start": "servor . index.html 8080 --reload --browse --static"
+    "start": "serve"
   },
   "alias": {
     "react": "./node_modules/react"

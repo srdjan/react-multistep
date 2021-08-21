@@ -20770,7 +20770,7 @@ var App = () => /* @__PURE__ */ import_react5.default.createElement("div", {
   prevStyle,
   nextStyle
 }), /* @__PURE__ */ import_react5.default.createElement("div", {
-  className: "container app-footer"
+  className: "app-footer"
 }, /* @__PURE__ */ import_react5.default.createElement("h6", null, "Press 'Enter' or click on progress bar for next step."), "Code is on", " ", /* @__PURE__ */ import_react5.default.createElement("a", {
   href: "https://github.com/Srdjan/react-multistep",
   target: "_blank",

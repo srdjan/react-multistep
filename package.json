@@ -2,7 +2,7 @@
   "name": "react-multistep",
   "version": "5.1.1",
   "description": "Responsive ReactJS multistep form component",
-  "module": "index.js",
+  "main": "dist/index.js",
   "files": [
     "index.js"
   ],
@@ -34,7 +34,7 @@
     "react": "17.0.2"
   },
   "scripts": {
-    "build": "esbuild react-multistep.js '--define:process.env.NODE_ENV=\"production\"' --external:'react' --bundle --format=cjs --loader:.js=jsx --outfile=index.js && cp -f index.js ./example/index.js",
+    "build": "esbuild ./src/index.js '--define:process.env.NODE_ENV=\"production\"' --external:'react' --bundle --format=cjs --loader:.js=jsx --outdir=dist && cp -f ./dist/index.js ./example/index.js",
     "publish": "npm publish ./"
   }
 }
