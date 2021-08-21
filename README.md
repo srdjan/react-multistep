@@ -8,7 +8,7 @@
 #
 or, install it from [NPM](https://nodei.co/npm/react-multistep/)
 
-#### React 17.0.1 
+#### React 17.0.2 
 
 #### [List of forks](https://github.com/srdjan/react-multistep/network/members/)
 # 
@@ -23,14 +23,18 @@ next, import it inside of your app:
 const MultiStep = import from 'react-multistep'
 ```
 
-Component has only one Prop, 'showNavigation', which controls if the navigation buttons should be visable:
+Component accepts following, optional Props: 
+'showNavigation': controls if the navigation buttons should be visable:
 
 ```sh
 prop=showNavigation 
 type: boolean (default = true)
 ```
 
-It takes an array of objects representing individual steps: 
+'prevStyle' & 'nextStyle': control style of the navigation buttons
+
+
+Finlly, as required Prop, it takes an array of objects representing individual steps: 
 
 ```javascript
 const steps = [
@@ -56,7 +60,7 @@ cd react-multistep                                        //navigate to the proj
 
 ```sh
 npm install
-npm run build // (or, `npm run build:prod` for optimized build)
+npm run build 
 ```
 
 3) On a succesful build, navigate to the example folder and try it:
@@ -64,6 +68,7 @@ npm run build // (or, `npm run build:prod` for optimized build)
 ```sh
 cd ../example
 npm install
+npm run build
 npm start
 ```
 
