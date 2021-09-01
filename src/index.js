@@ -77,9 +77,9 @@ const getButtonsState = (indx, length) => {
 }
 
 export default function MultiStep (props) {
-  let showNav = true
   const { activeComponentClassName, inactiveComponentClassName } = props
-  if (props.showNavigation) showNav = props.showNavigation
+  const showNav =
+    typeof props.showNavigation === "undefined" ? true : props.showNavigation;
 
   const [stylesState, setStyles] = useState(getTopNavStyles(0, props.steps.length))
   const [compState, setComp] = useState(0)
