@@ -93,7 +93,6 @@ export default function MultiStep (props) {
 
   const next = () => setStepState(compState + 1)
   const previous = () => setStepState(compState > 0 ? compState - 1 : compState)
-  const handleKeyDown = evt => evt.which === 13 ? next(props.steps.length) : {}
 
   const handleOnClick = evt => {
     if (
@@ -138,7 +137,7 @@ export default function MultiStep (props) {
     )
 
   return (
-    <div onKeyDown={handleKeyDown}>
+    <div>
       <Ol>{renderSteps()}</Ol>
       {inactiveComponentClassName
         ? props.steps.map((step, index) => {
