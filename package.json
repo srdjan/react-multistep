@@ -1,6 +1,6 @@
 {
   "name": "react-multistep",
-  "version": "5.2.2",
+  "version": "5.2.3",
   "description": "Responsive ReactJS multistep form component",
   "main": "dist/index.js",
   "files": [
@@ -27,7 +27,7 @@
     "goober": "2.0.41"
   },
   "devDependencies": {
-    "esbuild": "0.12.22",
+    "esbuild": "0.12.25",
     "react": "17.0.2"
   },
   "peerDependencies": {
