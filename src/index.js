@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { styled, setup } from 'goober'
+import { css, styled, setup } from 'goober'
 
 setup(React.createElement)
 
@@ -8,7 +8,7 @@ const Ol = styled('ol')`
   padding-bottom: 2.2rem;
   list-style-type: none;
 `
-const LiTodo = styled('li')`
+const Li = styled('li')`
   display: inline-block;
   text-align: center;
   line-height: 4.8rem;
@@ -18,7 +18,19 @@ const LiTodo = styled('li')`
   color: silver;
   border-bottom: 2px solid silver;
 
-  &::before {
+  &:hover,
+  &:before {
+    color: #0FA0CE;
+  }
+  &:after {
+    content: "\\00a0\\00a0";
+  }   
+  span {
+    padding: 0 1.5rem;
+  }
+`
+const LiTodo = css`
+  &:before {
     position: relative;
     bottom: -3.99rem;
     float: left;
@@ -31,29 +43,9 @@ const LiTodo = styled('li')`
     line-height: 1.2em;
     border-radius: 0;
   }
-  &:hover,
-  &:before {
-    color: #0FA0CE;
-  }
-  &:after {
-    content: "\\00a0\\00a0";
-  }   
-  span {
-    padding: 0 1.5rem;
-  }
 `
-
-const LiDoing = styled('li')`
-  display: inline-block;
-  text-align: center;
-  line-height: 4.8rem;
-  padding: 0 0.7rem;
-  cursor: pointer;
-
-  color: black;
-  border-bottom: 2px solid #33C3F0;
-
-  &::before {
+const LiDoing = css`
+  &:before {
     position: relative;
     bottom: -3.99rem;
     float: left;
@@ -66,50 +58,20 @@ const LiDoing = styled('li')`
     line-height: 1.4em;
     border-radius: 1.2em;
   }
-  &:hover,
-  &:before {
-    color: #0FA0CE;
-  }
-  &:after {
-    content: "\\00a0\\00a0";
-  }   
-  span {
-    padding: 0 1.5rem;
-  }
 `
-
-const LiDone = styled('li')`
-  display: inline-block;
-  text-align: center;
-  line-height: 4.8rem;
-  padding: 0 0.7rem;
-  cursor: pointer;
-
-  color: black;
-  border-bottom: 2px solid #33C3F0;
-
-  &::before {
+const LiDone = css`
+  &:before {
     position: relative;
     bottom: -3.99rem;
     float: left;
     left: 50%;
 
     content: "\u2713";
-    color: 'white';
-    background-color: '#33C3F0';
+    color: white;
+    background-color: #33C3F0;
     width: 1.2em;
     line-height: 1.4em;
     border-radius: 1.2em;
-  }
-  &:hover,
-  &:before {
-    color: #0FA0CE;
-  }
-  &:after {
-    content: "\\00a0\\00a0";
-  }   
-  span {
-    padding: 0 1.5rem;
   }
 `
 
@@ -179,33 +141,36 @@ export default function MultiStep (props) {
     props.steps.map((s, i) => {
       if (stylesState[i] === 'todo') {
         return (
-          <LiTodo
+          <Li
+            className={LiTodo}
             onClick={handleOnClick}
             key={i}
             value={i}
           >
             <span>{i + 1}</span>
-          </LiTodo>
+          </Li>
         )
       } else if (stylesState[i] === 'doing') {
         return (
-          <LiDoing
+          <Li
+            className={LiDoing}
             onClick={handleOnClick}
             key={i}
             value={i}
           >
             <span>{i + 1}</span>
-          </LiDoing>
+          </Li>
         )
       } else {
         return (
-          <LiDone
+          <Li
+            className={LiDone}
             onClick={handleOnClick}
             key={i}
             value={i}
           >
             <span>{i + 1}</span>
-          </LiDone>
+          </Li>
         )
       }
     })
