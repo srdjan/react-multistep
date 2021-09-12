@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { css, styled, setup } from 'goober'
+import { styled, setup } from 'goober'
 
 setup(React.createElement)
 
@@ -8,16 +8,15 @@ const Ol = styled('ol')`
   padding-bottom: 2.2rem;
   list-style-type: none;
 `
-
-const LiClass = props => css`
+const LiTodo = styled('li')`
   display: inline-block;
   text-align: center;
-  line-height: 4.5rem;
+  line-height: 4.8rem;
   padding: 0 0.7rem;
   cursor: pointer;
 
-  color: ${props.state === 'todo' ? 'silver' : 'black'};
-  border-bottom: 4px solid ${props.state === 'todo' ? 'silver' : '#33C3F0'};
+  color: silver;
+  border-bottom: 2px solid silver;
 
   &::before {
     position: relative;
@@ -25,12 +24,12 @@ const LiClass = props => css`
     float: left;
     left: 50%;
 
-    ${props.state === 'todo' ? 'content: "\u039F";' : props.state === 'doing' ? 'content: "\u2022";' : 'content: "\u2713";'}
-    color: ${props.state === 'todo' ? 'silver' : 'white'};
-    background-color: ${props.state === 'todo' ? 'white' : '#33C3F0'};  
+    content: "\u039F";
+    color: silver;
+    background-color: white;
     width: 1.2em;
-    line-height: ${props.state === 'todo' ? '1.2em' : '1.4em'};
-    border-radius: ${props.state === 'todo' ? '0' : '1.2em'};
+    line-height: 1.2em;
+    border-radius: 0;
   }
   &:hover,
   &:before {
@@ -43,6 +42,77 @@ const LiClass = props => css`
     padding: 0 1.5rem;
   }
 `
+
+const LiDoing = styled('li')`
+  display: inline-block;
+  text-align: center;
+  line-height: 4.8rem;
+  padding: 0 0.7rem;
+  cursor: pointer;
+
+  color: black;
+  border-bottom: 2px solid #33C3F0;
+
+  &::before {
+    position: relative;
+    bottom: -3.99rem;
+    float: left;
+    left: 50%;
+
+    content: "\u2022";
+    color: white;
+    background-color: #33C3F0;  
+    width: 1.2em;
+    line-height: 1.4em;
+    border-radius: 1.2em;
+  }
+  &:hover,
+  &:before {
+    color: #0FA0CE;
+  }
+  &:after {
+    content: "\\00a0\\00a0";
+  }   
+  span {
+    padding: 0 1.5rem;
+  }
+`
+
+const LiDone = styled('li')`
+  display: inline-block;
+  text-align: center;
+  line-height: 4.8rem;
+  padding: 0 0.7rem;
+  cursor: pointer;
+
+  color: black;
+  border-bottom: 2px solid #33C3F0;
+
+  &::before {
+    position: relative;
+    bottom: -3.99rem;
+    float: left;
+    left: 50%;
+
+    content: "\u2713";
+    color: 'white';
+    background-color: '#33C3F0';
+    width: 1.2em;
+    line-height: 1.4em;
+    border-radius: 1.2em;
+  }
+  &:hover,
+  &:before {
+    color: #0FA0CE;
+  }
+  &:after {
+    content: "\\00a0\\00a0";
+  }   
+  span {
+    padding: 0 1.5rem;
+  }
+`
+
 const getTopNavStyles = (indx, length) => {
   const styles = []
   for (let i = 0; i < length; i++) {
@@ -79,7 +149,7 @@ const getButtonsState = (indx, length) => {
 export default function MultiStep (props) {
   const { activeComponentClassName, inactiveComponentClassName } = props
   const showNav =
-    typeof props.showNavigation === "undefined" ? true : props.showNavigation;
+    typeof props.showNavigation === 'undefined' ? true : props.showNavigation
 
   const [stylesState, setStyles] = useState(getTopNavStyles(0, props.steps.length))
   const [compState, setComp] = useState(0)
@@ -106,16 +176,39 @@ export default function MultiStep (props) {
   }
 
   const renderSteps = () =>
-    props.steps.map((s, i) => (
-      <li
-        className={LiClass({ state: stylesState[i] })}
-        onClick={handleOnClick}
-        key={i}
-        value={i}
-      >
-        <span>{i + 1}</span>
-      </li>
-    ))
+    props.steps.map((s, i) => {
+      if (stylesState[i] === 'todo') {
+        return (
+          <LiTodo
+            onClick={handleOnClick}
+            key={i}
+            value={i}
+          >
+            <span>{i + 1}</span>
+          </LiTodo>
+        )
+      } else if (stylesState[i] === 'doing') {
+        return (
+          <LiDoing
+            onClick={handleOnClick}
+            key={i}
+            value={i}
+          >
+            <span>{i + 1}</span>
+          </LiDoing>
+        )
+      } else {
+        return (
+          <LiDone
+            onClick={handleOnClick}
+            key={i}
+            value={i}
+          >
+            <span>{i + 1}</span>
+          </LiDone>
+        )
+      }
+    })
 
   const renderNav = (show) =>
     show && (

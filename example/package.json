@@ -6,7 +6,7 @@
   "scripts": {
     "debug": "esbuild app.js --bundle --format=cjs --outfile=bundle.js --loader:.js=jsx --sourcemap --preserve-symlinks",
     "build": "esbuild app.js --bundle --format=cjs --outfile=bundle.js --loader:.js=jsx",
-    "start": "serve"
+    "start": "npx serve"
   },
   "alias": {
     "react": "./node_modules/react"
@@ -16,6 +16,6 @@
     "react-dom": "17.0.2"
   },
   "devDependencies": {
-    "esbuild": "0.12.22"
+    "esbuild": "0.12.26"
   }
 }
