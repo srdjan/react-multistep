@@ -30,9 +30,12 @@ const Li = styled('li')`
   }
   &:before {
     position: relative;
-    bottom: -3.99rem;
     float: left;
     left: 50%;
+    width: 1.2em;
+    line-height: 1.4em;
+    border-radius: 0;
+    bottom: -3.99rem;
   }
 `
 const Todo = css`
@@ -40,9 +43,6 @@ const Todo = css`
     content: "\u039F";
     color: silver;
     background-color: white;
-    width: 1.2em;
-    line-height: 1.2em;
-    border-radius: 0;
   }
 `
 const Doing = css`
@@ -50,9 +50,6 @@ const Doing = css`
     content: "\u2022";
     color: white;
     background-color: #33C3F0;  
-    width: 1.2em;
-    line-height: 1.4em;
-    border-radius: 1.2em;
   }
 `
 const Done = css`
@@ -60,9 +57,6 @@ const Done = css`
     content: "\u2713";
     color: white;
     background-color: #33C3F0;
-    width: 1.2em;
-    line-height: 1.4em;
-    border-radius: 1.2em;
   }
 `
 
