@@ -28,14 +28,15 @@ const Li = styled('li')`
   span {
     padding: 0 1.5rem;
   }
-`
-const Todo = css`
   &:before {
     position: relative;
     bottom: -3.99rem;
     float: left;
     left: 50%;
-
+  }
+`
+const Todo = css`
+  &:before {
     content: "\u039F";
     color: silver;
     background-color: white;
@@ -46,11 +47,6 @@ const Todo = css`
 `
 const Doing = css`
   &:before {
-    position: relative;
-    bottom: -3.99rem;
-    float: left;
-    left: 50%;
-
     content: "\u2022";
     color: white;
     background-color: #33C3F0;  
@@ -61,11 +57,6 @@ const Doing = css`
 `
 const Done = css`
   &:before {
-    position: relative;
-    bottom: -3.99rem;
-    float: left;
-    left: 50%;
-
     content: "\u2713";
     color: white;
     background-color: #33C3F0;
