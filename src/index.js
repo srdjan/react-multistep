@@ -29,7 +29,7 @@ const Li = styled('li')`
     padding: 0 1.5rem;
   }
 `
-const LiTodo = css`
+const Todo = css`
   &:before {
     position: relative;
     bottom: -3.99rem;
@@ -44,7 +44,7 @@ const LiTodo = css`
     border-radius: 0;
   }
 `
-const LiDoing = css`
+const Doing = css`
   &:before {
     position: relative;
     bottom: -3.99rem;
@@ -59,7 +59,7 @@ const LiDoing = css`
     border-radius: 1.2em;
   }
 `
-const LiDone = css`
+const Done = css`
   &:before {
     position: relative;
     bottom: -3.99rem;
@@ -142,7 +142,7 @@ export default function MultiStep (props) {
       if (stylesState[i] === 'todo') {
         return (
           <Li
-            className={LiTodo}
+            className={Todo}
             onClick={handleOnClick}
             key={i}
             value={i}
@@ -153,7 +153,7 @@ export default function MultiStep (props) {
       } else if (stylesState[i] === 'doing') {
         return (
           <Li
-            className={LiDoing}
+            className={Doing}
             onClick={handleOnClick}
             key={i}
             value={i}
@@ -164,7 +164,7 @@ export default function MultiStep (props) {
       } else {
         return (
           <Li
-            className={LiDone}
+            className={Done}
             onClick={handleOnClick}
             key={i}
             value={i}
