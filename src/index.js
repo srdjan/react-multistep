@@ -1,67 +1,23 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom';
 import { css, styled, setup } from 'goober'
-
 setup(React.createElement)
 
-const Ol = styled('ol')`
+const Ol = styled('ul')`
   margin: 0;
-  padding-bottom: 2.2rem;
   list-style-type: none;
 `
-const Li = styled('li')`
-  display: inline-block;
-  text-align: center;
-  line-height: 4.8rem;
-  padding: 0 0.7rem;
-  cursor: pointer;
 
-  color: silver;
-  border-bottom: 2px solid silver;
+const LiClass = props => css`
 
-  &:hover,
-  &:before {
-    color: #0FA0CE;
-  }
-  &:after {
-    content: "\\00a0\\00a0";
-  }   
-  span {
-    padding: 0 1.5rem;
-  }
-  &:before {
-    position: relative;
-    float: left;
-    left: 50%;
-    width: 1.2em;
-    line-height: 1.4em;
-    border-radius: 0;
-    bottom: -3.99rem;
-  }
-`
-const Todo = css`
-  &:before {
-    content: "\u039F";
-    color: silver;
-    background-color: white;
-  }
-`
-const Doing = css`
-  &:before {
-    content: "\u2022";
-    color: white;
-    background-color: #33C3F0;  
-  }
-`
-const Done = css`
-  &:before {
-    content: "\u2713";
-    color: white;
-    background-color: #33C3F0;
-  }
+
+  color: ${props.state === 'todo' ? 'silver' : 'black'};
+;
+
 `
 
 const getTopNavStyles = (indx, length) => {
-  const styles = []
+  let styles = []
   for (let i = 0; i < length; i++) {
     if (i < indx) {
       styles.push('done')
@@ -93,10 +49,15 @@ const getButtonsState = (indx, length) => {
   }
 }
 
-export default function MultiStep (props) {
-  const { activeComponentClassName, inactiveComponentClassName } = props
-  const showNav =
-    typeof props.showNavigation === 'undefined' ? true : props.showNavigation
+export default function MultiStep(props) {
+  let showNav = true
+  if (props.showNavigation) showNav = props.showNavigation
+
+  let prevStyle = {}
+  if (props.prevStyle) prevStyle = props.prevStyle
+
+  let nextStyle = {}
+  if (props.nextStyle) nextStyle = props.nextStyle
 
   const [stylesState, setStyles] = useState(getTopNavStyles(0, props.steps.length))
   const [compState, setComp] = useState(0)
@@ -110,6 +71,7 @@ export default function MultiStep (props) {
 
   const next = () => setStepState(compState + 1)
   const previous = () => setStepState(compState > 0 ? compState - 1 : compState)
+  const handleKeyDown = evt => evt.which === 13 ? next(props.steps.length) : {}
 
   const handleOnClick = evt => {
     if (
@@ -121,74 +83,40 @@ export default function MultiStep (props) {
       setStepState(evt.currentTarget.value)
     }
   }
-
   const renderSteps = () =>
-    props.steps.map((s, i) => {
-      if (stylesState[i] === 'todo') {
-        return (
-          <Li
-            className={Todo}
-            onClick={handleOnClick}
-            key={i}
-            value={i}
-          >
-            <span>{i + 1}</span>
-          </Li>
-        )
-      } else if (stylesState[i] === 'doing') {
-        return (
-          <Li
-            className={Doing}
-            onClick={handleOnClick}
-            key={i}
-            value={i}
-          >
-            <span>{i + 1}</span>
-          </Li>
-        )
-      } else {
-        return (
-          <Li
-            className={Done}
-            onClick={handleOnClick}
-            key={i}
-            value={i}
-          >
-            <span>{i + 1}</span>
-          </Li>
-        )
-      }
-    })
+    props.steps.map((s, i) => (
+      <li
+        className={LiClass({ state: stylesState[i] })}
+        onClick={handleOnClick}
+        key={i}
+        value={i}
+      >
+        <Link to="#"></Link>
+        {/* <span>{i+1}</span> */}
+      </li>
+    ))
 
   const renderNav = (show) =>
     show && (
-      <div>
-        <button
-          style={buttonsState.showPreviousBtn ? props.prevStyle : { display: 'none' }}
-          onClick={previous}
-        >
-          Prev
-        </button>
-
-        <button
-          style={buttonsState.showNextBtn ? props.nextStyle : { display: 'none' }}
-          onClick={next}
-        >
-          Next
-        </button>
+      <div className="actions clearfix">
+        <ul role="menu" aria-label="Pagination">
+          <li style={buttonsState.showPreviousBtn ? props.prevStyle : { display: 'none' }}
+            onClick={previous}> 
+            <Link to="#">Back</Link>
+          </li>
+          <li style={buttonsState.showNextBtn ? props.nextStyle : { display: 'none' }}
+            onClick={next}> 
+            <Link to="#">Next</Link>
+          </li>
+        </ul>
       </div>
     )
 
   return (
-    <div>
-      <Ol>{renderSteps()}</Ol>
-      {inactiveComponentClassName
-        ? props.steps.map((step, index) => {
-            const className = index === compState ? activeComponentClassName : inactiveComponentClassName
-            return (<div className={className} key={index}>{step.component}</div>)
-          })
-        : <div>{props.steps[compState].component}</div>}
+    <form onKeyDown={handleKeyDown} className="ms-form-wizard style1-wizard" id="default-wizard">
+      <Ol role="tablist">{renderSteps()}</Ol>
+      <div className="content">{props.steps[compState].component}</div>
       <div>{renderNav(showNav)}</div>
-    </div>
+    </form>
   )
 }
