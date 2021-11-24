@@ -19,7 +19,7 @@ const nextStyle = { background: '#33c3f0' }
 
 const App = () => (
   <div className='container'>
-    <MultiStep steps={steps} prevStyle={prevStyle} nextStyle={nextStyle} />
+    <MultiStep activeStep={0} steps={steps} prevStyle={prevStyle} nextStyle={nextStyle} />
     <div className='app-footer'>
       <h6>Press 'Enter' or click on progress bar for next step.</h6>
       Code is on{' '}
