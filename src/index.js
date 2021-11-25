@@ -110,6 +110,11 @@ export default function MultiStep (props) {
   const [compState, setComp] = useState(activeStep)
   const [buttonsState, setButtons] = useState(getButtonsState(activeStep, props.steps.length))
   
+  useEffect(() => {
+    console.log('Index changed: ', props.activeStep);
+    setStepState(props.activeStep);
+  }, [props.activeStep]);
+  
   const setStepState = (indx) => {
     setStyles(getTopNavStyles(indx, props.steps.length))
     setComp(indx < props.steps.length ? indx : compState)
