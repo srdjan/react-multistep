@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { css, styled, setup } from 'goober'
 
 setup(React.createElement)
@@ -60,6 +60,13 @@ const Done = css`
   }
 `
 
+const getStep = (defaultIndex, newIndex, length) => {
+    if(newIndex <=  length){
+        return newIndex;
+    }
+    return defaultIndex;
+  }
+
 const getTopNavStyles = (indx, length) => {
   const styles = []
   for (let i = 0; i < length; i++) {
@@ -98,10 +105,16 @@ export default function MultiStep (props) {
   const showNav =
     typeof props.showNavigation === 'undefined' ? true : props.showNavigation
 
-  const [stylesState, setStyles] = useState(getTopNavStyles(0, props.steps.length))
-  const [compState, setComp] = useState(0)
-  const [buttonsState, setButtons] = useState(getButtonsState(0, props.steps.length))
-
+  const [activeStep] = useState(getStep(0, props.activeStep,  props.steps.length));
+  const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, props.steps.length))
+  const [compState, setComp] = useState(activeStep)
+  const [buttonsState, setButtons] = useState(getButtonsState(activeStep, props.steps.length))
+  
+  useEffect(() => {
+    console.log('Index changed: ', props.activeStep);
+    setStepState(props.activeStep);
+  }, [props.activeStep]);
+  
   const setStepState = (indx) => {
     setStyles(getTopNavStyles(indx, props.steps.length))
     setComp(indx < props.steps.length ? indx : compState)
