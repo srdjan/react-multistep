@@ -25,17 +25,10 @@ const MultiStep = import from 'react-multistep'
 
 Component accepts following, optional Props: 
 
- - 'showNavigation': controls if the navigation buttons should be visable:
-
-```sh
-prop=showNavigation 
-type: boolean (default = true)
-```
-
+- 'showNavigation': controls if the navigation buttons are visable (default = true)
 - 'prevStyle' & 'nextStyle': control style of the navigation buttons
-
-
-Finlly, as required Prop, it takes an array of objects representing individual steps: 
+- 'activeStep': define a start step, when not desired to start at the beggining 
+- 'steps': a required Prop, it takes an array of objects representing individual steps: 
 
 ```javascript
 const steps = [
@@ -44,7 +37,7 @@ const steps = [
               {name: 'StepThree', component: <StepThree/>},
               {name: 'StepFour', component: <StepFour/>}
             ];
-<Multistep showNavigation={true} steps={steps}/>
+<Multistep activeStep={1} showNavigation={true} steps={steps}/>
 ```
 
 #### If you want to explore try the included example...
