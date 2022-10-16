@@ -27,14 +27,28 @@
     "goober": "2.1.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.19.3",
+    "@storybook/addon-actions": "^6.5.12",
+    "@storybook/addon-essentials": "^6.5.12",
+    "@storybook/addon-interactions": "^6.5.12",
+    "@storybook/addon-links": "^6.5.12",
+    "@storybook/builder-webpack4": "^6.5.12",
+    "@storybook/manager-webpack4": "^6.5.12",
+    "@storybook/react": "^6.5.12",
+    "@storybook/testing-library": "^0.0.13",
+    "babel-loader": "^8.2.5",
     "esbuild": "0.13.15",
-    "react": "17.0.2"
+    "react": "17.0.2",
+    "react-dom": "17.0.2", 
+    "react-test-renderer": "17.0.2"
   },
   "peerDependencies": {
     "react": "17.0.2"
   },
   "scripts": {
     "build": "esbuild ./src/index.js '--define:process.env.NODE_ENV=\"production\"' --external:'react' --bundle --format=cjs --loader:.js=jsx --outdir=dist && cp -f ./dist/index.js ./example/index.js",
-    "publish": "npm publish ./"
+    "publish": "npm publish ./",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   }
 }
