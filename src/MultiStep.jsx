@@ -145,7 +145,7 @@ export default function MultiStep (props) {
             key={i}
             value={i}
           >
-            <span>{s.name ??  i + 1}</span>
+            <span>{i + 1}</span>
           </Li>
         )
       } else if (stylesState[i] === 'doing') {
@@ -156,7 +156,7 @@ export default function MultiStep (props) {
             key={i}
             value={i}
           >
-            <span>{s.name ??  i + 1}</span>
+            <span>{i + 1}</span>
           </Li>
         )
       } else {
@@ -167,7 +167,7 @@ export default function MultiStep (props) {
             key={i}
             value={i}
           >
-            <span>{s.name ??  i + 1}</span>
+            <span>{i + 1}</span>
           </Li>
         )
       }
