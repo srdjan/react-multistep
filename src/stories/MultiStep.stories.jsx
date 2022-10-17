@@ -2,6 +2,12 @@ import React from 'react';
 
 import MultiStep from '../MultiStep';
 
+import StepOne from './stepOne'
+import StepTwo from './stepTwo'
+import StepThree from './stepThree'
+import StepFour from './stepFour'
+
+
 export default {
   title: 'Example/MultiStep',
   component: MultiStep,
@@ -16,22 +22,34 @@ const Template = (args) => <MultiStep {...args} />;
 export const defaultTemplate = Template.bind({});
 defaultTemplate.args = {
   steps: [
-    { component: <div>1</div> },
-    { component: <div>2</div> },
-    { component: <div>3</div> },
-    { component: <div>4</div> }
-  ],
-  activeStep: 0
+    { component: <StepOne /> },
+    { component: <StepTwo /> },
+    { component: <StepThree /> },
+    { component: <StepFour /> }
+  ]
 };
 
 
-export const withTitlesTemplate = Template.bind({});
-withTitlesTemplate.args = {
+export const withActiveStepTemplate = Template.bind({});
+withActiveStepTemplate.args = {
   steps: [
-    { name: 'step one', component: <div>1</div> },
-    { name: 'step two', component: <div>2</div> },
-    { name: 'step three', component: <div>3</div> },
-    { name: 'step four', component: <div>4</div> }
+    { component: <StepOne /> },
+    { component: <StepTwo /> },
+    { component: <StepThree /> },
+    { component: <StepFour /> }
   ],
-  activeStep: 0
+  activeStep: 1
+};
+
+export const withStyledNavTemplate = Template.bind({});
+withStyledNavTemplate.args = {
+  steps: [
+    { component: <StepOne /> },
+    { component: <StepTwo /> },
+    { component: <StepThree /> },
+    { component: <StepFour /> }
+  ],
+  activeStep: 0,
+  nextStyle: { background: '#33c3f0' },
+  prevStyle: { background: '#33c3f0' }
 };
