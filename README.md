@@ -32,10 +32,10 @@ Component accepts following, optional Props:
 
 ```javascript
 const steps = [
-              {name: 'StepOne', component: <StepOne/>},
-              {name: 'StepTwo', component: <StepTwo/>},
-              {name: 'StepThree', component: <StepThree/>},
-              {name: 'StepFour', component: <StepFour/>}
+              {title: 'StepOne', component: <StepOne/>},
+              {title: 'StepTwo', component: <StepTwo/>},
+              {title: 'StepThree', component: <StepThree/>},
+              {title: 'StepFour', component: <StepFour/>}
             ];
 <Multistep activeStep={1} showNavigation={true} steps={steps}/>
 ```
@@ -72,3 +72,10 @@ npm start
 open index.html
 ```
 
+Instead of using the example you also have the option to test it with storybook,
+in the project folder just run:
+
+```sh
+npm install
+npm run storybook 
+```
