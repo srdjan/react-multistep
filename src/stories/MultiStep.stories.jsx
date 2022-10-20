@@ -29,6 +29,16 @@ defaultTemplate.args = {
   ]
 };
 
+export const withTitlesTemplate = Template.bind({});
+withTitlesTemplate.args = {
+  steps: [
+    { title: "step one", component: <StepOne /> },
+    { title: "step two", component: <StepTwo /> },
+    { title: "step three", component: <StepThree /> },
+    { title: "step four", component: <StepFour /> }
+  ],
+  activeStep: 0,
+};
 
 export const withActiveStepTemplate = Template.bind({});
 withActiveStepTemplate.args = {
