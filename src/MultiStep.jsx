@@ -143,7 +143,7 @@ export default function MultiStep (props) {
         return (
           <Li
             className={Todo}
-            style={props.stepCustomStyle}
+            style={stepCustomStyle}
             onClick={handleOnClick}
             key={i}
             value={i}
@@ -155,7 +155,7 @@ export default function MultiStep (props) {
         return (
           <Li
             className={Doing}
-            style={props.stepCustomStyle}
+            style={stepCustomStyle}
             onClick={handleOnClick}
             key={i}
             value={i}
@@ -167,7 +167,7 @@ export default function MultiStep (props) {
         return (
           <Li
             className={Done}
-            style={props.stepCustomStyle}
+            style={stepCustomStyle}
             onClick={handleOnClick}
             key={i}
             value={i}
