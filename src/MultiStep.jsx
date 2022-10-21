@@ -101,9 +101,11 @@ const getButtonsState = (indx, length) => {
 }
 
 export default function MultiStep (props) {
-  const { activeComponentClassName, inactiveComponentClassName } = props
+  const { activeComponentClassName, inactiveComponentClassName, stepCustomStyle } = props
   const showNav =
     typeof props.showNavigation === 'undefined' ? true : props.showNavigation
+  const showTitles =
+    typeof props.showTitles === 'undefined' ? true : props.showTitles
 
   const [activeStep] = useState(getStep(0, props.activeStep,  props.steps.length));
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, props.steps.length))
@@ -141,33 +143,36 @@ export default function MultiStep (props) {
         return (
           <Li
             className={Todo}
+            style={props.stepCustomStyle}
             onClick={handleOnClick}
             key={i}
             value={i}
           >
-            <span>{s.title ??  i + 1}</span>
+            { showTitles && <span>{s.title ??  i + 1}</span> }
           </Li>
         )
       } else if (stylesState[i] === 'doing') {
         return (
           <Li
             className={Doing}
+            style={props.stepCustomStyle}
             onClick={handleOnClick}
             key={i}
             value={i}
           >
-            <span>{s.title ??  i + 1}</span>
+            { showTitles && <span>{s.title ??  i + 1}</span> }
           </Li>
         )
       } else {
         return (
           <Li
             className={Done}
+            style={props.stepCustomStyle}
             onClick={handleOnClick}
             key={i}
             value={i}
           >
-            <span>{s.title ??  i + 1}</span>
+            { showTitles && <span>{s.title ??  i + 1}</span> }
           </Li>
         )
       }
