@@ -63,3 +63,29 @@ withStyledNavTemplate.args = {
   nextStyle: { background: '#33c3f0' },
   prevStyle: { background: '#33c3f0' }
 };
+
+
+export const withNoTitlesStepTemplate = Template.bind({});
+withNoTitlesStepTemplate.args = {
+  showTitles: false,
+  steps: [
+    { component: <StepOne /> },
+    { component: <StepTwo /> },
+    { component: <StepThree /> },
+    { component: <StepFour /> }
+  ],
+  activeStep: 1
+};
+
+export const withNoTitlesWithStepStyleStepTemplate = Template.bind({});
+withNoTitlesWithStepStyleStepTemplate.args = {
+  stepCustomStyle: {minWidth: '150px', maxWidth: '90vw'},
+  showTitles: false,
+  steps: [
+    { component: <StepOne /> },
+    { component: <StepTwo /> },
+    { component: <StepThree /> },
+    { component: <StepFour /> }
+  ],
+  activeStep: 1
+};
