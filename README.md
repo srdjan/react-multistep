@@ -25,10 +25,23 @@ const MultiStep = import from 'react-multistep'
 
 Component accepts following, optional Props: 
 
-- 'showNavigation': controls if the navigation buttons are visable (default = true)
-- 'prevStyle' & 'nextStyle': control style of the navigation buttons
-- 'activeStep': define a start step, when not desired to start at the beggining 
-- 'steps': a required Prop, it takes an array of objects representing individual steps: 
+| PROPERTY       | DESCRIPTION                                                  | TYPE     | DEFAULT    | isRequired|
+|----------------|--------------------------------------------------------------|----------|------------|-----------|
+| showNavigation | controls if the navigation buttons are visable               |boolean   |true        |false      |
+| showTitles     | control either the steps title are visible or not            |boolean   |true        |false      |
+| prevStyle      | control style of the navigation buttons                      |style obj |null        |null       |
+| nextStyle      | control style of the navigation buttons                      |style obj |null        |false      |
+| stepCustomStyle| control style of step                                        |style obj |null        |false      |
+| steps          | it takes an array of objects representing individual steps   |Step      |null        |true       |
+
+Step:
+
+| PROPERTY  | DESCRIPTION                                 | TYPE       | DEFAULT    | isRequired|
+|-----------|---------------------------------------------|------------|------------|-----------|
+| component | the step representing component             |JSX.Element |null        |true       |
+| title     | the step title, present above the steps nav |text        |step index  |false      |
+
+
 
 ```javascript
 const steps = [
