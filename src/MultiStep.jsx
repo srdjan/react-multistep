@@ -32,9 +32,9 @@ const Li = styled('li')`
     position: relative;
     float: left;
     left: 50%;
-    width: 1.2em;
+    width: 1.3em;
     line-height: 1.4em;
-    border-radius: 0;
+    border-radius: 50%;
     bottom: -3.99rem;
   }
 `
