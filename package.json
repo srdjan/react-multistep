@@ -1,10 +1,12 @@
 {
   "name": "react-multistep",
-  "version": "5.3.1",
+  "version": "5.3.2",
   "description": "Responsive ReactJS multistep form component",
   "main": "dist/index.js",
   "files": [
-    "dist/index.js"
+    "dist/index.js",
+    "src/index.js",
+    "src/MultiStep.jsx"
   ],
   "license": "MIT",
   "author": {
@@ -43,10 +45,10 @@
     "react-test-renderer": "17.0.2"
   },
   "peerDependencies": {
-    "react": "17.0.2"
+    "react": "^17.0.0 || ^18.0.0"
   },
   "scripts": {
-    "build": "esbuild ./src/index.js '--define:process.env.NODE_ENV=\"production\"' --external:'react' --bundle --format=cjs --loader:.js=jsx --outdir=dist && cp -f ./dist/index.js ./example/index.js",
+    "build": "esbuild ./src/index.js \"--define:process.env.NODE_ENV='production'\" --external:react --bundle --format=cjs --loader:.js=jsx --outdir=dist && cp -f ./dist/index.js ./example/index.js",
     "publish": "npm publish ./",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
