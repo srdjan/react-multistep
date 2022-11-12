@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
 
-export default () => {
+export default (props) => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+
+  // test signaling parent of a child change
+  props.validationChange()
 
   return (
     <div>

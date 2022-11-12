@@ -7,10 +7,10 @@ import StepThree from './stepThree'
 import StepFour from './stepFour'
 
 const steps = [
-  { component: <StepOne /> },
-  { component: <StepTwo /> },
-  { component: <StepThree /> },
-  { component: <StepFour /> }
+  { component: <StepOne validationChange/> },
+  { component: <StepTwo  validationChange/> },
+  { component: <StepThree  validationChange/> },
+  { component: <StepFour  validationChange/> }
 ]
 
 // custom styles

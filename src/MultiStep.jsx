@@ -71,7 +71,18 @@ export default function MultiStep (props) {
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, props.steps.length))
   const [compState, setComp] = useState(activeStep)
   const [buttonsState, setButtons] = useState(getButtonsState(activeStep, props.steps.length))
-  
+
+  // (1) register child event handler function
+  props.steps.map((step, index) => {
+    step.component.validationChange = handleChildValidationEvent
+    console.log(`registered: ${index}`)
+  })
+
+  // (2) https://lifeincoding.com/how-to-disable-button-with-css/
+  const handleChildValidationEvent = evt => { 
+
+  }
+
   const getStep = (defaultIndex, newIndex, length) => {
     if(newIndex <=  length){
         return newIndex;
@@ -125,15 +136,6 @@ export default function MultiStep (props) {
 
   const next = () => setStepState(compState + 1)
   const previous = () => setStepState(compState > 0 ? compState - 1 : compState)
-
-  // https://lifeincoding.com/how-to-disable-button-with-css/
-  const handleChildEvent = evt => { 
-    if( evt.currentTarget.value === 'prev') {
-      buttonsState.showPreviousBtn = ! buttonsState.showPreviousBtn
-    } else if( evt.currentTarget.value === 'next') {
-      buttonsState.showNextBtn = ! buttonsState.showNextBtn
-    }
-  }
 
   const handleOnClick = evt => {
     if (
