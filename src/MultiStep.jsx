@@ -58,48 +58,8 @@ const Done = css`
     color: white;
     background-color: #33C3F0;
   }
-`
-
-const getStep = (defaultIndex, newIndex, length) => {
-    if(newIndex <=  length){
-        return newIndex;
-    }
-    return defaultIndex;
-  }
-
-const getTopNavStyles = (indx, length) => {
-  const styles = []
-  for (let i = 0; i < length; i++) {
-    if (i < indx) {
-      styles.push('done')
-    } else if (i === indx) {
-      styles.push('doing')
-    } else {
-      styles.push('todo')
-    }
-  }
-  return styles
-}
-
-const getButtonsState = (indx, length) => {
-  if (indx > 0 && indx < length - 1) {
-    return {
-      showPreviousBtn: true,
-      showNextBtn: true
-    }
-  } else if (indx === 0) {
-    return {
-      showPreviousBtn: false,
-      showNextBtn: true
-    }
-  } else {
-    return {
-      showPreviousBtn: true,
-      showNextBtn: false
-    }
-  }
-}
-
+  `
+  
 export default function MultiStep (props) {
   const { activeComponentClassName, inactiveComponentClassName, stepCustomStyle } = props
   const showNav =
@@ -111,6 +71,46 @@ export default function MultiStep (props) {
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, props.steps.length))
   const [compState, setComp] = useState(activeStep)
   const [buttonsState, setButtons] = useState(getButtonsState(activeStep, props.steps.length))
+  
+  const getStep = (defaultIndex, newIndex, length) => {
+    if(newIndex <=  length){
+        return newIndex;
+    }
+    return defaultIndex;
+  }
+
+  const getTopNavStyles = (indx, length) => {
+    const styles = []
+    for (let i = 0; i < length; i++) {
+      if (i < indx) {
+        styles.push('done')
+      } else if (i === indx) {
+        styles.push('doing')
+      } else {
+        styles.push('todo')
+      }
+    }
+    return styles
+  }
+
+  const getButtonsState = (indx, length) => {
+    if (indx > 0 && indx < length - 1) {
+      return {
+        showPreviousBtn: true,
+        showNextBtn: true
+      }
+    } else if (indx === 0) {
+      return {
+        showPreviousBtn: false,
+        showNextBtn: true
+      }
+    } else {
+      return {
+        showPreviousBtn: true,
+        showNextBtn: false
+      }
+    }
+  }
   
   useEffect(() => {
     console.log('Index changed: ', props.activeStep);
@@ -125,6 +125,15 @@ export default function MultiStep (props) {
 
   const next = () => setStepState(compState + 1)
   const previous = () => setStepState(compState > 0 ? compState - 1 : compState)
+
+  // https://lifeincoding.com/how-to-disable-button-with-css/
+  const handleChildEvent = evt => { 
+    if( evt.currentTarget.value === 'prev') {
+      buttonsState.showPreviousBtn = ! buttonsState.showPreviousBtn
+    } else if( evt.currentTarget.value === 'next') {
+      buttonsState.showNextBtn = ! buttonsState.showNextBtn
+    }
+  }
 
   const handleOnClick = evt => {
     if (
