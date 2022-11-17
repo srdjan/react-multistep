@@ -4,3 +4,4 @@ package-lock.json
 dist
 example/bundle.js
 example/index.js
+storybook/
