@@ -26,9 +26,6 @@ const Li = styled('li')`
   &:after {
     content: "\\00a0\\00a0";
   }   
-  span {
-    padding: 0 1.5rem;
-  }
   &:before {
     position: relative;
     float: left;
