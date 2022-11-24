@@ -8,7 +8,6 @@ const Ol = styled('ol')`
   margin: 0;
   padding-bottom: 2.2rem;
   list-style-type: none;
-  width: fit-content;
 `
 const Li = styled('li')`
   display: inline-block;
@@ -67,6 +66,7 @@ const RowDirection = css`
 `
 
 const ColumnDirection = css`
+  margin-top: 4.8rem;
   flex-direction: column;
 `
 
