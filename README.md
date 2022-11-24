@@ -25,14 +25,15 @@ const MultiStep = import from 'react-multistep'
 
 Component accepts following, optional Props: 
 
-| PROPERTY       | DESCRIPTION                                                  | TYPE     | DEFAULT    | isRequired|
-|----------------|--------------------------------------------------------------|----------|------------|-----------|
-| showNavigation | controls if the navigation buttons are visable               |boolean   |true        |false      |
-| showTitles     | control either the steps title are visible or not            |boolean   |true        |false      |
-| prevStyle      | control style of the navigation buttons                      |style obj |null        |null       |
-| nextStyle      | control style of the navigation buttons                      |style obj |null        |false      |
-| stepCustomStyle| control style of step                                        |style obj |null        |false      |
-| steps          | it takes an array of objects representing individual steps   |Step      |null        |true       |
+| PROPERTY       | DESCRIPTION                                                  | TYPE       | DEFAULT    | isRequired|
+|----------------|--------------------------------------------------------------|------------|------------|-----------|
+| showNavigation | controls if the navigation buttons are visable               |boolean     |true        |false      |
+| showTitles     | control either the steps title are visible or not            |boolean     |true        |false      |
+| prevStyle      | control style of the navigation buttons                      |style obj   |null        |null       |
+| nextStyle      | control style of the navigation buttons                      |style obj   |null        |false      |
+| stepCustomStyle| control style of step                                        |style obj   |null        |false      |
+| direction      | control the steps nav direction                              |column||row |row         |false      |
+| steps          | it takes an array of objects representing individual steps   |Step        |null        |true       |
 
 Step:
 
