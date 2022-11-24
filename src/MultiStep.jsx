@@ -4,9 +4,11 @@ import { css, styled, setup } from 'goober'
 setup(React.createElement)
 
 const Ol = styled('ol')`
+  display: flex;
   margin: 0;
   padding-bottom: 2.2rem;
   list-style-type: none;
+  width: fit-content;
 `
 const Li = styled('li')`
   display: inline-block;
@@ -60,6 +62,14 @@ const Done = css`
   }
 `
 
+const RowDirection = css`
+  flex-direction: row;
+`
+
+const ColumnDirection = css`
+  flex-direction: column;
+`
+
 const getStep = (defaultIndex, newIndex, length) => {
     if(newIndex <=  length){
         return newIndex;
@@ -107,6 +117,8 @@ export default function MultiStep (props) {
   const showTitles =
     typeof props.showTitles === 'undefined' ? true : props.showTitles
 
+  const directionType = typeof props.direction === 'undefined' ? 'row' : props.direction
+
   const [activeStep] = useState(getStep(0, props.activeStep,  props.steps.length));
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, props.steps.length))
   const [compState, setComp] = useState(activeStep)
@@ -143,7 +155,7 @@ export default function MultiStep (props) {
         return (
           <Li
             className={Todo}
-            style={stepCustomStyle}
+            style={{...stepCustomStyle,  transform: directionType == 'column' ? 'rotate(90deg)' : 'rotate(0deg)'}}
             onClick={handleOnClick}
             key={i}
             value={i}
@@ -155,7 +167,7 @@ export default function MultiStep (props) {
         return (
           <Li
             className={Doing}
-            style={stepCustomStyle}
+            style={{...stepCustomStyle,  transform: directionType == 'column' ? 'rotate(90deg)' : 'rotate(0deg)'}}
             onClick={handleOnClick}
             key={i}
             value={i}
@@ -167,7 +179,7 @@ export default function MultiStep (props) {
         return (
           <Li
             className={Done}
-            style={stepCustomStyle}
+            style={{...stepCustomStyle,  transform: directionType == 'column' ? 'rotate(90deg)' : 'rotate(0deg)'}}
             onClick={handleOnClick}
             key={i}
             value={i}
@@ -198,8 +210,8 @@ export default function MultiStep (props) {
     )
 
   return (
-    <div>
-      <Ol>{renderSteps()}</Ol>
+    <div style={{display: 'flex', flexDirection: directionType === 'column' ? 'row' : 'column'}}>
+      <Ol className={directionType === 'column' ? ColumnDirection : RowDirection}>{renderSteps()}</Ol>
       {inactiveComponentClassName
         ? props.steps.map((step, index) => {
             const className = index === compState ? activeComponentClassName : inactiveComponentClassName
