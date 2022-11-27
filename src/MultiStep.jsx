@@ -3,10 +3,6 @@ import { css, styled, setup } from 'goober'
 
 setup(React.createElement)
 
-const Span = styled('span')`
-  width-min: 3rem;
-`
-
 const Ol = styled('ol')`
   margin: 0;
   padding-bottom: 2.2rem;
@@ -17,6 +13,7 @@ const Li = styled('li')`
   text-align: center;
   line-height: 4.8rem;
   padding: 0 0.7rem;
+  min-width: 5.5rem;
   cursor: pointer;
 
   color: silver;
@@ -169,7 +166,7 @@ export default function MultiStep(props) {
             key={i}
             value={i}
           >
-            {showTitles && <Span>{step.title ?? i + 1}</Span>}
+            {showTitles && <span>{step.title ?? i + 1}</span>}
           </Li>
         )
       }

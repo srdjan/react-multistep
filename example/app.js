@@ -30,7 +30,6 @@ const App = () => (
     <MultiStep
       steps={steps}
       activeStep={2}
-      showTitles
       showButtonNav
     />
     <div className='app-footer'>
