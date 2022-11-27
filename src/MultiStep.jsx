@@ -111,7 +111,6 @@ export default function MultiStep (props) {
   const [buttonsState, setButtons] = useState(getButtonsState(activeStep, props.steps.length))
   
   useEffect(() => {
-    console.log('Index changed: ', props.activeStep);
     setStepState(props.activeStep);
   }, [props.activeStep]);
   
