@@ -137,44 +137,23 @@ export default function MultiStep (props) {
 
   const renderSteps = () =>
     props.steps.map((s, i) => {
-      if (stylesState[i] === 'todo') {
-        return (
-          <Li
-            className={Todo}
-            style={stepCustomStyle}
-            onClick={handleOnClick}
-            key={i}
-            value={i}
-          >
-            { showTitles && <span>{s.title ??  i + 1}</span> }
-          </Li>
-        )
-      } else if (stylesState[i] === 'doing') {
-        return (
-          <Li
-            className={Doing}
-            style={stepCustomStyle}
-            onClick={handleOnClick}
-            key={i}
-            value={i}
-          >
-            { showTitles && <span>{s.title ??  i + 1}</span> }
-          </Li>
-        )
-      } else {
-        return (
-          <Li
-            className={Done}
-            style={stepCustomStyle}
-            onClick={handleOnClick}
-            key={i}
-            value={i}
-          >
-            { showTitles && <span>{s.title ??  i + 1}</span> }
-          </Li>
-        )
-      }
-    })
+      return (
+        <Li
+          className={
+                      stylesState[i] === 'todo' ? Todo :
+                      stylesState[i] === 'doing' ? Doing :
+                      Done
+                    }
+          style={stepCustomStyle}
+          onClick={handleOnClick}
+          key={i}
+          value={i}
+        >
+          { showTitles && <span>{s.title ??  i + 1}</span> }
+        </Li>
+      )
+    }
+  )
 
   const renderNav = (show) =>
     show && (
