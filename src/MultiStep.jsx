@@ -61,11 +61,11 @@ const Done = css`
 `
 
 const getStep = (defaultIndex, newIndex, length) => {
-    if(newIndex <=  length){
-        return newIndex;
-    }
-    return defaultIndex;
+  if (newIndex <= length) {
+    return newIndex;
   }
+  return defaultIndex;
+}
 
 const getTopNavStyles = (indx, length) => {
   const styles = []
@@ -100,20 +100,20 @@ const getButtonsState = (indx, length) => {
   }
 }
 
-export default function MultiStep (props) {
+export default function MultiStep(props) {
   const stepCustomStyle = typeof props.stepCustomStyle === 'undefined' ? {} : props.stepCustomStyle
   const showNav = typeof props.showNavigation === 'undefined' ? true : props.showNavigation
   const showTitles = typeof props.showTitles === 'undefined' ? true : props.showTitles
 
-  const [activeStep] = useState(getStep(0, props.activeStep,  props.steps.length));
+  const [activeStep] = useState(getStep(0, props.activeStep, props.steps.length));
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, props.steps.length))
   const [compState, setComp] = useState(activeStep)
   const [buttonsState, setButtons] = useState(getButtonsState(activeStep, props.steps.length))
-  
+
   useEffect(() => {
     setStepState(props.activeStep);
   }, [props.activeStep]);
-  
+
   const setStepState = (indx) => {
     setStyles(getTopNavStyles(indx, props.steps.length))
     setComp(indx < props.steps.length ? indx : compState)
@@ -134,27 +134,27 @@ export default function MultiStep (props) {
     }
   }
 
-  const renderSteps = () =>
-    props.steps.map((s, i) => {
+  const renderBreadcrumbs = () =>
+    props.steps.map((step, i) => {
       return (
         <Li
           className={
-                      stylesState[i] === 'todo' ? Todo :
-                      stylesState[i] === 'doing' ? Doing :
-                      Done
-                    }
+            stylesState[i] === 'todo' ? Todo :
+              stylesState[i] === 'doing' ? Doing :
+                Done
+          }
           style={stepCustomStyle}
           onClick={handleOnClick}
           key={i}
           value={i}
         >
-          { showTitles && <span>{s.title ??  i + 1}</span> }
+          {showTitles && <span>{step.title ?? i + 1}</span>}
         </Li>
       )
     }
-  )
+    )
 
-  const renderNav = (show) =>
+  const renderPrevNextNav = (show) =>
     show && (
       <div>
         <button
@@ -175,9 +175,9 @@ export default function MultiStep (props) {
 
   return (
     <div>
-      <Ol>{renderSteps()}</Ol>
+      <Ol>{renderBreadcrumbs()}</Ol>
       {props.steps[compState].component}
-      <div>{renderNav(showNav)}</div>
+      <div>{renderPrevNextNav(showNav)}</div>
     </div>
   )
 }
