@@ -15,9 +15,16 @@ const Li = styled('li')`
   line-height: 4.8rem;
   padding: 0 0.7rem;
   cursor: pointer;
+  min-width: 6rem;
 
   color: silver;
   border-bottom: 2px solid silver;
+
+ span{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+ }
 
   &:hover,
   &:before {
@@ -108,11 +115,9 @@ const getButtonsState = (indx, length) => {
 }
 
 export default function MultiStep (props) {
-  const { activeComponentClassName, inactiveComponentClassName, stepCustomStyle } = props
-  const showNav =
-    typeof props.showNavigation === 'undefined' ? true : props.showNavigation
-  const showTitles =
-    typeof props.showTitles === 'undefined' ? true : props.showTitles
+  const stepCustomStyle = typeof props.stepCustomStyle === 'undefined' ? {} : props.stepCustomStyle
+  const showNav = typeof props.showNavigation === 'undefined' ? true : props.showNavigation
+  const showTitles = typeof props.showTitles === 'undefined' ? true : props.showTitles
 
   const directionType = typeof props.direction === 'undefined' ? 'row' : props.direction
 
@@ -122,7 +127,6 @@ export default function MultiStep (props) {
   const [buttonsState, setButtons] = useState(getButtonsState(activeStep, props.steps.length))
   
   useEffect(() => {
-    console.log('Index changed: ', props.activeStep);
     setStepState(props.activeStep);
   }, [props.activeStep]);
   
@@ -148,44 +152,23 @@ export default function MultiStep (props) {
 
   const renderSteps = () =>
     props.steps.map((s, i) => {
-      if (stylesState[i] === 'todo') {
-        return (
-          <Li
-            className={Todo}
-            style={{...stepCustomStyle,  transform: directionType == 'column' ? 'rotate(90deg)' : 'rotate(0deg)'}}
-            onClick={handleOnClick}
-            key={i}
-            value={i}
-          >
-            { showTitles && <span>{s.title ??  i + 1}</span> }
-          </Li>
-        )
-      } else if (stylesState[i] === 'doing') {
-        return (
-          <Li
-            className={Doing}
-            style={{...stepCustomStyle,  transform: directionType == 'column' ? 'rotate(90deg)' : 'rotate(0deg)'}}
-            onClick={handleOnClick}
-            key={i}
-            value={i}
-          >
-            { showTitles && <span>{s.title ??  i + 1}</span> }
-          </Li>
-        )
-      } else {
-        return (
-          <Li
-            className={Done}
-            style={{...stepCustomStyle,  transform: directionType == 'column' ? 'rotate(90deg)' : 'rotate(0deg)'}}
-            onClick={handleOnClick}
-            key={i}
-            value={i}
-          >
-            { showTitles && <span>{s.title ??  i + 1}</span> }
-          </Li>
-        )
-      }
-    })
+      return (
+        <Li
+          className={
+                      stylesState[i] === 'todo' ? Todo :
+                      stylesState[i] === 'doing' ? Doing :
+                      Done
+                    }
+          style={{...stepCustomStyle,  transform: directionType == 'column' ? 'rotate(90deg)' : 'rotate(0deg)'}}
+          onClick={handleOnClick}
+          key={i}
+          value={i}
+        >
+          { showTitles && <span>{s.title ??  i + 1}</span> }
+        </Li>
+      )
+    }
+  )
 
   const renderNav = (show) =>
     show && (
@@ -209,12 +192,7 @@ export default function MultiStep (props) {
   return (
     <div style={{display: 'flex', flexDirection: directionType === 'column' ? 'row' : 'column'}}>
       <Ol className={directionType === 'column' ? ColumnDirection : RowDirection}>{renderSteps()}</Ol>
-      {inactiveComponentClassName
-        ? props.steps.map((step, index) => {
-            const className = index === compState ? activeComponentClassName : inactiveComponentClassName
-            return (<div className={className} key={index}>{step.component}</div>)
-          })
-        : <div>{props.steps[compState].component}</div>}
+      {props.steps[compState].component}
       <div>{renderNav(showNav)}</div>
     </div>
   )
