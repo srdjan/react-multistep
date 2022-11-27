@@ -7,19 +7,32 @@ import StepThree from './stepThree'
 import StepFour from './stepFour'
 
 const steps = [
-  { component: <StepOne /> },
-  { component: <StepTwo /> },
-  { component: <StepThree /> },
-  { component: <StepFour /> }
+  { title: 'Step 1', component: <StepOne /> },
+  { title: 'Step 2', component: <StepTwo /> },
+  { title: 'Step 3', component: <StepThree /> },
+  { title: 'Step 4', component: <StepFour /> }
 ]
 
 // custom styles
-const prevStyle = { background: '#33c3f0' }
-const nextStyle = { background: '#33c3f0' }
+const navButtonStyle = { background: 'gray', color: 'white' }
+// const customStyle = {
+//   color: 'red',
+//   background: 'orange',
+//   border: 'black'
+// }
+// customStyle = { customStyle }
+// navButtonStyle = { navButtonStyle }
+// showButtonNav
+// showTitles
 
 const App = () => (
   <div className='container'>
-    <MultiStep activeStep={0} steps={steps} prevStyle={prevStyle} nextStyle={nextStyle} />
+    <MultiStep
+      steps={steps}
+      activeStep={2}
+      showTitles
+      showButtonNav
+    />
     <div className='app-footer'>
       <h6>Press 'Enter' or click on progress bar for next step.</h6>
       Code is on{' '}

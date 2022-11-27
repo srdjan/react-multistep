@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, cloneElement } from 'react'
 import { css, styled, setup } from 'goober'
 
 setup(React.createElement)
+
+const Span = styled('span')`
+  width-min: 3rem;
+`
 
 const Ol = styled('ol')`
   margin: 0;
@@ -59,12 +63,23 @@ const Done = css`
     background-color: #33C3F0;
   }
 `
+const NavButton = css`
+  background: #33C3F0;
+  border-color: silver;
+  color: white; 
+`
+const NavButtonDisabled = css`
+  background: silver;
+  border-color: gray;
+  color: gray; 
+`
 
-const getStep = (defaultIndex, newIndex, length) => {
-  if (newIndex <= length) {
-    return newIndex;
+const getStep = (newIndex, length) => {
+  if (newIndex <= length && newIndex > 0) {
+    console.log(`newIndex: ${newIndex-1}`)
+    return newIndex-1;
   }
-  return defaultIndex;
+  return 0;
 }
 
 const getTopNavStyles = (indx, length) => {
@@ -100,19 +115,27 @@ const getButtonsState = (indx, length) => {
   }
 }
 
-export default function MultiStep(props) {
-  const stepCustomStyle = typeof props.stepCustomStyle === 'undefined' ? {} : props.stepCustomStyle
-  const showNav = typeof props.showNavigation === 'undefined' ? true : props.showNavigation
-  const showTitles = typeof props.showTitles === 'undefined' ? true : props.showTitles
+// cloneElement(
+//   step,
+//   { nextButton: "next!" }
+// )
 
-  const [activeStep] = useState(getStep(0, props.activeStep, props.steps.length));
+export default function MultiStep(props) {
+  // todo: stepCustomStyle needs to be incorporated in goober styles
+  // const stepCustomStyle = typeof props.stepCustomStyle === 'undefined' ? {} : props.stepCustomStyle
+  const showTitles = typeof props.showTitles === 'undefined' ? false : true
+  const showButtonNav = typeof props.showButtonNav === 'undefined' ? false : true
+  // todo: navButtonStyle needs to be incorporated in goober styles
+  // const navButtonStyle = typeof props.navButtonStyle === 'undefined' ? { background: 'white', color: 'red' } : props.prevStyle
+  
+  const [activeStep, _] = useState(getStep(props.activeStep, props.steps.length));
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, props.steps.length))
   const [compState, setComp] = useState(activeStep)
   const [buttonsState, setButtons] = useState(getButtonsState(activeStep, props.steps.length))
 
   useEffect(() => {
-    setStepState(props.activeStep);
-  }, [props.activeStep]);
+    setStepState(activeStep)
+  }, [activeStep])
 
   const setStepState = (indx) => {
     setStyles(getTopNavStyles(indx, props.steps.length))
@@ -136,36 +159,34 @@ export default function MultiStep(props) {
 
   const renderBreadcrumbs = () =>
     props.steps.map((step, i) => {
-      return (
-        <Li
-          className={
-            stylesState[i] === 'todo' ? Todo :
-              stylesState[i] === 'doing' ? Doing :
-                Done
-          }
-          style={stepCustomStyle}
-          onClick={handleOnClick}
-          key={i}
-          value={i}
-        >
-          {showTitles && <span>{step.title ?? i + 1}</span>}
-        </Li>
-      )
-    }
+        return (
+          <Li
+            className={
+              stylesState[i] === 'todo' ? Todo :
+                stylesState[i] === 'doing' ? Doing : Done
+            }
+            onClick={handleOnClick}
+            key={i}
+            value={i}
+          >
+            {showTitles && <Span>{step.title ?? i + 1}</Span>}
+          </Li>
+        )
+      }
     )
 
-  const renderPrevNextNav = (show) =>
+  const renderNavButtons = (show) =>
     show && (
       <div>
         <button
-          style={buttonsState.showPreviousBtn ? props.prevStyle : { display: 'none' }}
+          className={buttonsState.showPreviousBtn ? NavButton : NavButtonDisabled}
           onClick={previous}
         >
           Prev
         </button>
 
         <button
-          style={buttonsState.showNextBtn ? props.nextStyle : { display: 'none' }}
+          className={buttonsState.showNextBtn ? NavButton : NavButtonDisabled}
           onClick={next}
         >
           Next
@@ -177,7 +198,7 @@ export default function MultiStep(props) {
     <div>
       <Ol>{renderBreadcrumbs()}</Ol>
       {props.steps[compState].component}
-      <div>{renderPrevNextNav(showNav)}</div>
+      <div>{renderNavButtons(showButtonNav)}</div>
     </div>
   )
 }
