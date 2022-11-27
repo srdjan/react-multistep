@@ -101,11 +101,9 @@ const getButtonsState = (indx, length) => {
 }
 
 export default function MultiStep (props) {
-  const { activeComponentClassName, inactiveComponentClassName, stepCustomStyle } = props
-  const showNav =
-    typeof props.showNavigation === 'undefined' ? true : props.showNavigation
-  const showTitles =
-    typeof props.showTitles === 'undefined' ? true : props.showTitles
+  const stepCustomStyle = typeof props.stepCustomStyle === 'undefined' ? {} : props.stepCustomStyle
+  const showNav = typeof props.showNavigation === 'undefined' ? true : props.showNavigation
+  const showTitles = typeof props.showTitles === 'undefined' ? true : props.showTitles
 
   const [activeStep] = useState(getStep(0, props.activeStep,  props.steps.length));
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, props.steps.length))
@@ -200,12 +198,7 @@ export default function MultiStep (props) {
   return (
     <div>
       <Ol>{renderSteps()}</Ol>
-      {inactiveComponentClassName
-        ? props.steps.map((step, index) => {
-            const className = index === compState ? activeComponentClassName : inactiveComponentClassName
-            return (<div className={className} key={index}>{step.component}</div>)
-          })
-        : <div>{props.steps[compState].component}</div>}
+      {props.steps[compState].component}
       <div>{renderNav(showNav)}</div>
     </div>
   )
