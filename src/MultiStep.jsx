@@ -1,7 +1,7 @@
 import React, { useState, useEffect, cloneElement } from 'react'
 import { css, styled, setup } from 'goober'
-
-setup(React.createElement)
+import { prefix } from 'goober/prefixer'
+setup(React.createElement, prefix)
 
 const Ol = styled('ol')`
   margin: 0;
@@ -96,17 +96,17 @@ const getTopNavStyles = (indx, length) => {
 const getButtonsState = (indx, length) => {
   if (indx > 0 && indx < length - 1) {
     return {
-      showPreviousBtn: true,
-      showNextBtn: true
+      showPrevious: true,
+      showNext: true
     }
   } else if (indx === 0) {
     return {
-      showPreviousBtn: false,
-      showNextBtn: true
+      showPrevious: false,
+      showNext: true
     }
   } else {
     return {
-      showPreviousBtn: true,
+      showPrevious: true,
       showNextBtn: false
     }
   }
@@ -122,8 +122,7 @@ export default function MultiStep(props) {
   // const stepCustomStyle = typeof props.stepCustomStyle === 'undefined' ? {} : props.stepCustomStyle
   const showTitles = typeof props.showTitles === 'undefined' ? false : true
   const showButtonNav = typeof props.showButtonNav === 'undefined' ? false : true
-  // todo: navButtonStyle needs to be incorporated in goober styles
-  // const navButtonStyle = typeof props.navButtonStyle === 'undefined' ? { background: 'white', color: 'red' } : props.prevStyle
+  const navButtonStyle = typeof props.navButtonStyle === 'undefined' ? { background: 'white', color: 'red' } : props.prevStyle
   
   const [activeStep, _] = useState(getStep(props.activeStep, props.steps.length));
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, props.steps.length))
@@ -176,14 +175,14 @@ export default function MultiStep(props) {
     show && (
       <div>
         <button
-          className={buttonsState.showPreviousBtn ? NavButton : NavButtonDisabled}
+          className={buttonsState.showPrevious ? NavButton : NavButtonDisabled}
           onClick={previous}
         >
           Prev
         </button>
 
         <button
-          className={buttonsState.showNextBtn ? NavButton : NavButtonDisabled}
+          className={buttonsState.showNext ? NavButton : NavButtonDisabled}
           onClick={next}
         >
           Next
