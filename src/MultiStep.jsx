@@ -1,11 +1,11 @@
-import React, { useState, useEffect, cloneElement } from 'react'
+import React, { useState, useEffect, cloneElement, Component } from 'react'
 import { css, styled, setup } from 'goober'
 import { prefix } from 'goober/prefixer'
 setup(React.createElement, prefix)
 
-const Container = (props) => css`
-  border-radius: ${props.size}px;
-  background: ${props.background};
+const Multistep = styled('div')`
+  border-radius: ${(props) => props.size}px;
+  background: ${(props) => props.background};
 `
 const Breadcrumbs = styled('ol')`
   margin: 0;
@@ -14,7 +14,6 @@ const Breadcrumbs = styled('ol')`
 `
 const NavButtons = styled('ol')`
   margin: 0;
-  padding-bottom: 2.2rem;
   list-style-type: none;
 `
 const Li = styled('li')`
@@ -201,10 +200,10 @@ export default function MultiStep(props) {
     )
 
   return (
-    <div className={Container({ background: 'purple' })}>
+    <Multistep background={'orange'}>
       <Breadcrumbs>{renderBreadcrumbs()}</Breadcrumbs>
       {props.steps[compState].component}
       <NavButtons>{renderNavButtons(showButtonNav)}</NavButtons>
-    </div>
+    </Multistep>
   )
 }
