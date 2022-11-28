@@ -3,7 +3,16 @@ import { css, styled, setup } from 'goober'
 import { prefix } from 'goober/prefixer'
 setup(React.createElement, prefix)
 
-const Ol = styled('ol')`
+const Container = (props) => css`
+  border-radius: ${props.size}px;
+  background: ${props.background};
+`
+const Breadcrumbs = styled('ol')`
+  margin: 0;
+  padding-bottom: 2.2rem;
+  list-style-type: none;
+`
+const NavButtons = styled('ol')`
   margin: 0;
   padding-bottom: 2.2rem;
   list-style-type: none;
@@ -69,11 +78,11 @@ const NavButtonDisabled = css`
   background: silver;
   border-color: gray;
   color: gray; 
+  cursor: no-drop;
 `
 
 const getStep = (newIndex, length) => {
   if (newIndex <= length && newIndex > 0) {
-    console.log(`newIndex: ${newIndex-1}`)
     return newIndex-1;
   }
   return 0;
@@ -131,6 +140,7 @@ export default function MultiStep(props) {
 
   useEffect(() => {
     setStepState(activeStep)
+    //setNextNavButton(props.nextDisabled)
   }, [activeStep])
 
   const setStepState = (indx) => {
@@ -173,7 +183,7 @@ export default function MultiStep(props) {
 
   const renderNavButtons = (show) =>
     show && (
-      <div>
+      <>
         <button
           className={buttonsState.showPrevious ? NavButton : NavButtonDisabled}
           onClick={previous}
@@ -187,14 +197,14 @@ export default function MultiStep(props) {
         >
           Next
         </button>
-      </div>
+      </>
     )
 
   return (
-    <div>
-      <Ol>{renderBreadcrumbs()}</Ol>
+    <div className={Container({ background: 'purple' })}>
+      <Breadcrumbs>{renderBreadcrumbs()}</Breadcrumbs>
       {props.steps[compState].component}
-      <div>{renderNavButtons(showButtonNav)}</div>
+      <NavButtons>{renderNavButtons(showButtonNav)}</NavButtons>
     </div>
   )
 }
