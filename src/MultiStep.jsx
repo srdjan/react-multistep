@@ -68,17 +68,18 @@ const Done = css`
     background-color: #33C3F0;
   }
 `
-const NavButton = styled('button')`
-  background: #33C3F0;
-  border-color: silver;
-  color: white; 
 
-  &:disabled {
-    background: silver;
-    border-color: gray;
-    color: gray; 
+const NavButton = styled('button')((props) => ({
+  borderRadius: props.borderRadius ? props.borderRadius + 'px' : '10px',
+  background: props.background ? props.background : '#33C3F0',
+  color: props.color ? props.color : 'white', 
+  '&:disabled': {
+    background: props.disabledBackground ? props.disabledBackground : 'blue',
+    color: props.disabledColor ? props.disabledColor : 'gray',
+    cursor: props.disabledCursor ? props.disabledCursor : 'no-drop'
   }
-`
+}))
+
 
 const getStep = (newIndex, length) => {
   if (newIndex <= length && newIndex > 0) {
@@ -131,6 +132,21 @@ export default function MultiStep(props) {
   const showTitles = typeof props.showTitles === 'undefined' ? false : true
   const showNav = typeof props.showButtonNav === 'undefined' ? false : true
   
+  const extStyles =
+    {
+      nav: {
+        background: '#3eC3Fe',
+        border: 'red',
+        color: 'red',
+        disabled: {
+          background: 'white',
+          border: 'silver',
+          color: 'gray',
+          cursor: 'no-drop'
+        }
+      } 
+    }
+                              
   const [activeStep, _] = useState(getStep(props.activeStep, props.steps.length));
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, props.steps.length))
   const [compState, setComp] = useState(activeStep)
@@ -184,7 +200,7 @@ export default function MultiStep(props) {
       <>
         {
           buttonsState.showPrevious ?
-            <NavButton onClick={previous}>Prev</NavButton> :
+            <NavButton color={extStyles.nav.color} onClick={previous}>Prev</NavButton> :
             <NavButton disabled>Prev</NavButton>
         }
         {

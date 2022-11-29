@@ -13,16 +13,13 @@ const steps = [
   { title: 'Step 4', component: <StepFour /> }
 ]
 
-// custom styles
-const navButtonStyle = { background: 'gray', color: 'white' }
-// const customStyle = {
-//   color: 'red',
-//   background: 'orange',
-//   border: 'black'
-// }
-// customStyle = { customStyle }
-// navButtonStyle = { navButtonStyle }
-// showButtonNav
+// todo: custom styles
+const customStyles = {
+  background: 'gray',
+  color: 'white'
+}
+
+// todo: signal 'next' valid from Steps
 
 const App = () => (
   <div className='container'>
