@@ -4,6 +4,7 @@ import { css, styled, setup } from 'goober'
 setup(React.createElement)
 
 const Ol = styled('ol')`
+  display: flex;
   margin: 0;
   padding-bottom: 2.2rem;
   list-style-type: none;
@@ -14,9 +15,16 @@ const Li = styled('li')`
   line-height: 4.8rem;
   padding: 0 0.7rem;
   cursor: pointer;
+  min-width: 6rem;
 
   color: silver;
   border-bottom: 2px solid silver;
+
+ span{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+ }
 
   &:hover,
   &:before {
@@ -25,9 +33,6 @@ const Li = styled('li')`
   &:after {
     content: "\\00a0\\00a0";
   }   
-  span {
-    padding: 0 1.5rem;
-  }
   &:before {
     position: relative;
     float: left;
@@ -58,6 +63,15 @@ const Done = css`
     color: white;
     background-color: #33C3F0;
   }
+`
+
+const RowDirection = css`
+  flex-direction: row;
+`
+
+const ColumnDirection = css`
+  margin-top: 4.8rem;
+  flex-direction: column;
 `
 
 const getStep = (defaultIndex, newIndex, length) => {
@@ -105,6 +119,8 @@ export default function MultiStep (props) {
   const showNav = typeof props.showNavigation === 'undefined' ? true : props.showNavigation
   const showTitles = typeof props.showTitles === 'undefined' ? true : props.showTitles
 
+  const directionType = typeof props.direction === 'undefined' ? 'row' : props.direction
+
   const [activeStep] = useState(getStep(0, props.activeStep,  props.steps.length));
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, props.steps.length))
   const [compState, setComp] = useState(activeStep)
@@ -143,7 +159,7 @@ export default function MultiStep (props) {
                       stylesState[i] === 'doing' ? Doing :
                       Done
                     }
-          style={stepCustomStyle}
+          style={{...stepCustomStyle,  transform: directionType == 'column' ? 'rotate(90deg)' : 'rotate(0deg)'}}
           onClick={handleOnClick}
           key={i}
           value={i}
@@ -174,8 +190,8 @@ export default function MultiStep (props) {
     )
 
   return (
-    <div>
-      <Ol>{renderSteps()}</Ol>
+    <div style={{display: 'flex', flexDirection: directionType === 'column' ? 'row' : 'column'}}>
+      <Ol className={directionType === 'column' ? ColumnDirection : RowDirection}>{renderSteps()}</Ol>
       {props.steps[compState].component}
       <div>{renderNav(showNav)}</div>
     </div>
