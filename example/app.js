@@ -23,11 +23,11 @@ const navButtonStyle = { background: 'gray', color: 'white' }
 // customStyle = { customStyle }
 // navButtonStyle = { navButtonStyle }
 // showButtonNav
-// showTitles
 
 const App = () => (
   <div className='container'>
     <MultiStep
+      showTitles
       steps={steps}
       activeStep={2}
       showButtonNav

@@ -12,7 +12,7 @@ const Breadcrumbs = styled('ol')`
   padding-bottom: 2.2rem;
   list-style-type: none;
 `
-const NavButtons = styled('ol')`
+const Navigation = styled('ol')`
   margin: 0;
   list-style-type: none;
 `
@@ -68,16 +68,16 @@ const Done = css`
     background-color: #33C3F0;
   }
 `
-const NavButton = css`
+const NavButton = styled('button')`
   background: #33C3F0;
   border-color: silver;
   color: white; 
-`
-const NavButtonDisabled = css`
-  background: silver;
-  border-color: gray;
-  color: gray; 
-  cursor: no-drop;
+
+  &:disabled {
+    background: silver;
+    border-color: gray;
+    color: gray; 
+  }
 `
 
 const getStep = (newIndex, length) => {
@@ -122,15 +122,14 @@ const getButtonsState = (indx, length) => {
 
 // cloneElement(
 //   step,
-//   { nextButton: "next!" }
+//   { nextButton: enabled? }
 // )
 
 export default function MultiStep(props) {
   // todo: stepCustomStyle needs to be incorporated in goober styles
   // const stepCustomStyle = typeof props.stepCustomStyle === 'undefined' ? {} : props.stepCustomStyle
   const showTitles = typeof props.showTitles === 'undefined' ? false : true
-  const showButtonNav = typeof props.showButtonNav === 'undefined' ? false : true
-  const navButtonStyle = typeof props.navButtonStyle === 'undefined' ? { background: 'white', color: 'red' } : props.prevStyle
+  const showNav = typeof props.showButtonNav === 'undefined' ? false : true
   
   const [activeStep, _] = useState(getStep(props.activeStep, props.steps.length));
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, props.steps.length))
@@ -139,7 +138,7 @@ export default function MultiStep(props) {
 
   useEffect(() => {
     setStepState(activeStep)
-    //setNextNavButton(props.nextDisabled)
+    //setNextButton(props.disabled)
   }, [activeStep])
 
   const setStepState = (indx) => {
@@ -180,22 +179,19 @@ export default function MultiStep(props) {
       }
     )
 
-  const renderNavButtons = (show) =>
-    show && (
+  const renderNavButtons = () =>
+    showNav && (
       <>
-        <button
-          className={buttonsState.showPrevious ? NavButton : NavButtonDisabled}
-          onClick={previous}
-        >
-          Prev
-        </button>
-
-        <button
-          className={buttonsState.showNext ? NavButton : NavButtonDisabled}
-          onClick={next}
-        >
-          Next
-        </button>
+        {
+          buttonsState.showPrevious ?
+            <NavButton onClick={previous}>Prev</NavButton> :
+            <NavButton disabled>Prev</NavButton>
+        }
+        {
+          buttonsState.showNext ?
+            <NavButton onClick={next}>Next</NavButton> :
+            <NavButton disabled>next</NavButton>
+        }
       </>
     )
 
@@ -203,7 +199,7 @@ export default function MultiStep(props) {
     <Multistep background={'orange'}>
       <Breadcrumbs>{renderBreadcrumbs()}</Breadcrumbs>
       {props.steps[compState].component}
-      <NavButtons>{renderNavButtons(showButtonNav)}</NavButtons>
+      <Navigation>{renderNavButtons()}</Navigation>
     </Multistep>
   )
 }
