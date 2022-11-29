@@ -4,7 +4,6 @@ import { prefix } from 'goober/prefixer'
 setup(React.createElement, prefix)
 
 const Multistep = styled('div')`
-  border-radius: ${(props) => props.size}px;
   background: ${(props) => props.background};
 `
 const Breadcrumbs = styled('ol')`
@@ -69,18 +68,6 @@ const Done = css`
   }
 `
 
-const NavButton = styled('button')((props) => ({
-  borderRadius: props.borderRadius ? props.borderRadius + 'px' : '10px',
-  background: props.background ? props.background : '#33C3F0',
-  color: props.color ? props.color : 'white', 
-  '&:disabled': {
-    background: props.disabledBackground ? props.disabledBackground : 'blue',
-    color: props.disabledColor ? props.disabledColor : 'gray',
-    cursor: props.disabledCursor ? props.disabledCursor : 'no-drop'
-  }
-}))
-
-
 const getStep = (newIndex, length) => {
   if (newIndex <= length && newIndex > 0) {
     return newIndex-1;
@@ -127,27 +114,32 @@ const getButtonsState = (indx, length) => {
 // )
 
 export default function MultiStep(props) {
-  // todo: stepCustomStyle needs to be incorporated in goober styles
-  // const stepCustomStyle = typeof props.stepCustomStyle === 'undefined' ? {} : props.stepCustomStyle
-  const showTitles = typeof props.showTitles === 'undefined' ? false : true
-  const showNav = typeof props.showButtonNav === 'undefined' ? false : true
+  const styles = typeof props.styles === 'undefined' ? 'undefined' : props.styles
+  const showTitles = styles?.titles?.display
+  const showBreadcrumbs = styles?.breadcrumbs?.display
   
-  const extStyles =
-    {
-      nav: {
-        background: '#3eC3Fe',
-        border: 'red',
-        color: 'red',
-        disabled: {
-          background: 'white',
-          border: 'silver',
-          color: 'gray',
-          cursor: 'no-drop'
-        }
-      } 
+  const NavButton = styled('button')((props) => ({
+    display: styles?.navButtons?.display ?
+      styles.navButtons.display : 'inline',
+    color: styles?.navButtons?.color ?
+            styles.navButtons.color : 'white',
+    background: styles?.navButtons?.background ?
+            styles.navButtons.background : '#33C3F0',
+    ['border-radius']: styles?.navButtons?.['border-radius'] ?
+            styles.navButtons['border-radius'] : '20px',
+    ['&:disabled']: {
+        color: styles?.navButtons?.disabled?.color ?
+            styles.navButtons.disabled.color : 'white',
+        background: styles?.navButtons?.disabled?.background ?
+            styles.navButtons.disabled.background : '#33C3F0',
+        border: styles?.navButtons?.disabled?.border ?
+        styles.navButtons.disabled.border : 'gray',
+        cursor: styles?.navButtons?.disabled?.cursor ?
+          styles.navButtons.disabled.cursor : 'not-allowed!important'
     }
+  }))
                               
-  const [activeStep, _] = useState(getStep(props.activeStep, props.steps.length));
+  const [activeStep, _] = useState(getStep(props.config?.activeStep, props.steps.length));
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, props.steps.length))
   const [compState, setComp] = useState(activeStep)
   const [buttonsState, setButtons] = useState(getButtonsState(activeStep, props.steps.length))
@@ -178,11 +170,12 @@ export default function MultiStep(props) {
   }
 
   const renderBreadcrumbs = () =>
+    showBreadcrumbs && 
     props.steps.map((step, i) => {
         return (
           <Li
             className={
-              stylesState[i] === 'todo' ? Todo :
+                stylesState[i] === 'todo' ? Todo :
                 stylesState[i] === 'doing' ? Doing : Done
             }
             onClick={handleOnClick}
@@ -196,20 +189,18 @@ export default function MultiStep(props) {
     )
 
   const renderNavButtons = () =>
-    showNav && (
-      <>
-        {
-          buttonsState.showPrevious ?
-            <NavButton color={extStyles.nav.color} onClick={previous}>Prev</NavButton> :
-            <NavButton disabled>Prev</NavButton>
-        }
-        {
-          buttonsState.showNext ?
-            <NavButton onClick={next}>Next</NavButton> :
-            <NavButton disabled>next</NavButton>
-        }
-      </>
-    )
+    <>
+      {
+        buttonsState.showPrevious ?
+          <NavButton onClick={previous}>Prev</NavButton> :
+          <NavButton disabled>Prev</NavButton>
+      }
+      {
+        buttonsState.showNext ?
+          <NavButton onClick={next}>Next</NavButton> :
+          <NavButton disabled>next</NavButton>
+      }
+    </>
 
   return (
     <Multistep background={'orange'}>
