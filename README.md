@@ -8,7 +8,7 @@
 #
 or, install it from [NPM](https://nodei.co/npm/react-multistep/)
 
-#### React 17.0.2, ESBUILD
+#### React 18.x.x, ESBUILD
 
 #### [List of forks](https://github.com/srdjan/react-multistep/network/members/)
 # 
