@@ -41,6 +41,7 @@ const Li = styled('li')`
 `
 const Navigation = styled('ol')`
   margin: 0;
+  padding-left: 2rem;
   list-style-type: none;
 `
 
@@ -117,10 +118,17 @@ export default function MultiStep(props) {
   const showBreadcrumbs = styles?.breadcrumbs?.display
   
   const Multistep = styled('div')((props) => ({
+    width: 'fit-content',
     background: styles?.main?.background ?
       styles?.main?.background : 'white'  
   }))
-  
+
+  const Step = styled('div')((props) => ({
+    ['align-content']: 'center',
+    background: styles?.step?.background ?
+      styles?.main?.background : 'white'  
+  }))
+
   const NavButton = styled('button')((props) => ({
     display: styles?.navButtons?.display ?
       styles.navButtons.display : 'inline',
@@ -208,7 +216,7 @@ export default function MultiStep(props) {
   return (
     <Multistep>
       <Breadcrumbs>{renderBreadcrumbs()}</Breadcrumbs>
-      {props.steps[compState].component}
+      <Step>{props.steps[compState].component}</Step>
       <Navigation>{renderNavButtons()}</Navigation>
     </Multistep>
   )
