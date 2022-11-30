@@ -3,9 +3,6 @@ import { css, styled, setup } from 'goober'
 import { prefix } from 'goober/prefixer'
 setup(React.createElement, prefix)
 
-const Multistep = styled('div')`
-  background: ${(props) => props.background};
-`
 const Breadcrumbs = styled('ol')`
   margin: 0;
   padding-bottom: 2.2rem;
@@ -118,6 +115,11 @@ export default function MultiStep(props) {
   const showTitles = styles?.titles?.display
   const showBreadcrumbs = styles?.breadcrumbs?.display
   
+  const Multistep = styled('div')((props) => ({
+    background: styles?.main?.background ?
+      styles?.main?.background : 'white'  
+  }))
+  
   const NavButton = styled('button')((props) => ({
     display: styles?.navButtons?.display ?
       styles.navButtons.display : 'inline',
@@ -203,7 +205,7 @@ export default function MultiStep(props) {
     </>
 
   return (
-    <Multistep background={'orange'}>
+    <Multistep>
       <Breadcrumbs>{renderBreadcrumbs()}</Breadcrumbs>
       {props.steps[compState].component}
       <Navigation>{renderNavButtons()}</Navigation>

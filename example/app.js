@@ -6,21 +6,6 @@ import StepTwo from './stepTwo'
 import StepThree from './stepThree'
 import StepFour from './stepFour'
 
-const customStyles =
-{
-  nav: {
-    background: 'black',
-    border: 'red',
-    color: 'orange',
-    disabled: {
-      background: 'white',
-      border: 'silver',
-      color: 'gray',
-      cursor: 'no-drop'
-    }
-  }
-}
-
 const props = {
   config: {
     activeStep: 2
@@ -33,6 +18,9 @@ const props = {
     breadcrumbs: {
       display: 'none',
       color: 'white'
+    },
+    main: {
+      background: 'white'
     },
     navButtons: {
       display: 'inline',
@@ -54,7 +42,6 @@ const props = {
     { title: 'Step 4', component: <StepFour /> }
   ]
 }
-
 
 // todo: signal 'next' valid/not-valid state from Steps
 
