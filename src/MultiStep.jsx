@@ -8,10 +8,6 @@ const Breadcrumbs = styled('ol')`
   padding-bottom: 2.2rem;
   list-style-type: none;
 `
-const Navigation = styled('ol')`
-  margin: 0;
-  list-style-type: none;
-`
 const Li = styled('li')`
   display: inline-block;
   text-align: center;
@@ -43,6 +39,11 @@ const Li = styled('li')`
     bottom: -3.99rem;
   }
 `
+const Navigation = styled('ol')`
+  margin: 0;
+  list-style-type: none;
+`
+
 const Todo = css`
   &:before {
     content: "\u039F";
