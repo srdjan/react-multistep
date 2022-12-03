@@ -1,10 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import MultiStep from './index'
 import StepOne from './stepOne'
 import StepTwo from './stepTwo'
 import StepThree from './stepThree'
 import StepFour from './stepFour'
+
+import MultiStep from '../dist/index'
 
 const settings = {
   activeStep: 2
@@ -21,9 +22,6 @@ const styles = {
   },
   main: {
     background: 'silver'
-  },
-  step: {
-    background: 'yellow'
   },
   navButtons: {
     display: 'inline',

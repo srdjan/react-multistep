@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "debug": "esbuild app.js --bundle --format=cjs --outfile=bundle.js --loader:.js=jsx --sourcemap --preserve-symlinks",
-    "build:comp": "esbuild ../src/index.js \"--define:process.env.NODE_ENV='production'\" --external:react --bundle --format=cjs --loader:.js=jsx --outdir=../dist && cp -f ../dist/index.js ./index.js",
+    "build:comp": "esbuild ../src/index.js \"--define:process.env.NODE_ENV='production'\" --external:react --bundle --format=cjs --loader:.js=jsx --outdir=../dist",
     "build:app": "esbuild app.js --bundle --format=cjs --outfile=bundle.js --loader:.js=jsx",
     "start": "npm run build:comp | npm run build:app | npx serve"
   },
