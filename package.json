@@ -29,7 +29,7 @@
     "goober": "2.1.11"
   },
   "devDependencies": {
-    "esbuild": "0.15.14"
+    "esbuild": "0.15.16"
   },
   "peerDependencies": {
     "react": "18.2.0"

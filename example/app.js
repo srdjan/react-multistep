@@ -5,7 +5,7 @@ import StepTwo from './stepTwo'
 import StepThree from './stepThree'
 import StepFour from './stepFour'
 
-import MultiStep from '../dist/index'
+import MultiStep from './multistep'
 
 const settings = {
   activeStep: 2
