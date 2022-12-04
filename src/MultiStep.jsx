@@ -113,7 +113,7 @@ const getButtonsState = (indx, length) => {
 // )
 
 export default function MultiStep(props) {
-  const styles = typeof props.styles === 'undefined' ? 'undefined' : props.styles
+  const styles = typeof props.styles === 'undefined' ? {breadcrumbs: {display: 'none'}}  : props.styles
   const showTitles = styles?.titles?.display
   const showBreadcrumbs = styles?.breadcrumbs?.display
   
