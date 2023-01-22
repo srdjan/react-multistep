@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 export default () => {
-  const [checked, setChecked] = useState('')
+  const [checked, setChecked] = useState(false)
 
   return (
     <div>
@@ -20,9 +20,8 @@ export default () => {
           <label>
             <input
               type='checkbox'
-              //   defaultChecked={this.state.checked}
               checked={checked}
-              onChange={e => setChecked(e.target.value)}
+              onChange={e => setChecked(e.target.checked)}
               autoFocus
             />
             <span> Accept </span>{' '}
