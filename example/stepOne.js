@@ -1,14 +1,19 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 export default (props) => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const [checked, setChecked] = useState(false)
 
+  //- using checkbox state to signal valid/not valid form state here:
+  const [isValidState, setIsValidState] = useState(false)
   const signalParent = (isValid) => {
-    setChecked(isValid)
+    setIsValidState(isValid)
     props.signalIfValid(isValid)
   }
+  useEffect(() => {
+    console.log(`From Child, child in valid state?: ${isValidState}`)
+    signalParent(isValidState)
+  }, [])
 
   return (
     <div>
@@ -40,11 +45,11 @@ export default (props) => {
       <label>
         <input
           type='checkbox'
-          checked={checked}
+          checked={isValidState}
           onChange={e => signalParent(e.target.checked)}
           autoFocus
         />
-        <span> Accept </span>{' '}
+        <span> Valid State? </span>{' '}
       </label>
     </div>
   )

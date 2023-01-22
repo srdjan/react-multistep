@@ -149,12 +149,12 @@ export default function MultiStep (props) {
   const [buttonsState, setButtons] = useState(getButtonsState(activeStep, numberOfSteps, true))
   
   useEffect(() => {
-    console.log(`Parent, childIsValid?: ${childIsValid}`)
+    console.log(`From parent, child in valid state?: ${childIsValid}`)
 
-    setStepState(props.activeStep, childIsValid)
+    setStepState(props.activeStep)
   }, [props.activeStep, childIsValid])
   
-  const setStepState = (indx, childIsValid) => {
+  const setStepState = (indx) => {
     setStyles(getTopNavStyles(indx, numberOfSteps))
     setComp(indx < numberOfSteps ? indx : compState)
     setButtons(getButtonsState(indx, numberOfSteps, childIsValid))
@@ -164,6 +164,11 @@ export default function MultiStep (props) {
   const previous = () => setStepState(compState > 0 ? compState - 1 : compState)
 
   const handleOnClick = evt => {
+    if (! childIsValid) {
+      console.log('Child not in valid state - no transition')
+      return
+    }
+
     if (
       evt.currentTarget.value === numberOfSteps - 1 &&
       compState === numberOfSteps - 1
