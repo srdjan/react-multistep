@@ -21,7 +21,7 @@ const App = () => (
   <div className='container'>
     <MultiStep activeStep={0} steps={steps} prevStyle={prevStyle} nextStyle={nextStyle} />
     <div className='app-footer'>
-      <h6>Press 'Enter' or click on progress bar for next step.</h6>
+      <h6>Use navigation buttons or click on progress bar for next step.</h6>
       Code is on{' '}
       <a href='https://github.com/Srdjan/react-multistep' target='_blank' rel='noreferrer'>
         github

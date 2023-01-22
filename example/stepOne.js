@@ -1,8 +1,14 @@
 import React, { useState } from 'react'
 
-export default () => {
+export default (props) => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const [checked, setChecked] = useState(false)
+
+  const signalParent = (isValid) => {
+    setChecked(isValid)
+    props.signalIfValid(isValid)
+  }
 
   return (
     <div>
@@ -31,6 +37,15 @@ export default () => {
           />
         </div>
       </div>
+      <label>
+        <input
+          type='checkbox'
+          checked={checked}
+          onChange={e => signalParent(e.target.checked)}
+          autoFocus
+        />
+        <span> Accept </span>{' '}
+      </label>
     </div>
   )
 }

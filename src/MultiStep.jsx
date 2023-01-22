@@ -95,16 +95,16 @@ const getTopNavStyles = (indx, length) => {
   return styles
 }
 
-const getButtonsState = (indx, length) => {
+const getButtonsState = (indx, length, isInValidState) => {
   if (indx > 0 && indx < length - 1) {
     return {
-      showPreviousBtn: true,
+      showPreviousBtn: isInValidState ? true : false,
       showNextBtn: true
     }
   } else if (indx === 0) {
     return {
       showPreviousBtn: false,
-      showNextBtn: true
+      showNextBtn: isInValidState ? true : false
     }
   } else {
     return {
@@ -120,17 +120,17 @@ export default function MultiStep (props) {
   const numberOfSteps = steps.length
   const [childIsValid, setChildIsValid] = useState(true)
 
-  const setValidState = (isValid) => {
+  const setIsChildInValidState = (isValid) => {
     setChildIsValid(isValid)
-    console.log(`Parent, from child ${isValid}, parent: ${childIsValid}`)
   }
   
   if(children) { 
     let childrenWithProps = React.Children.map(children, (child, index) => {
       return React.cloneElement(child, {
-        signalIfValid: setValidState
+        signalIfValid: setIsChildInValidState
       }) 
     })
+    // for backward compatibility we preserve 'steps' with components array:
     steps = []
     childrenWithProps.forEach(childComponent => {
       steps.push({component: childComponent})
@@ -138,7 +138,7 @@ export default function MultiStep (props) {
   }
 
   const stepCustomStyle = typeof props.stepCustomStyle === 'undefined' ? {} : props.stepCustomStyle
-  const showNav = typeof props.showNavigation === 'undefined' ? true : props.showNavigation
+  const showNavButtons = typeof props.showNavigation === 'undefined' ? true : props.showNavigation
   const showTitles = typeof props.showTitles === 'undefined' ? true : props.showTitles
 
   const directionType = typeof props.direction === 'undefined' ? 'row' : props.direction
@@ -146,16 +146,18 @@ export default function MultiStep (props) {
   const [activeStep] = useState(getStep(0, props.activeStep,  numberOfSteps));
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, numberOfSteps))
   const [compState, setComp] = useState(activeStep)
-  const [buttonsState, setButtons] = useState(getButtonsState(activeStep, numberOfSteps))
+  const [buttonsState, setButtons] = useState(getButtonsState(activeStep, numberOfSteps, true))
   
   useEffect(() => {
-    setStepState(props.activeStep);
-  }, [props.activeStep]);
+    console.log(`Parent, childIsValid?: ${childIsValid}`)
+
+    setStepState(props.activeStep, childIsValid)
+  }, [props.activeStep, childIsValid])
   
-  const setStepState = (indx) => {
+  const setStepState = (indx, childIsValid) => {
     setStyles(getTopNavStyles(indx, numberOfSteps))
     setComp(indx < numberOfSteps ? indx : compState)
-    setButtons(getButtonsState(indx, numberOfSteps))
+    setButtons(getButtonsState(indx, numberOfSteps, childIsValid))
   }
 
   const next = () => setStepState(compState + 1)
@@ -172,7 +174,7 @@ export default function MultiStep (props) {
     }
   }
 
-  const renderSteps = () =>
+  const renderTopNav = () =>
     steps.map((s, i) => {
       return (
         <Li
@@ -192,7 +194,7 @@ export default function MultiStep (props) {
     }
   )
 
-  const renderNav = (show) =>
+  const renderButtonsNav = (show) =>
     show && (
       <div>
         <button
@@ -213,9 +215,9 @@ export default function MultiStep (props) {
 
   return (
     <div style={{display: 'flex', flexDirection: directionType === 'column' ? 'row' : 'column'}}>
-      <Ol className={directionType === 'column' ? ColumnDirection : RowDirection}>{renderSteps()}</Ol>
+      <Ol className={directionType === 'column' ? ColumnDirection : RowDirection}>{renderTopNav()}</Ol>
       {steps[compState].component}
-      <div>{renderNav(showNav)}</div>
+      <div>{renderButtonsNav(showNavButtons)}</div>
     </div>
   )
 }
