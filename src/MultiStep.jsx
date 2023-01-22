@@ -98,17 +98,17 @@ const getTopNavStyles = (indx, length) => {
 const getButtonsState = (indx, length, isValidState) => {
   if (indx > 0 && indx < length - 1) {
     return {
-      showPreviousBtn: true,
+      showPrevBtn: true,
       showNextBtn: isValidState ? true : false
     }
   } else if (indx === 0) {
     return {
-      showPreviousBtn: false,
+      showPrevBtn: false,
       showNextBtn: isValidState ? true : false
     }
   } else {
     return {
-      showPreviousBtn: true,
+      showPrevBtn: true,
       showNextBtn: false
     }
   }
@@ -149,10 +149,7 @@ export default function MultiStep (props) {
   
   useEffect(() => {
     setButtons(getButtonsState(activeStep, numberOfSteps, childIsValid))
-
     console.log(`From parent, child in valid state?: ${childIsValid}, button state: ${buttonsState.showNextBtn}`)
-
-    // setStepState(props.activeStep, childIsValid)
   }, [activeStep, childIsValid])
   
   const setStepState = (indx, isValidState) => {
