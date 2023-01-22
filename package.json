@@ -35,7 +35,7 @@
     "react": "18.2.0"
   },
   "scripts": {
-    "build": "esbuild ./src/index.js \"--define:process.env.NODE_ENV='production'\" --external:react --bundle --format=cjs --loader:.js=jsx --outdir=dist && cp -f ./dist/index.js ./example/index.js",
+    "build": "esbuild ./src/index.js \"--define:process.env.NODE_ENV='production'\" --external:react --bundle --format=cjs --loader:.js=jsx --outdir=dist && cp -f ./dist/index.js ./example/dist/index.js",
     "publish": "npm publish ./"
   }
 }

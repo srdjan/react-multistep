@@ -95,16 +95,16 @@ const getTopNavStyles = (indx, length) => {
   return styles
 }
 
-const getButtonsState = (indx, length, isInValidState) => {
+const getButtonsState = (indx, length, isValidState) => {
   if (indx > 0 && indx < length - 1) {
     return {
-      showPreviousBtn: isInValidState ? true : false,
-      showNextBtn: true
+      showPreviousBtn: true,
+      showNextBtn: isValidState ? true : false
     }
   } else if (indx === 0) {
     return {
       showPreviousBtn: false,
-      showNextBtn: isInValidState ? true : false
+      showNextBtn: isValidState ? true : false
     }
   } else {
     return {
@@ -143,25 +143,26 @@ export default function MultiStep (props) {
 
   const directionType = typeof props.direction === 'undefined' ? 'row' : props.direction
 
-  const [activeStep] = useState(getStep(0, props.activeStep,  numberOfSteps));
+  const [activeStep, setActiveStep] = useState(getStep(0, props.activeStep,  numberOfSteps))
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, numberOfSteps))
-  const [compState, setComp] = useState(activeStep)
-  const [buttonsState, setButtons] = useState(getButtonsState(activeStep, numberOfSteps, true))
+  const [buttonsState, setButtons] = useState(getButtonsState(activeStep, numberOfSteps, childIsValid))
   
   useEffect(() => {
-    console.log(`From parent, child in valid state?: ${childIsValid}`)
+    setButtons(getButtonsState(activeStep, numberOfSteps, childIsValid))
 
-    setStepState(props.activeStep)
-  }, [props.activeStep, childIsValid])
+    console.log(`From parent, child in valid state?: ${childIsValid}, button state: ${buttonsState.showNextBtn}`)
+
+    // setStepState(props.activeStep, childIsValid)
+  }, [activeStep, childIsValid])
   
-  const setStepState = (indx) => {
+  const setStepState = (indx, isValidState) => {
     setStyles(getTopNavStyles(indx, numberOfSteps))
-    setComp(indx < numberOfSteps ? indx : compState)
-    setButtons(getButtonsState(indx, numberOfSteps, childIsValid))
+    setActiveStep(indx < numberOfSteps ? indx : activeStep)
+    setButtons(getButtonsState(indx, numberOfSteps, isValidState))
   }
 
-  const next = () => setStepState(compState + 1)
-  const previous = () => setStepState(compState > 0 ? compState - 1 : compState)
+  const next = () => setStepState(activeStep + 1)
+  const previous = () => setStepState(activeStep > 0 ? activeStep - 1 : activeStep)
 
   const handleOnClick = evt => {
     if (! childIsValid) {
@@ -171,7 +172,7 @@ export default function MultiStep (props) {
 
     if (
       evt.currentTarget.value === numberOfSteps - 1 &&
-      compState === numberOfSteps - 1
+      activeStep === numberOfSteps - 1
     ) {
       setStepState(numberOfSteps)
     } else {
@@ -202,18 +203,13 @@ export default function MultiStep (props) {
   const renderButtonsNav = (show) =>
     show && (
       <div>
-        <button
-          style={buttonsState.showPreviousBtn ? props.prevStyle : { display: 'none' }}
-          onClick={previous}
-        >
-          Prev
+        <button onClick={previous}
+                disabled={buttonsState.showPrevBtn ? false : true}>
+                Prev
         </button>
-
-        <button
-          style={buttonsState.showNextBtn ? props.nextStyle : { display: 'none' }}
-          onClick={next}
-        >
-          Next
+        <button onClick={next}
+                disabled={buttonsState.showNextBtn ? false : true}>
+                Next
         </button>
       </div>
     )
@@ -221,7 +217,7 @@ export default function MultiStep (props) {
   return (
     <div style={{display: 'flex', flexDirection: directionType === 'column' ? 'row' : 'column'}}>
       <Ol className={directionType === 'column' ? ColumnDirection : RowDirection}>{renderTopNav()}</Ol>
-      {steps[compState].component}
+      {steps[activeStep].component}
       <div>{renderButtonsNav(showNavButtons)}</div>
     </div>
   )
