@@ -43,7 +43,7 @@ Step:
 | title     | the step title, present above the steps nav |text        |step index  |false      |
 
 
-
+There are two ways to configure Multistep, with external array (old way):
 ```javascript
 const steps = [
               {title: 'StepOne', component: <StepOne/>},
@@ -53,6 +53,32 @@ const steps = [
             ];
 <Multistep activeStep={1} showNavigation={true} steps={steps}/>
 ```
+
+or, inline (to suport) child form disabling moving to the next step if form validation is not passing:
+
+```javascript
+<Multistep activeStep={1} showNavigation={true} steps={steps}>
+    <StepOne/>
+    <StepTwo/>
+    <StepThree/>
+    <StepFour/>
+</Multistep>
+```
+
+To enable this feature, if the step (child form component) needs to deactivate 'Next' button based on validation, following changes in the child form are required:
+
+<img width="500" alt="child-step-component-changes" src="https://user-images.githubusercontent.com/61190/213932636-5f2d8dfe-0f98-457e-9f0f-6a890174a834.png">
+
+As you can see,  Multistep adds dynamically a new prop function to child components;
+
+  `signalIfValid(valid: boolean)`
+
+By default it is 'false; and child components invokes it based on current validation. In the example, I use a simple checkbox to simulate valid/not valid.
+
+Also, for this feature, steps (child form components) are added inline:
+
+<img width="500" alt="child-steps-added-to-multistep-inline" src="https://user-images.githubusercontent.com/61190/213932915-5c9301df-3d6c-4772-b697-be58e80a8851.png">
+
 
 #### If you want to explore try the included example...
 
