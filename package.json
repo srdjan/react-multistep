@@ -4,10 +4,12 @@
   "description": "Responsive ReactJS multistep form component",
   "main": "dist/index.js",
   "files": [
+    "build/*.d.ts",
     "dist/index.js",
     "src/index.js",
     "src/MultiStep.jsx"
   ],
+  "types": "build/index.d.ts",
   "license": "MIT",
   "author": {
     "name": "@djidja8",
@@ -29,13 +31,15 @@
     "goober": "2.1.11"
   },
   "devDependencies": {
-    "esbuild": "0.17.4"
+    "esbuild": "0.17.4",
+    "typescript": "^4.9.5"
   },
   "peerDependencies": {
     "react": "18.2.0"
   },
   "scripts": {
-    "build": "esbuild ./src/index.js \"--define:process.env.NODE_ENV='production'\" --external:react --bundle --format=cjs --loader:.js=jsx --outdir=dist && cp -f ./dist/index.js ./example/dist/index.js",
+    "build:tsc": "tsc && cp -f ./dist/index.js ./example/index.js",
+    "build:bundle": "esbuild ./build/index.js \"--define:process.env.NODE_ENV='production'\" --external:react --bundle --format=cjs --loader:.js=jsx --outdir=dist && cp -f ./dist/index.js ./example/index.js",
     "publish": "npm publish ./"
   }
 }

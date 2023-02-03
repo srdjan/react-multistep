@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { css, styled, setup } from 'goober'
+import { MultiStepPropsBase, Step} from './interfaces'
 
 setup(React.createElement)
 
@@ -82,7 +83,7 @@ const getStep = (defaultIndex, newIndex, length) => {
   }
 
 const getTopNavStyles = (indx, length) => {
-  const styles = []
+  const styles: string[] = []
   for (let i = 0; i < length; i++) {
     if (i < indx) {
       styles.push('done')
@@ -114,16 +115,19 @@ const getButtonsState = (indx, length, isValidState) => {
   }
 }
 
-export default function MultiStep (props) {
-  const {children } = props
-  let steps = props.steps ? props.steps : children  // for backward compatibility
-  const numberOfSteps = steps.length
-  const [childIsValid, setChildIsValid] = useState(true)
+export default function MultiStep (props: MultiStepPropsBase) {
+  const {children} = props
+  let stepsArray = props.steps
+  let steps: Step[] = []
+  if(!stepsArray && !children){
+    throw TypeError("missing children or steps in props");
+  }
 
+  const [childIsValid, setChildIsValid] = useState(true)
   const setIsChildInValidState = (isValid) => {
     setChildIsValid(isValid)
   }
-  
+
   if(children) { 
     let childrenWithProps = React.Children.map(children, (child, index) => {
       return React.cloneElement(child, {
@@ -131,11 +135,13 @@ export default function MultiStep (props) {
       }) 
     })
     // for backward compatibility we preserve 'steps' with components array:
-    steps = []
-    childrenWithProps.forEach(childComponent => {
-      steps.push({component: childComponent})
-    })
+    steps = childrenWithProps.map(childComponent => ({component: childComponent}))
+  }else{
+    steps = stepsArray
   }
+
+  const numberOfSteps = steps.length
+
 
   const stepCustomStyle = typeof props.stepCustomStyle === 'undefined' ? {} : props.stepCustomStyle
   const showNavButtons = typeof props.showNavigation === 'undefined' ? true : props.showNavigation
@@ -152,7 +158,7 @@ export default function MultiStep (props) {
     console.log(`From parent, child in valid state?: ${childIsValid}, button state: ${buttonsState.showNextBtn}`)
   }, [activeStep, childIsValid])
   
-  const setStepState = (indx, isValidState) => {
+  const setStepState = (indx: number, isValidState?: boolean) => {
     setStyles(getTopNavStyles(indx, numberOfSteps))
     setActiveStep(indx < numberOfSteps ? indx : activeStep)
     setButtons(getButtonsState(indx, numberOfSteps, isValidState))
