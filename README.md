@@ -1,16 +1,20 @@
 # Responsive React multistep form component
 
-
-<img width="60%" height="auto" src="https://raw.githubusercontent.com/srdjan/react-multistep/master/assets/react-multistep.png"/>
-
-
-#### Take it for a spin [here](http://srdjan.github.io/react-multistep/)
+#### Take it for a [spin](http://srdjan.github.io/react-multistep/)
 #
-or, install it from [NPM](https://nodei.co/npm/react-multistep/)
 
-#### React 18.x.x, ESBUILD
 
-#### [List of forks](https://github.com/srdjan/react-multistep/network/members/)
+<kbd>
+<img border=width="60%" height="auto" src="https://raw.githubusercontent.com/srdjan/react-multistep/master/assets/react-multistep.png"/>
+</kbd>
+
+#### Install from [NPM](https://nodei.co/npm/react-multistep/)
+
+#### List of contributors (:raised_hands:):
+<a href = "https://github.com/react-multistep/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=srdjan/react-multistep" alt="AWESOME CONTRIBUTORS" />
+</a>
+
 # 
 #### Instructions
 
