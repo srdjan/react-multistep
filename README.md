@@ -47,7 +47,9 @@ Step:
 | title     | the step title, present above the steps nav |text        |step index  |false      |
 
 
-There are two ways to configure Multistep, with external array (old way):
+There are two ways to configure Multistep, with external array: 
+
+(* **this is the old way, which is `depricated` and will be removed in the next major version**)
 ```javascript
 const steps = [
               {title: 'StepOne', component: <StepOne/>},
