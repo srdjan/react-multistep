@@ -60,7 +60,7 @@ const steps = [
 <Multistep activeStep={1} showNavigation={true} steps={steps}/>
 ```
 
-or, inline (to suport) child form disabling moving to the next step if form validation is not passing:
+or, inline (to suport disabling moving to the next step if form validation is not passing):
 
 ```javascript
 <Multistep activeStep={1} showNavigation={true}>
