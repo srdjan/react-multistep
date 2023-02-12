@@ -50,6 +50,7 @@ Step:
 There are two ways to configure Multistep, with external array: 
 
 (* **this is the old way, which is `deprecated` and will be removed in the next major version**)
+
 ```javascript
 const steps = [
               {title: 'StepOne', component: <StepOne/>},
@@ -60,14 +61,14 @@ const steps = [
 <Multistep activeStep={1} showNavigation={true} steps={steps}/>
 ```
 
-or, inline (to suport disabling moving to the next step if form validation is not passing):
+or, inline, to support disabling moving to the next step if form validation is not passing:
 
 ```javascript
 <Multistep activeStep={1} showNavigation={true}>
-    <StepOne/>
-    <StepTwo/>
-    <StepThree/>
-    <StepFour/>
+    <StepOne title: 'StepOne'/>
+    <StepTwo title: 'StepTwo'/>
+    <StepThree title: 'StepThree'/>
+    <StepFour title: 'StepFour'/>
 </Multistep>
 ```
 

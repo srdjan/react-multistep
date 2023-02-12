@@ -116,7 +116,8 @@ const getButtonsState = (indx, length, isValidState) => {
 }
 
 export default function MultiStep (props: MultiStepPropsBase) {
-  const {children} = props
+  const { children } = props
+
   let stepsArray = props.steps
   
   if (!stepsArray && !children) {
@@ -135,8 +136,8 @@ export default function MultiStep (props: MultiStepPropsBase) {
     })
     // for backward compatibility we preserve 'steps' with components array:
     steps = childrenWithProps.map(childComponent => (
-      { 
-        title: childComponent.title,
+      {
+        title: childComponent.props.title,
         component: childComponent
       })
     )
