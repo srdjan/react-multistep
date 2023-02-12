@@ -5,7 +5,7 @@
 
 
 <kbd>
-<img border=width="600px" height="400px" src="https://raw.githubusercontent.com/srdjan/react-multistep/master/assets/react-multistep.png"/>
+<img border=width="500px" height="300px" src="https://raw.githubusercontent.com/srdjan/react-multistep/master/assets/react-multistep.png"/>
 </kbd>
 
 #### Install from [NPM](https://nodei.co/npm/react-multistep/)
@@ -16,7 +16,7 @@
 </a>
 
 # 
-#### Instructions
+### Instructions
 
 To use this module in your app run:
 ```sh
@@ -26,30 +26,29 @@ next, import it inside of your app:
 ```sh
 const MultiStep = import from 'react-multistep'
 ```
+and then, in your app (see bellow for two supported usage patterns, `Steps External Array` vs `Inline`:
+```sh
+<MultiStep activeStep={0} steps={steps} prevStyle={prevStyle} nextStyle={nextStyle} />
+```
 
-Component accepts following, optional Props: 
+MultiStep component accepts following props (all optional, except Steps array): 
 
 | PROPERTY       | DESCRIPTION                                                  | TYPE       | DEFAULT    | isRequired|
 |----------------|--------------------------------------------------------------|------------|------------|-----------|
 | showNavigation | controls if the navigation buttons are visable               |boolean     |true        |false      |
 | showTitles     | control either the steps title are visible or not            |boolean     |true        |false      |
-| prevStyle      | control style of the navigation buttons                      |style obj   |null        |null       |
+| prevStyle      | control style of the navigation buttons                      |style obj   |null        |false      |
 | nextStyle      | control style of the navigation buttons                      |style obj   |null        |false      |
 | stepCustomStyle| control style of step                                        |style obj   |null        |false      |
 | direction      | control the steps nav direction                              |column||row |row         |false      |
+| activeStep     | it takes a number representing representing starting step    |number      |1           |false      |
 | steps          | it takes an array of objects representing individual steps   |Step        |null        |true       |
 
-Step:
 
-| PROPERTY  | DESCRIPTION                                 | TYPE       | DEFAULT    | isRequired|
-|-----------|---------------------------------------------|------------|------------|-----------|
-| component | the step representing component             |JSX.Element |null        |true       |
-| title     | the step title, present above the steps nav |text        |step index  |false      |
+#
+### Two supported ways to configure Multistep: 
 
-
-There are two ways to configure Multistep, with external array: 
-
-(* **this is the old way, which is `deprecated` and will be removed in the next major version**)
+####  `Steps`, an externall array of components is the `old way`, currently supported for backwards compatibility and is `deprecated`, it will be removed in the next major version:
 
 ```javascript
 const steps = [
@@ -58,10 +57,22 @@ const steps = [
               {title: 'StepThree', component: <StepThree/>},
               {title: 'StepFour', component: <StepFour/>}
             ];
+...       
+...
+
 <Multistep activeStep={1} showNavigation={true} steps={steps}/>
 ```
+Each Step in array can have following two properties:
 
-or, inline, to support disabling moving to the next step if form validation is not passing:
+| PROPERTY  | DESCRIPTION                                 | TYPE       | DEFAULT    | isRequired|
+|-----------|---------------------------------------------|------------|------------|-----------|
+| component | the step representing component             |JSX.Element |null        |true       |
+| title     | the step title, present above the steps nav |text        |step index  |false      |
+
+
+or, new, preferred way:
+
+#### `Inline`, with the support for controling navigation to the next 'step' based on the current step's form validation:
 
 ```javascript
 <Multistep activeStep={1} showNavigation={true}>
@@ -71,6 +82,10 @@ or, inline, to support disabling moving to the next step if form validation is n
     <StepFour title='StepFour'/>
 </Multistep>
 ```
+(* **`inline` is the preferred way, going forward**)
+
+#
+### Controlling navigation to the next step with form validation
 
 To enable this feature, if the step (child form component) needs to deactivate 'Next' button based on validation, following changes in the child form are required:
 
