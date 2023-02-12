@@ -49,7 +49,7 @@ Step:
 
 There are two ways to configure Multistep, with external array: 
 
-(* **this is the old way, which is `depricated` and will be removed in the next major version**)
+(* **this is the old way, which is `deprecated` and will be removed in the next major version**)
 ```javascript
 const steps = [
               {title: 'StepOne', component: <StepOne/>},

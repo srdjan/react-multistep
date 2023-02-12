@@ -38,8 +38,8 @@
     "react": "18.2.0"
   },
   "scripts": {
-    "build:tsc": "tsc && cp -f ./dist/index.js ./example/index.js",
-    "build:bundle": "esbuild ./build/index.js \"--define:process.env.NODE_ENV='production'\" --external:react --bundle --format=cjs --loader:.js=jsx --outdir=dist && cp -f ./dist/index.js ./example/index.js",
+    "build": "tsc && cp -f ./build/** ./example/node_modules/MultiStep/",
+    "bundle": "esbuild ./build/index.js \"--define:process.env.NODE_ENV='production'\" --external:react --bundle --format=cjs --loader:.js=jsx --outdir=dist",
     "publish": "npm publish ./"
   }
 }

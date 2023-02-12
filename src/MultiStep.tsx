@@ -118,16 +118,15 @@ const getButtonsState = (indx, length, isValidState) => {
 export default function MultiStep (props: MultiStepPropsBase) {
   const {children} = props
   let stepsArray = props.steps
-  let steps: Step[] = []
-  if(!stepsArray && !children){
-    throw TypeError("missing children or steps in props");
+  
+  if (!stepsArray && !children) {
+    throw TypeError("missing children or steps in props")
   }
 
   const [childIsValid, setChildIsValid] = useState(true)
-  const setIsChildInValidState = (isValid) => {
-    setChildIsValid(isValid)
-  }
+  const setIsChildInValidState = (isValid) => setChildIsValid(isValid)
 
+  let steps: Step[] = []
   if(children) { 
     let childrenWithProps = React.Children.map(children, (child, index) => {
       return React.cloneElement(child, {
@@ -135,20 +134,22 @@ export default function MultiStep (props: MultiStepPropsBase) {
       }) 
     })
     // for backward compatibility we preserve 'steps' with components array:
-    steps = childrenWithProps.map(childComponent => ({component: childComponent}))
-  }else{
+    steps = childrenWithProps.map(childComponent => (
+      { 
+        title: childComponent.title,
+        component: childComponent
+      })
+    )
+  }
+  else {
     steps = stepsArray
   }
 
   const numberOfSteps = steps.length
-
-
   const stepCustomStyle = typeof props.stepCustomStyle === 'undefined' ? {} : props.stepCustomStyle
   const showNavButtons = typeof props.showNavigation === 'undefined' ? true : props.showNavigation
   const showTitles = typeof props.showTitles === 'undefined' ? true : props.showTitles
-
   const directionType = typeof props.direction === 'undefined' ? 'row' : props.direction
-
   const [activeStep, setActiveStep] = useState(getStep(0, props.activeStep,  numberOfSteps))
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, numberOfSteps))
   const [buttonsState, setButtons] = useState(getButtonsState(activeStep, numberOfSteps, childIsValid))

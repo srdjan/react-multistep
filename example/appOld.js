@@ -7,10 +7,10 @@ import StepThree from './stepThree'
 import StepFour from './stepFour'
 
 const steps = [
-  { component: <StepOne /> },
-  { component: <StepTwo /> },
-  { component: <StepThree /> },
-  { component: <StepFour /> }
+  { title: 'step one', component: <StepOne /> },
+  { title: 'step two', component: <StepTwo /> },
+  { title: 'step three', component: <StepThree /> },
+  { title: 'step four', component: <StepFour /> }
 ]
 
 // custom styles
