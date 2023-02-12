@@ -5,7 +5,7 @@
 
 
 <kbd>
-<img border=width="60%" height="auto" src="https://raw.githubusercontent.com/srdjan/react-multistep/master/assets/react-multistep.png"/>
+<img border=width="600px" height="400px" src="https://raw.githubusercontent.com/srdjan/react-multistep/master/assets/react-multistep.png"/>
 </kbd>
 
 #### Install from [NPM](https://nodei.co/npm/react-multistep/)
