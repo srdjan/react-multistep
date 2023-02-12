@@ -65,10 +65,10 @@ or, inline, to support disabling moving to the next step if form validation is n
 
 ```javascript
 <Multistep activeStep={1} showNavigation={true}>
-    <StepOne title: 'StepOne'/>
-    <StepTwo title: 'StepTwo'/>
-    <StepThree title: 'StepThree'/>
-    <StepFour title: 'StepFour'/>
+    <StepOne title='StepOne'/>
+    <StepTwo title='StepTwo'/>
+    <StepThree title='StepThree'/>
+    <StepFour title='StepFour'/>
 </Multistep>
 ```
 
