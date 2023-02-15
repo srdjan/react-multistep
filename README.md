@@ -8,7 +8,6 @@
 <img border=width="500px" height="300px" src="https://raw.githubusercontent.com/srdjan/react-multistep/master/assets/react-multistep.png"/>
 </kbd>
 
-#### Install from [NPM](https://nodei.co/npm/react-multistep/)
 
 #### List of contributors (:raised_hands:):
 <a href = "https://github.com/react-multistep/graphs/contributors">
@@ -28,7 +27,10 @@ const MultiStep = import from 'react-multistep'
 ```
 and then, in your app (see bellow for two supported usage patterns, `Steps External Array` vs `Inline`:
 ```sh
-<MultiStep activeStep={0} steps={steps} prevStyle={prevStyle} nextStyle={nextStyle} />
+<MultiStep activeStep={0} prevStyle={prevStyle} nextStyle={nextStyle}>
+    <StepOne title='Step 1'/>
+    <StepTwo title='Step 2'/>
+</MultiStep>
 ```
 
 MultiStep component accepts following props (all optional, except Steps array): 
@@ -41,14 +43,23 @@ MultiStep component accepts following props (all optional, except Steps array):
 | nextStyle      | control style of the navigation buttons                      |style obj   |null        |false      |
 | stepCustomStyle| control style of step                                        |style obj   |null        |false      |
 | direction      | control the steps nav direction                              |column||row |row         |false      |
-| activeStep     | it takes a number representing representing starting step    |number      |1           |false      |
-| steps          | it takes an array of objects representing individual steps   |Step        |null        |true       |
+| activeStep     | it takes a number representing representing starting step    |number      |0           |false      |
+| steps          | it takes an array of objects representing individual steps   |Step        |null        |false       |
 
 
 #
-### Two supported ways to configure Multistep: 
+#### There are two ways to configure Multistep, preferred way is `Inline` chiled components (with the new feature that allows controlling the navigation based on the current step's form validation):
 
-####  `Steps`, an externall array of components is the `old way`, currently supported for backwards compatibility and is `deprecated`, it will be removed in the next major version:
+```javascript
+<Multistep activeStep={1} showNavigation={true}>
+    <StepOne title='StepOne'/>
+    <StepTwo title='StepTwo'/>
+    <StepThree title='StepThree'/>
+    <StepFour title='StepFour'/>
+</Multistep>
+```
+
+####  The old way via `Steps`, an externall array of components, is still supported for backwards compatibility, but is being `deprecated`, and it will be removed in the next major version:
 
 ```javascript
 const steps = [
@@ -62,7 +73,7 @@ const steps = [
 
 <Multistep activeStep={1} showNavigation={true} steps={steps}/>
 ```
-Each Step in array can have following two properties:
+Each element (`Step`) of the array can have following two properties:
 
 | PROPERTY  | DESCRIPTION                                 | TYPE       | DEFAULT    | isRequired|
 |-----------|---------------------------------------------|------------|------------|-----------|
@@ -70,39 +81,21 @@ Each Step in array can have following two properties:
 | title     | the step title, present above the steps nav |text        |step index  |false      |
 
 
-or, new, preferred way:
-
-#### `Inline`, with the support for controling navigation to the next 'step' based on the current step's form validation:
-
-```javascript
-<Multistep activeStep={1} showNavigation={true}>
-    <StepOne title='StepOne'/>
-    <StepTwo title='StepTwo'/>
-    <StepThree title='StepThree'/>
-    <StepFour title='StepFour'/>
-</Multistep>
-```
-(* **`inline` is the preferred way, going forward**)
-
 #
-### Controlling navigation to the next step with form validation
+### NEW! Feature: Controlling navigation to the next step with form validation
 
-To enable this feature, if the step (child form component) needs to deactivate 'Next' button based on validation, following changes in the child form are required:
-
-<img width="500" alt="child-step-component-changes" src="https://user-images.githubusercontent.com/61190/213932636-5f2d8dfe-0f98-457e-9f0f-6a890174a834.png">
-
-As you can see,  Multistep adds dynamically a new prop function to child components;
+To enable this feature, when the child form component needs to control 'Next' navigational button, based on it's local validation, MultiStep dynamically adds a new prop function to child components that should be used to signal validation status. MultiStep will disable /enable `Next` buttong accordingly. This function has follwing signature:
 
   `signalIfValid(valid: boolean)`
 
-By default it is 'false; and child components invokes it based on current validation. In the example, I use a simple checkbox to simulate valid/not valid.
+By default the state is 'false; and child components invokes it based on current outcome of the validation. In the example app, a simple checkbox is used to simulate valid/not valid.
 
-Also, for this feature, steps (child form components) are added inline:
+This can be seen in the `example` app, but here are the relevant parts, required in the form child component:
 
-<img width="500" alt="child-steps-added-to-multistep-inline" src="https://user-images.githubusercontent.com/61190/213932915-5c9301df-3d6c-4772-b697-be58e80a8851.png">
+<img width="600" alt="child-step-component-changes" src="https://user-images.githubusercontent.com/61190/213932636-5f2d8dfe-0f98-457e-9f0f-6a890174a834.png">
 
 
-#### If you want to explore try the included example...
+#### If you would like to explore this further, try the included code example...
 
 1) Start by cloning the repo locally:
 
