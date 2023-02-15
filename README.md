@@ -48,7 +48,7 @@ MultiStep component accepts following props (all optional, except Steps array):
 
 
 #
-#### There are two ways to configure Multistep, preferred way is `Inline` chiled components (with the new feature that allows controlling the navigation based on the current step's form validation):
+#### There are two ways to configure Multistep component, preferred way is with `Inlined` child components. Using this approach, enables the new feature that allows controlling the navigation based on the current step's form validation:
 
 ```javascript
 <Multistep activeStep={1} showNavigation={true}>
@@ -59,7 +59,7 @@ MultiStep component accepts following props (all optional, except Steps array):
 </Multistep>
 ```
 
-####  The old way via `Steps`, an externall array of components, is still supported for backwards compatibility, but is being `deprecated`, and it will be removed in the next major version:
+####  The old way via `Steps`, a prop in the form aof an array of components, is still supported for backwards compatibility. But, it has being `deprecated`, and it will be removed in the future:
 
 ```javascript
 const steps = [
@@ -82,15 +82,15 @@ Each element (`Step`) of the array can have following two properties:
 
 
 #
-### NEW! Feature: Controlling navigation to the next step with form validation
+### 🚀 NEW! Feature: Controlling navigation to the next step with form validation
 
-To enable this feature, when the child form component needs to control 'Next' navigational button, based on it's local validation, MultiStep dynamically adds a new prop function to child components that should be used to signal validation status. MultiStep will disable /enable `Next` buttong accordingly. This function has follwing signature:
+To enable this feature, when the child form component needs to control 'Next' navigational button, based on it's local validation, MultiStep dynamically adds a new prop function to child components that should be used to signal validation status. MultiStep will disable /enable `Next` button accordingly. This function has follwing signature:
 
   `signalIfValid(valid: boolean)`
 
-By default the state is 'false; and child components invokes it based on current outcome of the validation. In the example app, a simple checkbox is used to simulate valid/not valid.
+By default the state is `false` and child components invokes it based on current outcome of the validation. In the example app, a simple checkbox is used to simulate valid/not valid.
 
-This can be seen in the `example` app, but here are the relevant parts, required in the form child component:
+This can be seen in the `example` app, but here are the relevant parts, required inside of the form child component:
 
 <img width="600" alt="child-step-component-changes" src="https://user-images.githubusercontent.com/61190/213932636-5f2d8dfe-0f98-457e-9f0f-6a890174a834.png">
 
