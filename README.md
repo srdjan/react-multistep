@@ -25,7 +25,7 @@ next, import it inside of your app:
 ```sh
 const MultiStep = import from 'react-multistep'
 ```
-and then, in your app (see bellow for two supported usage patterns, `Steps External Array` vs `Inline`:
+and then, in your app (:warning:  see bellow for two supported usage patterns):
 ```sh
 <MultiStep activeStep={0} prevStyle={prevStyle} nextStyle={nextStyle}>
     <StepOne title='Step 1'/>
@@ -42,9 +42,9 @@ MultiStep component accepts following props (all optional, except Steps array):
 | prevStyle      | control style of the navigation buttons                      |style obj   |null        |false      |
 | nextStyle      | control style of the navigation buttons                      |style obj   |null        |false      |
 | stepCustomStyle| control style of step                                        |style obj   |null        |false      |
-| direction      | control the steps nav direction                              |column||row |row         |false      |
+| direction      | control the steps nav direction                              |column      |row         |false      |
 | activeStep     | it takes a number representing representing starting step    |number      |0           |false      |
-| steps          | it takes an array of objects representing individual steps   |Step        |null        |false       |
+| steps          | it takes an array of objects representing individual steps   |Step        |null        |false      |
 
 
 #
@@ -59,7 +59,7 @@ MultiStep component accepts following props (all optional, except Steps array):
 </Multistep>
 ```
 
-####  The old way via `Steps`, a prop in the form aof an array of components, is still supported for backwards compatibility. But, it has being `deprecated`, and it will be removed in the future:
+####  The old way via `Steps`, a prop in the form of an array of components, is still supported for backwards compatibility. But, :warning: it has being `deprecated`, and it will be removed in the future:
 
 ```javascript
 const steps = [
