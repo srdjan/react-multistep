@@ -35,16 +35,23 @@ and then, in your app (:warning:  see bellow for two supported usage patterns):
 
 MultiStep component accepts following props (all optional, except Steps array): 
 
-| PROPERTY       | DESCRIPTION                                                  | TYPE       | DEFAULT    | isRequired|
-|----------------|--------------------------------------------------------------|------------|------------|-----------|
-| showNavigation | controls if the navigation buttons are visable               |boolean     |true        |false      |
-| showTitles     | control either the steps title are visible or not            |boolean     |true        |false      |
-| prevStyle      | control style of the navigation buttons                      |style obj   |null        |false      |
-| nextStyle      | control style of the navigation buttons                      |style obj   |null        |false      |
-| stepCustomStyle| control style of step                                        |style obj   |null        |false      |
-| direction      | control the steps nav direction                              |column      |row         |false      |
-| activeStep     | it takes a number representing representing starting step    |number      |0           |false      |
-| steps          | it takes an array of objects representing individual steps   |Step        |null        |false      |
+| PROPERTY       | DESCRIPTION                                                  | TYPE        | DEFAULT    | isRequired|
+|----------------|--------------------------------------------------------------|-------------|------------|-----------|
+| showNavigation | controls if the navigation buttons are visable               |boolean      |true        |false      |
+| showTitles     | control either the steps title are visible or not            |boolean      |true        |false      |
+| prevButton     | configure the prev navigation button                         |NavButton    |null        |false      |
+| nextButton     | configure the naxt the navigation button                     |NavButton    |null        |false      |
+| stepCustomStyle| control style of step                                        |CSSProperties|null        |false      |
+| direction      | control the steps nav direction                              |column       |row         |false      |
+| activeStep     | it takes a number representing representing starting step    |number       |0           |false      |
+| steps          | it takes an array of objects representing individual steps   |Step         |null        |false      |
+
+
+NavButton
+| PROPERTY       | DESCRIPTION                                                  | TYPE         | DEFAULT    | isRequired|
+|----------------|--------------------------------------------------------------|--------------|------------|-----------|
+| title          | The display sting value of the navigation nutton             |string        |Prev / Next |false      |
+| style          | The css style of the navigation button                       |CSSProperties |null          |false      |
 
 
 #
