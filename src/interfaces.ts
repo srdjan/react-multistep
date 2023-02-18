@@ -11,7 +11,7 @@ export interface NavButton{
 }
 
 export interface MultiStepPropsBase {
-    stepCustomStyle?: object
+    stepCustomStyle?: React.CSSProperties
     showNavigation?: boolean
     showTitles?: boolean
     direction?: "row" | "column"
