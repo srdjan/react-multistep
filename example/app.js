@@ -6,10 +6,6 @@ import StepTwo from './stepTwo'
 import StepThree from './stepThree'
 import StepFour from './stepFour'
 
-// custom styles
-const prevStyle = { background: '#33c3f0' }
-const nextStyle = { background: '#33c3f0' }
-
 const App = () => (
   <div className='container'>
     <MultiStep activeStep={0} prevButton={{style:{ background: 'red' }, title: 'prev step'}} >
