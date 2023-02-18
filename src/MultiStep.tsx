@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { css, styled, setup } from 'goober'
-import { MultiStepPropsBase, Step} from './interfaces'
+import { MultiStepPropsBase, NavButton, Step} from './interfaces'
 
 setup(React.createElement)
 
@@ -205,16 +205,18 @@ export default function MultiStep (props: MultiStepPropsBase) {
     }
   )
 
-  const renderButtonsNav = (show) =>
+  const renderButtonsNav = (show: boolean, prevButton?: NavButton, nextButton?: NavButton) =>
     show && (
       <div>
         <button onClick={previous}
+                style={prevButton?.style}
                 disabled={buttonsState.showPrevBtn ? false : true}>
-                Prev
+              {prevButton && prevButton.title ? <>{prevButton.title}</> : <>Prev</>}
         </button>
         <button onClick={next}
+                style={nextButton?.style}
                 disabled={buttonsState.showNextBtn ? false : true}>
-                Next
+              {nextButton && nextButton.title ? <>{nextButton.title}</> : <>Next</>}
         </button>
       </div>
     )
@@ -223,7 +225,7 @@ export default function MultiStep (props: MultiStepPropsBase) {
     <div style={{display: 'flex', flexDirection: directionType === 'column' ? 'row' : 'column'}}>
       <Ol className={directionType === 'column' ? ColumnDirection : RowDirection}>{renderTopNav()}</Ol>
       {steps[activeStep].component}
-      <div>{renderButtonsNav(showNavButtons)}</div>
+      <div>{renderButtonsNav(showNavButtons, props.prevButton, props.nextButton)}</div>
     </div>
   )
 }
