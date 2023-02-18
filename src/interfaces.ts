@@ -5,6 +5,11 @@ export interface Step {
   component: React.ReactElement
 }
 
+export interface NavButton{
+  title?: string
+  style?: React.CSSProperties
+}
+
 export interface MultiStepPropsBase {
     stepCustomStyle?: object
     showNavigation?: boolean
@@ -13,4 +18,6 @@ export interface MultiStepPropsBase {
     activeStep?: number
     children?: React.ReactElement[]
     steps?: Step[]
+    prevButton?: NavButton
+    nextButton?: NavButton
 }
