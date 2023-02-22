@@ -25,7 +25,7 @@ next, import it inside of your app:
 ```sh
 const MultiStep = import from 'react-multistep'
 ```
-and then, in your app (:warning:  see bellow for two supported usage patterns):
+and then, in your application, you add your custom components/forms this way: 
 ```sh
 <MultiStep activeStep={0} prevStyle={prevStyle} nextStyle={nextStyle}>
     <StepOne title='Step 1'/>
@@ -47,7 +47,9 @@ MultiStep component accepts following props (all optional, except Steps array):
 | steps          | it takes an array of objects representing individual steps   |Step         |null        |false      |
 
 
-NavButton
+#### 🚀 NEW! you can also use style props for the navigation buttons and change how they look:
+
+
 | PROPERTY       | DESCRIPTION                                                  | TYPE         | DEFAULT    | isRequired|
 |----------------|--------------------------------------------------------------|--------------|------------|-----------|
 | title          | The display sting value of the navigation nutton             |string        |Prev / Next |false      |
@@ -66,7 +68,7 @@ NavButton
 </Multistep>
 ```
 
-####  The old way via `Steps`, a prop in the form of an array of components, is still supported for backwards compatibility. But, :warning: it has being `deprecated`, and it will be removed in the future:
+####  The old way via `Steps`, a prop in the form of an array of components, is still supported for backwards compatibility. But, (:warning:) this way has being `deprecated` (:warning:), and it will be removed in the future:
 
 ```javascript
 const steps = [
@@ -80,7 +82,7 @@ const steps = [
 
 <Multistep activeStep={1} showNavigation={true} steps={steps}/>
 ```
-Each element (`Step`) of the array can have following two properties:
+When configured this way, each component (`Step`) of the array can have following two properties:
 
 | PROPERTY  | DESCRIPTION                                 | TYPE       | DEFAULT    | isRequired|
 |-----------|---------------------------------------------|------------|------------|-----------|
@@ -89,7 +91,7 @@ Each element (`Step`) of the array can have following two properties:
 
 
 #
-### 🚀 NEW! Feature: Controlling navigation to the next step with form validation
+#### 🚀 NEW! Feature: Controlling navigation to the next step with form validation
 
 To enable this feature, when the child form component needs to control 'Next' navigational button, based on it's local validation, MultiStep dynamically adds a new prop function to child components that should be used to signal validation status. MultiStep will disable /enable `Next` button accordingly. This function has follwing signature:
 
