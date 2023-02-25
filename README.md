@@ -80,7 +80,7 @@ const steps = [
 ...       
 ...
 
-<Multistep activeStep={1} showNavigation={true} steps={steps}/>
+<MultiStep activeStep={1} showNavigation={true} steps={steps}/>
 ```
 When configured this way, each component (`Step`) of the array can have following two properties:
 
