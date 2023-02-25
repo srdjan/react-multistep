@@ -52,8 +52,8 @@ MultiStep component accepts following props (all optional, except Steps array):
 
 | PROPERTY       | DESCRIPTION                                                  | TYPE         | DEFAULT    | isRequired|
 |----------------|--------------------------------------------------------------|--------------|------------|-----------|
-| title          | The display sting value of the navigation nutton             |string        |Prev / Next |false      |
-| style          | The css style of the navigation button                       |CSSProperties |null          |false      |
+| title          | The display string value of the navigation button            |string        |Prev / Next |false      |
+| style          | The css style of the navigation button                       |CSSProperties |null        |false      |
 
 
 #
@@ -80,7 +80,7 @@ const steps = [
 ...       
 ...
 
-<Multistep activeStep={1} showNavigation={true} steps={steps}/>
+<MultiStep activeStep={1} showNavigation={true} steps={steps}/>
 ```
 When configured this way, each component (`Step`) of the array can have following two properties:
 
