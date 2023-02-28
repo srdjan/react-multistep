@@ -104,7 +104,8 @@ This can be seen in the `example` app, but here are the relevant parts, required
 <img width="600" alt="child-step-component-changes" src="https://user-images.githubusercontent.com/61190/213932636-5f2d8dfe-0f98-457e-9f0f-6a890174a834.png">
 
 
-#### If you would like to explore this further, try the included code example...
+## Instructions for local development
+#### If you would like to explore further, contribute a PR or just try the included code example:
 
 1) Start by cloning the repo locally:
 
