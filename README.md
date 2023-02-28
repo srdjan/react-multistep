@@ -131,16 +131,6 @@ npm run build
 npm start
 ```
 
-4) Now you can open the example in your favorite browser:
+4) Now you can open the example in your favorite browser
 
-```sh
-open index.html
-```
 
-Instead of using the example you also have the option to test it with storybook,
-in the project folder just run:
-
-```sh
-npm install
-npm run storybook 
-```
