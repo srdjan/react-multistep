@@ -107,12 +107,12 @@ This can be seen in the `example` app, but here are the relevant parts, required
 ## Instructions for local development
 #### If you would like to explore further, contribute a PR or just try the included code example:
 
-#### Start by cloning the repo locally:
+Start by cloning the repo locally:
 ```sh
 git clone https://github.com/srdjan/react-multistep.git
 ```
 
-#### then: 
+then:
 
 ```sh
 cd react-multistep            // (1) navigate to the project folder
@@ -120,7 +120,7 @@ npm install                   // (2) install dependencies
 npm run build                 // (3) build the component
 ```
 
-#### On a successful build, try the example app:
+On a successful build, try the example app:
 
 ```sh
 cd ../example                 // (1) navigate to the example folder
@@ -129,4 +129,4 @@ npm run build                 // (3) build the example
 npm start                     // (4) start the local server
 ```
 
-#### Now, you can open the example in your favorite browser...
+Now, you can open the example in your favorite browser...
