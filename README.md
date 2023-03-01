@@ -111,26 +111,21 @@ This can be seen in the `example` app, but here are the relevant parts, required
 
 ```sh
 //--step 1
-git clone https://github.com/srdjan/react-multistep.git   //clone the repo
-cd react-multistep/example                                //navigate to the project folder
+git clone https://github.com/srdjan/react-multistep.git   // (1) clone the repo
+cd react-multistep                                        // (2) navigate to the project folder
+npm install                                               // (3) install dependencies
+npm run build                                             // (4) build the component
 ```
 
-2)  Next, install dependencies and build the component:
+3) On a successful build, to try the example app:
 
 ```sh
-npm install
-npm run build 
+cd ../example                                             // (1) navigate to the example folder
+npm install                                               // (2) install dependencies
+npm run build                                             // (3) build the example
+npm start                                                 // (4) start the local server
 ```
 
-3) On a successful build, to try the example app, navigate to the example folder and try it:
-
-```sh
-cd ../example
-npm install
-npm run build
-npm start
-```
-
-4) Now you can open the example in your favorite browser
+Now, you can open the example in your favorite browser...
 
 
