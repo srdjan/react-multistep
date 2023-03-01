@@ -1,6 +1,6 @@
 {
   "name": "react-multistep",
-  "version": "5.5.6",
+  "version": "5.5.7",
   "description": "Responsive ReactJS multistep form component",
   "main": "dist/index.js",
   "files": [
@@ -31,14 +31,14 @@
     "goober": "2.1.12"
   },
   "devDependencies": {
-    "esbuild": "0.17.7",
+    "esbuild": "0.17.10",
     "typescript": "4.9.5"
   },
   "peerDependencies": {
     "react": "18.2.0"
   },
   "scripts": {
-    "build": "tsc && mkdir -p ./example/node_modules/MultiStep && cp -f ./build/** ./example/node_modules/MultiStep/",
+    "build": "tsc",
     "bundle": "esbuild ./build/index.js \"--define:process.env.NODE_ENV='production'\" --external:react --bundle --format=cjs --loader:.js=jsx --outdir=dist",
     "publish": "npm publish ./"
   }
