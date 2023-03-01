@@ -107,25 +107,28 @@ This can be seen in the `example` app, but here are the relevant parts, required
 ## Instructions for local development
 #### If you would like to explore further, contribute a PR or just try the included code example:
 
-1) Start by cloning the repo locally:
-
+#### Start by cloning the repo locally:
 ```sh
-//--step 1
-git clone https://github.com/srdjan/react-multistep.git   // (1) clone the repo
-cd react-multistep                                        // (2) navigate to the project folder
-npm install                                               // (3) install dependencies
-npm run build                                             // (4) build the component
+git clone https://github.com/srdjan/react-multistep.git
 ```
 
-3) On a successful build, to try the example app:
+#### then: 
 
 ```sh
-cd ../example                                             // (1) navigate to the example folder
-npm install                                               // (2) install dependencies
-npm run build                                             // (3) build the example
-npm start                                                 // (4) start the local server
+cd react-multistep            // (1) navigate to the project folder
+npm install                   // (2) install dependencies
+npm run build                 // (3) build the component
 ```
 
-Now, you can open the example in your favorite browser...
+#### On a successful build, try the example app:
+
+```sh
+cd ../example                 // (1) navigate to the example folder
+npm install                   // (2) install dependencies
+npm run build                 // (3) build the example
+npm start                     // (4) start the local server
+```
+
+#### Now, you can open the example in your favorite browser...
 
 
