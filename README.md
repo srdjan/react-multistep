@@ -68,7 +68,7 @@ MultiStep component accepts following props (all optional, except Steps array):
 </MultiStep>
 ```
 
-####  The old way via `Steps`, a prop in the form of an array of components, is still supported for backwards compatibility. But, (:warning:) this way has being `deprecated` (:warning:), and it will be removed in the future:
+####  The old way via `Steps`, a prop in the form of an array of components, is still supported for backwards compatibility. But, (:warning:) this way has being `deprecated`, and it will be removed in the future:
 
 ```javascript
 const steps = [
