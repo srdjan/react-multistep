@@ -113,13 +113,23 @@ git clone https://github.com/srdjan/react-multistep.git
 ```
 
 #### then: 
+#### Start by cloning the repo locally:
+```sh
+git clone https://github.com/srdjan/react-multistep.git
+```
+
+#### then: 
 
 ```sh
 cd react-multistep            // (1) navigate to the project folder
 npm install                   // (2) install dependencies
 npm run build                 // (3) build the component
+cd react-multistep            // (1) navigate to the project folder
+npm install                   // (2) install dependencies
+npm run build                 // (3) build the component
 ```
 
+#### On a successful build, try the example app:
 #### On a successful build, try the example app:
 
 ```sh
@@ -127,8 +137,10 @@ cd ../example                 // (1) navigate to the example folder
 npm install                   // (2) install dependencies
 npm run build                 // (3) build the example
 npm start                     // (4) start the local server
+cd ../example                 // (1) navigate to the example folder
+npm install                   // (2) install dependencies
+npm run build                 // (3) build the example
+npm start                     // (4) start the local server
 ```
 
 #### Now, you can open the example in your favorite browser...
-
-
