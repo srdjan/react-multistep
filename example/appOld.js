@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import MultiStep from './index'
+import MultiStep from 'react-multistep'
 import StepOne from './stepOne'
 import StepTwo from './stepTwo'
 import StepThree from './stepThree'

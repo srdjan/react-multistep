@@ -37,10 +37,10 @@ MultiStep component accepts following props (all optional, except Steps array):
 
 | PROPERTY       | DESCRIPTION                                                  | TYPE        | DEFAULT    | isRequired|
 |----------------|--------------------------------------------------------------|-------------|------------|-----------|
-| showNavigation | controls if the navigation buttons are visable               |boolean      |true        |false      |
+| showNavigation | controls if the navigation buttons are visible               |boolean      |true        |false      |
 | showTitles     | control either the steps title are visible or not            |boolean      |true        |false      |
 | prevButton     | configure the prev navigation button                         |NavButton    |null        |false      |
-| nextButton     | configure the naxt the navigation button                     |NavButton    |null        |false      |
+| nextButton     | configure the next the navigation button                     |NavButton    |null        |false      |
 | stepCustomStyle| control style of step                                        |CSSProperties|null        |false      |
 | direction      | control the steps nav direction                              |column       |row         |false      |
 | activeStep     | it takes a number representing representing starting step    |number       |0           |false      |
@@ -60,12 +60,12 @@ MultiStep component accepts following props (all optional, except Steps array):
 #### There are two ways to configure Multistep component, preferred way is with `Inlined` child components. Using this approach, enables the new feature that allows controlling the navigation based on the current step's form validation:
 
 ```javascript
-<Multistep activeStep={1} showNavigation={true}>
+<MultiStep activeStep={1} showNavigation={true}>
     <StepOne title='StepOne'/>
     <StepTwo title='StepTwo'/>
     <StepThree title='StepThree'/>
     <StepFour title='StepFour'/>
-</Multistep>
+</MultiStep>
 ```
 
 ####  The old way via `Steps`, a prop in the form of an array of components, is still supported for backwards compatibility. But, (:warning:) this way has being `deprecated` (:warning:), and it will be removed in the future:
@@ -112,7 +112,7 @@ This can be seen in the `example` app, but here are the relevant parts, required
 ```sh
 //--step 1
 git clone https://github.com/srdjan/react-multistep.git   //clone the repo
-cd react-multistep                                        //navigate to the project folder
+cd react-multistep/example                                //navigate to the project folder
 ```
 
 2)  Next, install dependencies and build the component:
@@ -122,7 +122,7 @@ npm install
 npm run build 
 ```
 
-3) On a succesful build, navigate to the example folder and try it:
+3) On a successful build, to try the example app, navigate to the example folder and try it:
 
 ```sh
 cd ../example

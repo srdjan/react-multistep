@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "debug": "esbuild app.js --bundle --format=cjs --outfile=./bundle.js --loader:.js=jsx --sourcemap --preserve-symlinks",
-    "build": "esbuild app.js --bundle --format=cjs --outfile=./bundle.js --loader:.js=jsx",
+    "inst:comp": "mkdir -p node_modules/react-multistep && cp -f ../build/** node_modules/react-multistep/",
+    "build": "npm run inst:comp && esbuild app.js --bundle --format=cjs --outfile=./bundle.js --loader:.js=jsx",
     "start": "npx serve"
   },
   "alias": {
@@ -16,6 +17,6 @@
     "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "esbuild": "0.17.4"
+    "esbuild": "0.17.10"
   }
 }
