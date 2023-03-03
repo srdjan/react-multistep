@@ -27,7 +27,7 @@ const MultiStep = import from 'react-multistep'
 ```
 and then, in your application, you add your custom components/forms this way: 
 ```sh
-<MultiStep activeStep={0} prevStyle={prevStyle} nextStyle={nextStyle}>
+<MultiStep activeStep={2} prevStyle={prevStyle} nextStyle={nextStyle}>
     <StepOne title='Step 1'/>
     <StepTwo title='Step 2'/>
 </MultiStep>
@@ -60,7 +60,7 @@ MultiStep component accepts following props (all optional, except Steps array):
 #### There are two ways to configure Multistep component, preferred way is with `Inlined` child components. Using this approach, enables the new feature that allows controlling the navigation based on the current step's form validation:
 
 ```javascript
-<MultiStep activeStep={1} showNavigation={true}>
+<MultiStep showNavigation={false}>
     <StepOne title='StepOne'/>
     <StepTwo title='StepTwo'/>
     <StepThree title='StepThree'/>
