@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { css, styled, setup } from 'goober'
-import { MultiStepPropsBase, NavButton, Step} from './interfaces'
+import { MultiStepPropsBase, NavButton, Step } from './interfaces'
 
 setup(React.createElement)
 
@@ -75,14 +75,14 @@ const ColumnDirection = css`
   flex-direction: column;
 `
 
-const getStep = (defaultIndex, newIndex, length) => {
-    if(newIndex <=  length){
-        return newIndex;
-    }
-    return defaultIndex;
+const getStep = (defaultIndex: number, newIndex: number, length: number): number => {
+  if (newIndex <= length) {
+    return newIndex;
   }
+  return defaultIndex;
+}
 
-const getTopNavStyles = (indx, length) => {
+const getTopNavStyles = (indx: number, length: number): string[] => {
   const styles: string[] = []
   for (let i = 0; i < length; i++) {
     if (i < indx) {
@@ -96,7 +96,7 @@ const getTopNavStyles = (indx, length) => {
   return styles
 }
 
-const getButtonsState = (indx, length, isValidState) => {
+const getButtonsState = (indx: number, length: number, isValidState: boolean) => {
   if (indx > 0 && indx < length - 1) {
     return {
       showPrevBtn: true,
@@ -115,24 +115,24 @@ const getButtonsState = (indx, length, isValidState) => {
   }
 }
 
-export default function MultiStep (props: MultiStepPropsBase) {
+export default function MultiStep(props: MultiStepPropsBase) {
   const { children } = props
 
   let stepsArray = props.steps
-  
+
   if (!stepsArray && !children) {
     throw TypeError("missing children or steps in props")
   }
 
   const [childIsValid, setChildIsValid] = useState(true)
-  const setIsChildInValidState = (isValid) => setChildIsValid(isValid)
+  const setIsChildInValidState = (isValid: boolean) => setChildIsValid(isValid)
 
   let steps: Step[] = []
-  if(children) { 
+  if (children) {
     let childrenWithProps = React.Children.map(children, (child, index) => {
       return React.cloneElement(child, {
         signalIfValid: setIsChildInValidState
-      }) 
+      })
     })
     // for backward compatibility we preserve 'steps' with components array:
     steps = childrenWithProps.map(childComponent => (
@@ -151,15 +151,15 @@ export default function MultiStep (props: MultiStepPropsBase) {
   const showNavButtons = typeof props.showNavigation === 'undefined' ? true : props.showNavigation
   const showTitles = typeof props.showTitles === 'undefined' ? true : props.showTitles
   const directionType = typeof props.direction === 'undefined' ? 'row' : props.direction
-  const [activeStep, setActiveStep] = useState(getStep(0, props.activeStep,  numberOfSteps))
+  const [activeStep, setActiveStep] = useState(getStep(0, props.activeStep, numberOfSteps))
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, numberOfSteps))
   const [buttonsState, setButtons] = useState(getButtonsState(activeStep, numberOfSteps, childIsValid))
-  
+
   useEffect(() => {
     setButtons(getButtonsState(activeStep, numberOfSteps, childIsValid))
-    console.log(`From parent, child in valid state?: ${childIsValid}, button state: ${buttonsState.showNextBtn}`)
+    // console.log(`From parent, child in valid state?: ${childIsValid}, button state: ${buttonsState.showNextBtn}`)
   }, [activeStep, childIsValid])
-  
+
   const setStepState = (indx: number, isValidState?: boolean) => {
     setStyles(getTopNavStyles(indx, numberOfSteps))
     setActiveStep(indx < numberOfSteps ? indx : activeStep)
@@ -169,8 +169,8 @@ export default function MultiStep (props: MultiStepPropsBase) {
   const next = () => setStepState(activeStep + 1)
   const previous = () => setStepState(activeStep > 0 ? activeStep - 1 : activeStep)
 
-  const handleOnClick = evt => {
-    if (! childIsValid) {
+  const handleOnClick = (evt: { currentTarget: { value: number } }) => {
+    if (!childIsValid) {
       console.log('Child not in valid state - no transition')
       return
     }
@@ -190,39 +190,39 @@ export default function MultiStep (props: MultiStepPropsBase) {
       return (
         <Li
           className={
-                      stylesState[i] === 'todo' ? Todo :
-                      stylesState[i] === 'doing' ? Doing :
-                      Done
-                    }
-          style={{...stepCustomStyle,  transform: directionType == 'column' ? 'rotate(90deg)' : 'rotate(0deg)'}}
+            stylesState[i] === 'todo' ? Todo :
+              stylesState[i] === 'doing' ? Doing :
+                Done
+          }
+          style={{ ...stepCustomStyle, transform: directionType == 'column' ? 'rotate(90deg)' : 'rotate(0deg)' }}
           onClick={handleOnClick}
           key={i}
           value={i}
         >
-          { showTitles && <span>{s.title ??  i + 1}</span> }
+          {showTitles && <span>{s.title ?? i + 1}</span>}
         </Li>
       )
     }
-  )
+    )
 
   const renderButtonsNav = (show: boolean, prevButton?: NavButton, nextButton?: NavButton) =>
     show && (
       <div>
         <button onClick={previous}
-                style={prevButton?.style}
-                disabled={buttonsState.showPrevBtn ? false : true}>
-              {prevButton && prevButton.title ? <>{prevButton.title}</> : <>Prev</>}
+          style={prevButton?.style}
+          disabled={buttonsState.showPrevBtn ? false : true}>
+          {prevButton && prevButton.title ? <>{prevButton.title}</> : <>Prev</>}
         </button>
         <button onClick={next}
-                style={nextButton?.style}
-                disabled={buttonsState.showNextBtn ? false : true}>
-              {nextButton && nextButton.title ? <>{nextButton.title}</> : <>Next</>}
+          style={nextButton?.style}
+          disabled={buttonsState.showNextBtn ? false : true}>
+          {nextButton && nextButton.title ? <>{nextButton.title}</> : <>Next</>}
         </button>
       </div>
     )
 
   return (
-    <div style={{display: 'flex', flexDirection: directionType === 'column' ? 'row' : 'column'}}>
+    <div style={{ display: 'flex', flexDirection: directionType === 'column' ? 'row' : 'column' }}>
       <Ol className={directionType === 'column' ? ColumnDirection : RowDirection}>{renderTopNav()}</Ol>
       {steps[activeStep].component}
       <div>{renderButtonsNav(showNavButtons, props.prevButton, props.nextButton)}</div>
