@@ -5,8 +5,10 @@
   "license": "MIT",
   "scripts": {
     "debug": "esbuild app.js --bundle --format=cjs --outfile=./bundle.js --loader:.js=jsx --sourcemap --preserve-symlinks",
+    "build:comp": "cd .. && tsc && cd ./example",   
     "inst:comp": "mkdir -p node_modules/react-multistep && cp -f ../build/** node_modules/react-multistep/",
-    "build": "npm run inst:comp && esbuild app.js --bundle --format=cjs --outfile=./bundle.js --loader:.js=jsx",
+    "build:app": "esbuild app.js --bundle --format=cjs --outfile=./bundle.js --loader:.js=jsx",
+    "build": "npm run build:comp && npm run inst:comp && npm run build:app",
     "start": "npx serve"
   },
   "alias": {
