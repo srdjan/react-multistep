@@ -22,11 +22,11 @@ To use this module in your app run:
 npm install react-multistep
 ```
 next, import it inside of your app:
-```sh
-const MultiStep = import from 'react-multistep'
+```jsx
+import MultiStep from 'react-multistep'
 ```
 and then, in your application, you add your custom components/forms this way: 
-```sh
+```jsx
 <MultiStep activeStep={0} prevButton={prevButton} nextButton={nextButton}>
     <StepOne title='Step 1'/>
     <StepTwo title='Step 2'/>
