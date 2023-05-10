@@ -27,7 +27,7 @@ const MultiStep = import from 'react-multistep'
 ```
 and then, in your application, you add your custom components/forms this way: 
 ```sh
-<MultiStep activeStep={2} prevStyle={prevStyle} nextStyle={nextStyle}>
+<MultiStep activeStep={2} prevButton={prevButton} nextButton={nextButton}>
     <StepOne title='Step 1'/>
     <StepTwo title='Step 2'/>
 </MultiStep>
