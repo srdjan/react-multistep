@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
+import {createRoot} from 'react-dom/client'
 import MultiStep from 'react-multistep'
 import StepOne from './stepOne'
 import StepTwo from './stepTwo'
@@ -24,4 +24,5 @@ const App = () => (
   </div>
 )
 
-ReactDOM.render(<App />, document.getElementById('root'))
+const root = createRoot(document.getElementById('root'));
+root.render(<App />)
