@@ -8,7 +8,7 @@ import StepFour from './stepFour'
 
 const App = () => (
   <div className='container'>
-    <MultiStep activeStep={0} prevButton={{style:{ background: 'red' }, title: 'prev step'}} >
+    <MultiStep activeStep={0} prevButton={{title: 'Back', style:{ background: 'red' }}} >
       <StepOne title='Step 1'/>
       <StepTwo title='Step 2'/>
       <StepThree title='Step 3'/>
