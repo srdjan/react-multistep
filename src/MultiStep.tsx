@@ -146,10 +146,14 @@ export default function MultiStep(props: MultiStepPropsBase) {
     steps = stepsArray
   }
 
+  const showTitles = typeof props.showTitles === 'undefined' ? true : props.showTitles
   const numberOfSteps = steps.length
   const stepCustomStyle = typeof props.stepCustomStyle === 'undefined' ? {} : props.stepCustomStyle
+  
   const showNavButtons = typeof props.showNavigation === 'undefined' ? true : props.showNavigation
-  const showTitles = typeof props.showTitles === 'undefined' ? true : props.showTitles
+  const prevButton: NavButton = typeof props.prevButton === 'undefined' ? {} : props.prevButton
+  const nextButton: NavButton = typeof props.nextButton === 'undefined' ? {} : props.nextButton
+  
   const directionType = typeof props.direction === 'undefined' ? 'row' : props.direction
   const [activeStep, setActiveStep] = useState(getStep(0, props.activeStep, numberOfSteps))
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, numberOfSteps))
@@ -205,7 +209,7 @@ export default function MultiStep(props: MultiStepPropsBase) {
     }
     )
 
-  const renderButtonsNav = (show: boolean, prevButton?: NavButton, nextButton?: NavButton) =>
+  const renderButtonsNav = (show: boolean) =>
     show && (
       <div>
         <button onClick={previous}
@@ -225,7 +229,7 @@ export default function MultiStep(props: MultiStepPropsBase) {
     <div style={{ display: 'flex', flexDirection: directionType === 'column' ? 'row' : 'column' }}>
       <Ol className={directionType === 'column' ? ColumnDirection : RowDirection}>{renderTopNav()}</Ol>
       {steps[activeStep].component}
-      <div>{renderButtonsNav(showNavButtons, props.prevButton, props.nextButton)}</div>
+      <div>{renderButtonsNav(showNavButtons)}</div>
     </div>
   )
 }
