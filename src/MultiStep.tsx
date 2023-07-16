@@ -161,13 +161,12 @@ export default function MultiStep(props: MultiStepPropsBase) {
 
   useEffect(() => {
     setButtons(getButtonsState(activeStep, numberOfSteps, childIsValid))
-    // console.log(`From parent, child in valid state?: ${childIsValid}, button state: ${buttonsState.showNextBtn}`)
+    console.log(`useEffect: childIsValid: ${childIsValid}, button state: ${buttonsState.showNextBtn}`)
   }, [activeStep, childIsValid])
 
-  const setStepState = (indx: number, isValidState?: boolean) => {
+  const setStepState = (indx: number) => {
     setStyles(getTopNavStyles(indx, numberOfSteps))
     setActiveStep(indx < numberOfSteps ? indx : activeStep)
-    setButtons(getButtonsState(indx, numberOfSteps, isValidState))
   }
 
   const next = () => setStepState(activeStep + 1)
