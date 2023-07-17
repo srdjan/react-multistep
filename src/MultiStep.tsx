@@ -124,8 +124,8 @@ export default function MultiStep(props: MultiStepPropsBase) {
     throw TypeError("missing children or steps in props")
   }
 
-  const [stepIsValid, setChildIsValid] = useState(false)
-  const stepStateChanged = (isValid: boolean) => setChildIsValid(prev => ! prev)
+  const [stepIsValid, setStepIsValid] = useState(false)
+  const stepStateChanged = (isValid: boolean) => setStepIsValid(prev => !prev)
 
   let steps: Step[] = []
   if (children) {
@@ -213,8 +213,7 @@ export default function MultiStep(props: MultiStepPropsBase) {
           {showTitles && <span>{s.title ?? i + 1}</span>}
         </Li>
       )
-    }
-    )
+    })
 
   const renderButtonsNav = (show: boolean) =>
     show && (
