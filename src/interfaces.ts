@@ -21,3 +21,11 @@ export interface MultiStepPropsBase {
     prevButton?: NavButton
     nextButton?: NavButton
 }
+
+export interface StepState {
+  title?: string
+  isValid: boolean
+  prevStep?: number
+  nextStep?: number
+  warning?: string
+}

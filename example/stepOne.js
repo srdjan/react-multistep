@@ -3,17 +3,29 @@ import React, { useState, useEffect } from 'react'
 export default (props) => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const [stepState, setStepState] = useState(false)
 
-  //- using checkbox state to signal valid/not valid form state here:
-  const [isValidState, setIsValidState] = useState(false)
-  const signalParent = (isValid) => {
-    setIsValidState(isValid)
-    props.signalIfValid(isValid)
+  const validate = val => {
+    console.log(`prevFirstName: ${firstName}, newFirstName: ${val}`)
+    let prevFirstName = firstName
+    setFirstName(val)
+
+    if(prevFirstName.length === 0 && val.length === 1) {
+      setStepState(true)
+      props.signalParent(stepState)
+      console.log(`It is valid`)
+      return
+    }
+    
+    if(prevFirstName.length ===1 && val.length == 0) {
+      setStepState(false)
+      props.signalParent(stepState)
+      console.log(`It is NOT valid`)
+      return
+    }
+
+    console.log('What?')
   }
-  useEffect(() => {
-    console.log(`From Child, child in valid state?: ${isValidState}`)
-    signalParent(isValidState)
-  }, [])
 
   return (
     <div>
@@ -24,9 +36,10 @@ export default (props) => {
             className='u-full-width'
             placeholder='First Name'
             type='text'
-            onChange={e => setFirstName(e.target.value)}
+            onChange={e => validate(e.target.value)}
             value={firstName}
             autoFocus
+            required
           />
         </div>
       </div>
@@ -37,20 +50,10 @@ export default (props) => {
             className='u-full-width'
             placeholder='Last Name'
             type='text'
-            onChange={e => setLastName(e.target.value)}
+            onChange={e => setLastName(e.target.value)} 
             value={lastName}
           />
         </div>
       </div>
-      <label>
-        <input
-          type='checkbox'
-          checked={isValidState}
-          onChange={e => signalParent(e.target.checked)}
-          autoFocus
-        />
-        <span> Valid State? </span>{' '}
-      </label>
-    </div>
-  )
+    </div>)
 }

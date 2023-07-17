@@ -82,12 +82,12 @@ const getStep = (defaultIndex: number, newIndex: number, length: number): number
   return defaultIndex;
 }
 
-const getTopNavStyles = (indx: number, length: number): string[] => {
+const getTopNavStyles = (activeStep: number, length: number): string[] => {
   const styles: string[] = []
   for (let i = 0; i < length; i++) {
-    if (i < indx) {
+    if (i < activeStep) {
       styles.push('done')
-    } else if (i === indx) {
+    } else if (i === activeStep) {
       styles.push('doing')
     } else {
       styles.push('todo')
@@ -96,21 +96,21 @@ const getTopNavStyles = (indx: number, length: number): string[] => {
   return styles
 }
 
-const getButtonsState = (indx: number, length: number, isValidState: boolean) => {
-  if (indx > 0 && indx < length - 1) {
+const getButtonsState = (activeStep: number, length: number, stepValid: boolean) => {
+  if (activeStep === 0) {
     return {
-      showPrevBtn: true,
-      showNextBtn: isValidState ? true : false
+      prevDisabled: true,
+      nextDisabled: !stepValid
     }
-  } else if (indx === 0) {
+  } else if (activeStep > 0 && activeStep < length - 1) {
     return {
-      showPrevBtn: false,
-      showNextBtn: isValidState ? true : false
+      prevDisabled: false,
+      nextDisabled: !stepValid
     }
   } else {
     return {
-      showPrevBtn: true,
-      showNextBtn: false
+      prevDisabled: false,
+      nextDisabled: false
     }
   }
 }
@@ -124,14 +124,14 @@ export default function MultiStep(props: MultiStepPropsBase) {
     throw TypeError("missing children or steps in props")
   }
 
-  const [childIsValid, setChildIsValid] = useState(true)
-  const setIsChildInValidState = (isValid: boolean) => setChildIsValid(isValid)
+  const [stepIsValid, setChildIsValid] = useState(false)
+  const stepStateChanged = (isValid: boolean) => setChildIsValid(prev => ! prev)
 
   let steps: Step[] = []
   if (children) {
     let childrenWithProps = React.Children.map(children, (child, index) => {
       return React.cloneElement(child, {
-        signalIfValid: setIsChildInValidState
+        signalParent: stepStateChanged
       })
     })
     // for backward compatibility we preserve 'steps' with components array:
@@ -157,24 +157,25 @@ export default function MultiStep(props: MultiStepPropsBase) {
   const directionType = typeof props.direction === 'undefined' ? 'row' : props.direction
   const [activeStep, setActiveStep] = useState(getStep(0, props.activeStep, numberOfSteps))
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, numberOfSteps))
-  const [buttonsState, setButtons] = useState(getButtonsState(activeStep, numberOfSteps, childIsValid))
+  const [buttonsState, setButtonsState] = useState(getButtonsState(activeStep, numberOfSteps, stepIsValid))
 
   useEffect(() => {
-    setButtons(getButtonsState(activeStep, numberOfSteps, childIsValid))
-    console.log(`useEffect: childIsValid: ${childIsValid}, button state: ${buttonsState.showNextBtn}`)
-  }, [activeStep, childIsValid])
+    setButtonsState(getButtonsState(activeStep, numberOfSteps, stepIsValid))
+    console.log(`stepIsValid: ${stepIsValid}, button is disabled: ${buttonsState.nextDisabled}`)
+    // console.log(`activeStep: ${activeStep}`)
+  }, [activeStep, stepIsValid])
 
-  const setStepState = (indx: number) => {
-    setStyles(getTopNavStyles(indx, numberOfSteps))
-    setActiveStep(indx < numberOfSteps ? indx : activeStep)
+  const setStepState = (activeStep: number) => {
+    setStyles(getTopNavStyles(activeStep, numberOfSteps))
+    setActiveStep(activeStep < numberOfSteps ? activeStep : activeStep)
   }
 
   const next = () => setStepState(activeStep + 1)
   const previous = () => setStepState(activeStep > 0 ? activeStep - 1 : activeStep)
 
   const handleOnClick = (evt: { currentTarget: { value: number } }) => {
-    if (!childIsValid) {
-      console.log('Child not in valid state - no transition')
+    if (!stepIsValid) {
+      console.log('Error: Step validation failed')
       return
     }
 
@@ -213,12 +214,12 @@ export default function MultiStep(props: MultiStepPropsBase) {
       <div>
         <button onClick={previous}
           style={prevButton?.style}
-          disabled={buttonsState.showPrevBtn ? false : true}>
+          disabled={buttonsState.prevDisabled}>
           {prevButton && prevButton.title ? <>{prevButton.title}</> : <>Prev</>}
         </button>
         <button onClick={next}
           style={nextButton?.style}
-          disabled={buttonsState.showNextBtn ? false : true}>
+          disabled={buttonsState.nextDisabled}>
           {nextButton && nextButton.title ? <>{nextButton.title}</> : <>Next</>}
         </button>
       </div>

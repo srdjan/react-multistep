@@ -99,7 +99,7 @@ When configured this way, each component (`Step`) of the array can have followin
 
 To enable this feature, when the child form component needs to control 'Next' navigational button, based on it's local validation, MultiStep dynamically adds a new prop function to child components that should be used to signal validation status. MultiStep will disable /enable `Next` button accordingly. This function has follwing signature:
 
-  `signalIfValid(valid: boolean)`
+  `signalParent(valid: boolean)`
 
 By default the state is `false` and child components invokes it based on current outcome of the validation. In the example app, a simple checkbox is used to simulate valid/not valid.
 
