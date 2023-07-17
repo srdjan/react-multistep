@@ -105,17 +105,12 @@ const getButtonsState = (activeStep: number, length: number, stepIsValid: boolea
     }
   } else if (activeStep > 0 && activeStep < length - 1) {
     console.log(`ActiveStep > 0, isValid: ${stepIsValid}`)
-
     return {
       prevDisabled: false,
       nextDisabled: !stepIsValid
     }
   } else {
     console.log('No way')
-    // return {
-    //   prevDisabled: false,
-    //   nextDisabled: false
-    // }
   }
 }
 
@@ -171,7 +166,6 @@ export default function MultiStep(props: MultiStepPropsBase) {
 
   useEffect(() => {
     setButtonsState(getButtonsState(activeStep, numberOfSteps, stepIsValid))
-    console.log(`stepIsValid: ${stepIsValid}, button is disabled: ${buttonsState.nextDisabled}`)
   }, [activeStep, stepIsValid])
 
   const setStepState = (activeStep: number) => {
