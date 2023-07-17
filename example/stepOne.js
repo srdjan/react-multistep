@@ -13,18 +13,14 @@ export default (props) => {
     if(prevFirstName.length === 0 && val.length === 1) {
       setStepState(true)
       props.signalParent(stepState)
-      console.log(`It is valid`)
       return
     }
     
     if(prevFirstName.length ===1 && val.length == 0) {
       setStepState(false)
       props.signalParent(stepState)
-      console.log(`It is NOT valid`)
       return
     }
-
-    console.log('What?')
   }
 
   return (

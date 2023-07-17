@@ -162,7 +162,6 @@ export default function MultiStep(props: MultiStepPropsBase) {
   useEffect(() => {
     setButtonsState(getButtonsState(activeStep, numberOfSteps, stepIsValid))
     console.log(`stepIsValid: ${stepIsValid}, button is disabled: ${buttonsState.nextDisabled}`)
-    // console.log(`activeStep: ${activeStep}`)
   }, [activeStep, stepIsValid])
 
   const setStepState = (activeStep: number) => {
@@ -170,8 +169,16 @@ export default function MultiStep(props: MultiStepPropsBase) {
     setActiveStep(activeStep < numberOfSteps ? activeStep : activeStep)
   }
 
-  const next = () => setStepState(activeStep + 1)
-  const previous = () => setStepState(activeStep > 0 ? activeStep - 1 : activeStep)
+  const next = () => {
+    let newActiveStep = activeStep === steps.length - 1 ? activeStep : activeStep + 1
+    setStepState(newActiveStep) 
+    console.log(`Next, ActiveStep: ${newActiveStep}`)
+  }
+  const previous = () => {
+    let newActiveStep = activeStep > 0 ? activeStep -1 : activeStep
+    setStepState(newActiveStep)
+    console.log(`Prev, ActiveStep: ${newActiveStep}`)
+  }
 
   const handleOnClick = (evt: { currentTarget: { value: number } }) => {
     if (!stepIsValid) {
