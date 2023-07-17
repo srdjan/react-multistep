@@ -3,22 +3,22 @@ import React, { useState, useEffect } from 'react'
 export default (props) => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const [stepState, setStepState] = useState(false)
 
-  const validate = val => {
-    console.log(`prevFirstName: ${firstName}, newFirstName: ${val}`)
+  useEffect(() => {
+    props.signalParent(false)
+  }, [])
+
+  const validate = (val) => {
     let prevFirstName = firstName
     setFirstName(val)
 
     if(prevFirstName.length === 0 && val.length === 1) {
-      setStepState(true)
-      props.signalParent(stepState)
+      props.signalParent(true)
       return
     }
     
-    if(prevFirstName.length ===1 && val.length == 0) {
-      setStepState(false)
-      props.signalParent(stepState)
+    if(prevFirstName.length === 1 && val.length == 0) {
+      props.signalParent(false)
       return
     }
   }

@@ -96,22 +96,26 @@ const getTopNavStyles = (activeStep: number, length: number): string[] => {
   return styles
 }
 
-const getButtonsState = (activeStep: number, length: number, stepValid: boolean) => {
+const getButtonsState = (activeStep: number, length: number, stepIsValid: boolean) => {
   if (activeStep === 0) {
+    console.log(`ActiveStep === 0, isValid: ${stepIsValid}`)
     return {
       prevDisabled: true,
-      nextDisabled: !stepValid
+      nextDisabled: !stepIsValid
     }
   } else if (activeStep > 0 && activeStep < length - 1) {
+    console.log(`ActiveStep > 0, isValid: ${stepIsValid}`)
+
     return {
       prevDisabled: false,
-      nextDisabled: !stepValid
+      nextDisabled: !stepIsValid
     }
   } else {
-    return {
-      prevDisabled: false,
-      nextDisabled: false
-    }
+    console.log('No way')
+    // return {
+    //   prevDisabled: false,
+    //   nextDisabled: false
+    // }
   }
 }
 
@@ -125,7 +129,10 @@ export default function MultiStep(props: MultiStepPropsBase) {
   }
 
   const [stepIsValid, setStepIsValid] = useState(false)
-  const stepStateChanged = (isValid: boolean) => setStepIsValid(prev => !prev)
+  const stepStateChanged = (isValid: boolean) => {
+    console.log(`stepStateChanged invoked, isValid: ${isValid}`)
+    setStepIsValid(prev => isValid)
+  }
 
   let steps: Step[] = []
   if (children) {
@@ -157,7 +164,10 @@ export default function MultiStep(props: MultiStepPropsBase) {
   const directionType = typeof props.direction === 'undefined' ? 'row' : props.direction
   const [activeStep, setActiveStep] = useState(getStep(0, props.activeStep, numberOfSteps))
   const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, numberOfSteps))
-  const [buttonsState, setButtonsState] = useState(getButtonsState(activeStep, numberOfSteps, stepIsValid))
+  const [buttonsState, setButtonsState] = useState({
+    prevDisabled: true,
+    nextDisabled: true
+  })
 
   useEffect(() => {
     setButtonsState(getButtonsState(activeStep, numberOfSteps, stepIsValid))
