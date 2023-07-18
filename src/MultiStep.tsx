@@ -237,7 +237,9 @@ export default function MultiStep(props: MultiStepPropsBase) {
 
   return (
     <div style={{ display: 'flex', flexDirection: directionType === 'column' ? 'row' : 'column' }}>
-      <Ol className={directionType === 'column' ? ColumnDirection : RowDirection}>{renderTopNav()}</Ol>
+      <Ol className={directionType === 'column' ? ColumnDirection : RowDirection}>
+        {renderTopNav()}
+      </Ol>
       {steps[activeStep].component}
       <div>{renderButtonsNav(showNavButtons)}</div>
     </div>

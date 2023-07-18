@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from 'react'
 
+let firstName = ''
+const setFirstName = s => firstName = s
+
+let lastName = ''
+const setLastName = s => lastName = s
+
 export default (props) => {
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
+  const [changed, setChanged] = useState(0)
 
   useEffect(() => {
-    props.signalParent(false)
-  }, [])
+    if(changed == 0) {
+      props.signalParent(firstName.length > 0)
+    }
+  }, [changed])
 
-  const validate = (val) => {
+  const validateFirstName = (val) => {
+    setChanged(c => c += 1)
+    
     let prevFirstName = firstName
     setFirstName(val)
 
@@ -23,6 +32,11 @@ export default (props) => {
     }
   }
 
+  const validateLastName = (val) => {
+    setChanged(c => c += 1)
+    setLastName(val)
+  }
+
   return (
     <div>
       <div className='row'>
@@ -32,7 +46,7 @@ export default (props) => {
             className='u-full-width'
             placeholder='First Name'
             type='text'
-            onChange={e => validate(e.target.value)}
+            onChange={e => validateFirstName(e.target.value)}
             value={firstName}
             autoFocus
             required
@@ -46,7 +60,7 @@ export default (props) => {
             className='u-full-width'
             placeholder='Last Name'
             type='text'
-            onChange={e => setLastName(e.target.value)} 
+            onChange={e => validateLastName(e.target.value)} 
             value={lastName}
           />
         </div>
