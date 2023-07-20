@@ -35,11 +35,11 @@ const Done = {
 
 const prevButton = {
   title: 'Back', 
-  style:{ borderColor: 'blue', float: 'left' }
+  style:{ borderColor: 'blue' }
 }
 const nextButton = {
   title: 'Forward', 
-  style:{ borderColor: 'yellow', float: 'right' }
+  style:{ borderColor: 'yellow', marginLeft: '1rem' }
 }
 
 const App = () => (
@@ -55,8 +55,7 @@ const App = () => (
       <StepFour title='Step 4'/>
     </MultiStep>
     <div className='app-footer'>
-      <h6>Use navigation buttons or click on progress bar for next step.</h6>
-      Code is on{' '}
+      Use navigation buttons or click on progress bar for next step. Code is on{' '}
       <a href='https://github.com/Srdjan/react-multistep' target='_blank' rel='noreferrer'>
         github
       </a>
