@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { styled, setup } from 'goober'
-import { MultiStepPropsBase, NavButton, Step } from './interfaces'
+import { MultiStepPropsBase, NavButton } from './interfaces'
 
 setup(React.createElement)
 
@@ -99,9 +99,8 @@ export default function MultiStep(props: MultiStepPropsBase) {
       component: child
   }))
   
-  const numberOfSteps = steps.length
-  const stepCustomStyle = typeof props.stepCustomStyle === 'undefined' ? {} : props.stepCustomStyle
-  const showNavButtons = typeof props.showNavigation === 'undefined' ? true : props.showNavigation
+  const topNavStyle = typeof props.topNavStyle === 'undefined' ? {} : props.topNavStyle
+  const topNavStepStyle = typeof props.topNavStepStyle === 'undefined' ? {} : props.topNavStepStyle
   const prevButton: NavButton = typeof props.prevButton === 'undefined' ? {} : props.prevButton
   const nextButton: NavButton = typeof props.nextButton === 'undefined' ? {} : props.nextButton
   
@@ -110,20 +109,20 @@ export default function MultiStep(props: MultiStepPropsBase) {
   // 2) removed const directionType = typeof props.direction === 'undefined' ? 'row' : props.direction
   // 3) removed const showTitles 
 
-  const [activeStep, setActiveStep] = useState(getStep(0, props.activeStep, numberOfSteps))
-  const [stylesState, setStylesState] = useState(getTopNavStyles(activeStep, numberOfSteps))
+  const [activeStep, setActiveStep] = useState(0)
+  const [stylesState, setStylesState] = useState(getTopNavStyles(activeStep, steps.length))
   const [buttonsState, setButtonsState] = useState({
     prevDisabled: true,
     nextDisabled: true
   })
 
   useEffect(() => {
-    setButtonsState(getButtonsState(activeStep, numberOfSteps, stepIsValid))
+    setButtonsState(getButtonsState(activeStep, steps.length, stepIsValid))
   }, [activeStep, stepIsValid])
 
   const setStepState = (activeStep: number) => {
-    setStylesState(getTopNavStyles(activeStep, numberOfSteps))
-    setActiveStep(activeStep < numberOfSteps ? activeStep : activeStep)
+    setStylesState(getTopNavStyles(activeStep, steps.length))
+    setActiveStep(activeStep < steps.length ? activeStep : activeStep)
   }
 
   const next = () => {
@@ -144,10 +143,10 @@ export default function MultiStep(props: MultiStepPropsBase) {
     }
 
     if (
-      evt.currentTarget.value === numberOfSteps - 1 &&
-      activeStep === numberOfSteps - 1
+      evt.currentTarget.value === steps.length - 1 &&
+      activeStep === steps.length - 1
     ) {
-      setStepState(numberOfSteps)
+      setStepState(steps.length)
     } else {
       setStepState(evt.currentTarget.value)
     }
@@ -156,20 +155,19 @@ export default function MultiStep(props: MultiStepPropsBase) {
   const renderTopNav = () =>
     steps.map((s, i) => {
       return (
-        <Li
-          style={{ ...stepCustomStyle }}
+        <li
+          style={{ ...topNavStepStyle }}
           onClick={handleOnClick}
           key={i}
         >
           {stylesState[i] === 'doing' ?
             <DoingSpan>{s.title ?? i + 1}</DoingSpan> :
             <Span>{s.title ?? i + 1}</Span> }
-        </Li>
+        </li>
       )
     })
 
-  const renderButtonsNav = () =>
-    showNavButtons && (
+  const renderButtonsNav = () => (
       <div>
         <button onClick={previous}
           style={prevButton?.style}
@@ -186,7 +184,7 @@ export default function MultiStep(props: MultiStepPropsBase) {
 
   return (
     <>
-      <Ol>{renderTopNav()}</Ol>
+      <ol style={{ ...topNavStyle }}>{renderTopNav()}</ol>
       {steps[activeStep].component}
       <div>{renderButtonsNav()}</div>
     </>

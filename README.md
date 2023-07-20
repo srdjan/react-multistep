@@ -37,14 +37,13 @@ MultiStep component accepts following props (all optional, except Steps array):
 
 | PROPERTY       | DESCRIPTION                                                  | TYPE        | DEFAULT    | isRequired|
 |----------------|--------------------------------------------------------------|-------------|------------|-----------|
-| showNavigation | controls if the navigation buttons are visible               |boolean      |true        |false      |
+| showTopNav     | controls if the navigation buttons are visible               |boolean      |true        |false      |
 | showTitles     | control either the steps title are visible or not            |boolean      |true        |false      |
-| prevButton     | configure the prev navigation button                         |NavButton    |null        |false      |
-| nextButton     | configure the next the navigation button                     |NavButton    |null        |false      |
+| prevButton     | configure the prev navigation button                          |NavButton    |null        |false      |
+| nextButton     | configure the next the navigation button                      |NavButton    |null        |false      |
 | stepCustomStyle| control style of step                                        |CSSProperties|null        |false      |
 | direction      | control the steps nav direction                              |column       |row         |false      |
 | activeStep     | it takes a number representing representing starting step    |number       |0           |false      |
-| steps          | it takes an array of objects representing individual steps   |Step         |null        |false      |
 
 
 #### 🚀 NEW! you can also use style props for the navigation buttons and change how they look with two props 'prevButton' & 'nextButton':
@@ -57,7 +56,7 @@ MultiStep component accepts following props (all optional, except Steps array):
 
 
 #
-#### There are two ways to configure Multistep component, preferred way is with `Inlined` child components. Using this approach, enables the new feature that allows controlling the navigation based on the current step's form validation:
+#### To configure Multistep component, we `inline` child components:
 
 ```javascript
     <MultiStep  title: 'Order Workflow'} 
@@ -72,20 +71,6 @@ MultiStep component accepts following props (all optional, except Steps array):
 </MultiStep>
 ```
 
-####  The old way via `Steps`, a prop in the form of an array of components, is still supported for backwards compatibility. But, (:warning:) this way has being `deprecated`, and it will be removed in the future:
-
-```javascript
-const steps = [
-              {title: 'StepOne', component: <StepOne/>},
-              {title: 'StepTwo', component: <StepTwo/>},
-              {title: 'StepThree', component: <StepThree/>},
-              {title: 'StepFour', component: <StepFour/>}
-            ];
-...       
-...
-
-<MultiStep activeStep={1} showNavigation={true} steps={steps}/>
-```
 When configured this way, each component (`Step`) of the array can have following two properties:
 
 | PROPERTY  | DESCRIPTION                                 | TYPE       | DEFAULT    | isRequired|
