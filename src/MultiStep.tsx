@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { css, styled, setup } from 'goober'
+import { styled, setup } from 'goober'
 import { MultiStepPropsBase, NavButton, Step } from './interfaces'
 
 setup(React.createElement)
@@ -9,70 +9,37 @@ const Ol = styled('ol')`
   margin: 0;
   padding-bottom: 2.2rem;
   list-style-type: none;
+  flex-direction: row;
 `
 const Li = styled('li')`
   display: inline-block;
   text-align: center;
-  line-height: 4.8rem;
-  padding: 0 0.7rem;
+  padding-top: 4rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
   cursor: pointer;
   min-width: 6rem;
-
-  color: silver;
-  border-bottom: 2px solid silver;
-
- span{
+  border-bottom: 1px solid silver; 
+`
+const DoingSpan = styled('span')`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
- }
-
-  &:hover,
-  &:before {
-    color: #0FA0CE;
-  }
-  &:after {
-    content: "\\00a0\\00a0";
-  }   
-  &:before {
-    position: relative;
-    float: left;
-    left: 50%;
-    width: 1.3em;
-    line-height: 1.4em;
-    border-radius: 50%;
-    bottom: -3.99rem;
-  }
+  color: #33C3F0;
+  @media (max-width: 360px) {
+    position: absolute;
+    top: 1rem;
+    left: 2rem;
+  }    
 `
-const Todo = css`
-  &:before {
-    content: "\u039F";
-    color: silver;
-    background-color: white;
+const Span = styled('span')`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: silver;
+  @media (max-width: 360px) {
+    display: none;
   }
-`
-const Doing = css`
-  &:before {
-    content: "\u2022";
-    color: white;
-    background-color: #33C3F0;  
-  }
-`
-const Done = css`
-  &:before {
-    content: "\u2713";
-    color: white;
-    background-color: #33C3F0;
-  }
-`
-
-const RowDirection = css`
-  flex-direction: row;
-`
-
-const ColumnDirection = css`
-  margin-top: 4.8rem;
-  flex-direction: column;
 `
 
 const getStep = (defaultIndex: number, newIndex: number, length: number): number => {
@@ -115,50 +82,37 @@ const getButtonsState = (activeStep: number, length: number, stepIsValid: boolea
 }
 
 export default function MultiStep(props: MultiStepPropsBase) {
-  const { children } = props
-
-  let stepsArray = props.steps
-
-  if (!stepsArray && !children) {
-    throw TypeError("missing children or steps in props")
+  let { children } = props
+  if (!children) {
+    throw TypeError("Error: No steps to show")
   }
 
   const [stepIsValid, setStepIsValid] = useState(false)
   const stepStateChanged = (isValid: boolean) => {
-    console.log(`stepStateChanged invoked, isValid: ${isValid}`)
-    setStepIsValid(prev => isValid)
+    console.debug(`stepStateChanged invoked, isValid: ${isValid}`)
+    setStepIsValid(() => isValid)
   }
 
-  let steps: Step[] = []
-  if (children) {
-    let childrenWithProps = React.Children.map(children, (child, index) => {
-      return React.cloneElement(child, {
-        signalParent: stepStateChanged
-      })
+  children = React.Children.map(children, child => React.cloneElement(child, { signalParent: stepStateChanged }))
+  let steps = children.map(child => (
+    {
+      title: child.props.title,
+      component: child
     })
-    // for backward compatibility we preserve 'steps' with components array:
-    steps = childrenWithProps.map(childComponent => (
-      {
-        title: childComponent.props.title,
-        component: childComponent
-      })
-    )
-  }
-  else {
-    steps = stepsArray
-  }
-
-  const showTitles = typeof props.showTitles === 'undefined' ? true : props.showTitles
+  )
   const numberOfSteps = steps.length
   const stepCustomStyle = typeof props.stepCustomStyle === 'undefined' ? {} : props.stepCustomStyle
-  
   const showNavButtons = typeof props.showNavigation === 'undefined' ? true : props.showNavigation
   const prevButton: NavButton = typeof props.prevButton === 'undefined' ? {} : props.prevButton
   const nextButton: NavButton = typeof props.nextButton === 'undefined' ? {} : props.nextButton
   
-  const directionType = typeof props.direction === 'undefined' ? 'row' : props.direction
+  //todo: remove and update docs
+  // 1) stepsArray
+  // 2) const directionType = typeof props.direction === 'undefined' ? 'row' : props.direction
+  // 3) const showTitles = typeof props.showTitles === 'undefined' ? true : props.showTitles
+
   const [activeStep, setActiveStep] = useState(getStep(0, props.activeStep, numberOfSteps))
-  const [stylesState, setStyles] = useState(getTopNavStyles(activeStep, numberOfSteps))
+  const [stylesState, setStylesState] = useState(getTopNavStyles(activeStep, numberOfSteps))
   const [buttonsState, setButtonsState] = useState({
     prevDisabled: true,
     nextDisabled: true
@@ -169,7 +123,7 @@ export default function MultiStep(props: MultiStepPropsBase) {
   }, [activeStep, stepIsValid])
 
   const setStepState = (activeStep: number) => {
-    setStyles(getTopNavStyles(activeStep, numberOfSteps))
+    setStylesState(getTopNavStyles(activeStep, numberOfSteps))
     setActiveStep(activeStep < numberOfSteps ? activeStep : activeStep)
   }
 
@@ -204,23 +158,19 @@ export default function MultiStep(props: MultiStepPropsBase) {
     steps.map((s, i) => {
       return (
         <Li
-          className={
-            stylesState[i] === 'todo' ? Todo :
-              stylesState[i] === 'doing' ? Doing :
-                Done
-          }
-          style={{ ...stepCustomStyle, transform: directionType == 'column' ? 'rotate(90deg)' : 'rotate(0deg)' }}
+          style={{ ...stepCustomStyle }}
           onClick={handleOnClick}
           key={i}
-          value={i}
         >
-          {showTitles && <span>{s.title ?? i + 1}</span>}
+          {stylesState[i] === 'doing' ?
+            <DoingSpan>{s.title ?? i + 1}</DoingSpan> :
+            <Span>{s.title ?? i + 1}</Span> }
         </Li>
       )
     })
 
-  const renderButtonsNav = (show: boolean) =>
-    show && (
+  const renderButtonsNav = () =>
+    showNavButtons && (
       <div>
         <button onClick={previous}
           style={prevButton?.style}
@@ -236,12 +186,10 @@ export default function MultiStep(props: MultiStepPropsBase) {
     )
 
   return (
-    <div style={{ display: 'flex', flexDirection: directionType === 'column' ? 'row' : 'column' }}>
-      <Ol className={directionType === 'column' ? ColumnDirection : RowDirection}>
-        {renderTopNav()}
-      </Ol>
+    <>
+      <Ol>{renderTopNav()}</Ol>
       {steps[activeStep].component}
-      <div>{renderButtonsNav(showNavButtons)}</div>
-    </div>
+      <div>{renderButtonsNav()}</div>
+    </>
   )
 }
