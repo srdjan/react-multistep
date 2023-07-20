@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { styled, setup } from 'goober'
-import { MultiStepPropsBase, NavButton } from './interfaces'
+import { MultiStepPropsBase, NavButtonProp } from './interfaces'
 
 setup(React.createElement)
 
@@ -41,13 +41,6 @@ const Span = styled('span')`
     display: none;
   }
 `
-
-const getStep = (defaultIndex: number, newIndex: number, length: number): number => {
-  if (newIndex <= length) {
-    return newIndex;
-  }
-  return defaultIndex;
-}
 
 const getTopNavStyles = (activeStep: number, length: number): string[] => {
   const styles: string[] = []
@@ -99,10 +92,10 @@ export default function MultiStep(props: MultiStepPropsBase) {
       component: child
   }))
   
-  const topNavStyle = typeof props.topNavStyle === 'undefined' ? {} : props.topNavStyle
-  const topNavStepStyle = typeof props.topNavStepStyle === 'undefined' ? {} : props.topNavStepStyle
-  const prevButton: NavButton = typeof props.prevButton === 'undefined' ? {} : props.prevButton
-  const nextButton: NavButton = typeof props.nextButton === 'undefined' ? {} : props.nextButton
+  const topNavStyle = typeof props.topNavProp === 'undefined' ? {} : props.topNavProp
+  const topNavStepStyle = typeof props.topNavStepProp === 'undefined' ? {} : props.topNavStepProp
+  const prevButton: NavButtonProp = typeof props.prevButton === 'undefined' ? {} : props.prevButton
+  const nextButton: NavButtonProp = typeof props.nextButton === 'undefined' ? {} : props.nextButton
   
   //todo: remove and update docs
   // 1) removed stepsArray

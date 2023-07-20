@@ -6,9 +6,21 @@ import StepTwo from './stepTwo'
 import StepThree from './stepThree'
 import StepFour from './stepFour'
 
+const prevButtonStyle = {
+                          title: 'Back', 
+                          style:{ borderColor: 'blue' }
+                        }
+const topNavStyle = {
+                      display: "flex",
+                      margin: "0",
+                      paddingBottom: "2.2rem",
+                      listStyleType: "none",
+                      flexDirection: "row"
+                  }
+
 const App = () => (
   <div className='container'>
-    <MultiStep prevButton={{title: 'Back', style:{ borderColor: 'blue' }}} >
+    <MultiStep prevButtonStyle={prevButtonStyle} topNavProp={topNavStyle}>
       <StepOne title='Step 1'/>
       <StepTwo title='Step 2'/>
       <StepThree title='Step 3'/>
