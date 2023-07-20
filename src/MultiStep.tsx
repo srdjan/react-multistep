@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { styled, setup } from 'goober'
-import { MultiStepPropsBase, NavButtonProp } from './interfaces'
+import { MultiStepPropsBase, NavButton } from './interfaces'
 
 setup(React.createElement)
 
@@ -20,23 +20,37 @@ const Li = styled('li')`
   cursor: pointer;
   min-width: 6rem;
   border-bottom: 1px solid silver; 
-`
-const DoingSpan = styled('span')`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #33C3F0;
+`
+const ToDo = styled('span')`
+  &:before {
+    content: "\u039F";
+    color: silver;
+    background-color: white;
+  }
+`
+const Doing = styled('span')`
+  color: #9b4dca;
+  &:before {
+    content: "\u2022";
+    color: white;
+    background-color: #33C3F0;  
+  }
   @media (max-width: 360px) {
     position: absolute;
     top: 1rem;
     left: 2rem;
   }    
 `
-const Span = styled('span')`
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+const Done = styled('span')`
   color: silver;
+  &:before {
+    content: "\u2713";
+    color: white;
+    background-color: #33C3F0;
+  }
   @media (max-width: 360px) {
     display: none;
   }
@@ -88,19 +102,26 @@ export default function MultiStep(props: MultiStepPropsBase) {
 
   children = React.Children.map(children, child => React.cloneElement(child, { signalParent: stepStateChanged }))
   let steps = children.map(child => ({
-      title: child.props.title,
-      component: child
+    title: child.props.title,
+    component: child
   }))
   
-  const topNavStyle = typeof props.topNavProp === 'undefined' ? {} : props.topNavProp
-  const topNavStepStyle = typeof props.topNavStepProp === 'undefined' ? {} : props.topNavStepProp
-  const prevButton: NavButtonProp = typeof props.prevButton === 'undefined' ? {} : props.prevButton
-  const nextButton: NavButtonProp = typeof props.nextButton === 'undefined' ? {} : props.nextButton
+  const containerStyle = typeof props.containerStyle === 'undefined' ? {} : props.containerStyle
+  const topNavStyle = typeof props.topNav === 'undefined' ? {} : props.topNav
+  const topNavStepStyle = typeof props.topNavStep === 'undefined' ? {} : props.topNavStep
+  const todoStyle = typeof props.todo === 'undefined' ? {} : props.todo
+  const doingStyle = typeof props.doing === 'undefined' ? {} : props.doing
+  const doneStyle = typeof props.done === 'undefined' ? {} : props.done
+
+  const prevButton: NavButton = typeof props.prevButton === 'undefined' ? {} : props.prevButton
+  const nextButton: NavButton = typeof props.nextButton === 'undefined' ? {} : props.nextButton
   
-  //todo: remove and update docs
+  //todo: update docs
   // 1) removed stepsArray
   // 2) removed const directionType = typeof props.direction === 'undefined' ? 'row' : props.direction
-  // 3) removed const showTitles 
+  // 3) removed const showTitles
+  // ... 
+  // more like, redo docs from scratch :)
 
   const [activeStep, setActiveStep] = useState(0)
   const [stylesState, setStylesState] = useState(getTopNavStyles(activeStep, steps.length))
@@ -120,11 +141,11 @@ export default function MultiStep(props: MultiStepPropsBase) {
 
   const next = () => {
     let newActiveStep = activeStep === steps.length - 1 ? activeStep : activeStep + 1
-    setStepState(newActiveStep) 
+    setStepState(newActiveStep)
     console.log(`Next, ActiveStep: ${newActiveStep}`)
   }
   const previous = () => {
-    let newActiveStep = activeStep > 0 ? activeStep -1 : activeStep
+    let newActiveStep = activeStep > 0 ? activeStep - 1 : activeStep
     setStepState(newActiveStep)
     console.log(`Prev, ActiveStep: ${newActiveStep}`)
   }
@@ -153,33 +174,37 @@ export default function MultiStep(props: MultiStepPropsBase) {
           onClick={handleOnClick}
           key={i}
         >
-          {stylesState[i] === 'doing' ?
-            <DoingSpan>{s.title ?? i + 1}</DoingSpan> :
-            <Span>{s.title ?? i + 1}</Span> }
+          {
+            stylesState[i] === 'doing' ?
+              <Doing style={doingStyle}>{s.title ?? i + 1}</Doing> :
+            stylesState[i] === 'done' ?
+              <Done style={doneStyle}>{s.title ?? i + 1}</Done> :
+              <ToDo style={todoStyle}>{s.title ?? i + 1}</ToDo>
+          }
         </li>
       )
     })
 
   const renderButtonsNav = () => (
-      <div>
-        <button onClick={previous}
-          style={prevButton?.style}
-          disabled={buttonsState.prevDisabled}>
-          {prevButton && prevButton.title ? <>{prevButton.title}</> : <>Prev</>}
-        </button>
-        <button onClick={next}
-          style={nextButton?.style}
-          disabled={buttonsState.nextDisabled}>
-          {nextButton && nextButton.title ? <>{nextButton.title}</> : <>Next</>}
-        </button>
-      </div>
-    )
+    <>
+      <button onClick={previous}
+        style={prevButton?.style}
+        disabled={buttonsState.prevDisabled}>
+          {prevButton && prevButton.title ? prevButton.title : 'Prev'}
+      </button>
+      <button onClick={next}
+        style={nextButton?.style}
+        disabled={buttonsState.nextDisabled}>
+          {nextButton && nextButton.title ? nextButton.title : 'Next'}
+      </button>
+    </>
+  )
 
   return (
-    <>
+    <div style = {{ ...containerStyle }} >
       <ol style={{ ...topNavStyle }}>{renderTopNav()}</ol>
       {steps[activeStep].component}
       <div>{renderButtonsNav()}</div>
-    </>
+    </div>
   )
 }
