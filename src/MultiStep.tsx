@@ -1,60 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { styled, setup } from 'goober'
 import { MultiStepPropsBase, NavButton } from './interfaces'
-
-setup(React.createElement)
-
-const Ol = styled('ol')`
-  display: flex;
-  margin: 0;
-  padding-bottom: 2.2rem;
-  list-style-type: none;
-  flex-direction: row;
-`
-const Li = styled('li')`
-  display: inline-block;
-  text-align: center;
-  padding-top: 4rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  cursor: pointer;
-  min-width: 6rem;
-  border-bottom: 1px solid silver; 
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`
-const ToDo = styled('span')`
-  &:before {
-    content: "\u039F";
-    color: silver;
-    background-color: white;
-  }
-`
-const Doing = styled('span')`
-  color: #9b4dca;
-  &:before {
-    content: "\u2022";
-    color: white;
-    background-color: #33C3F0;  
-  }
-  @media (max-width: 360px) {
-    position: absolute;
-    top: 1rem;
-    left: 2rem;
-  }    
-`
-const Done = styled('span')`
-  color: silver;
-  &:before {
-    content: "\u2713";
-    color: white;
-    background-color: #33C3F0;
-  }
-  @media (max-width: 360px) {
-    display: none;
-  }
-`
 
 const getTopNavStyles = (activeStep: number, length: number): string[] => {
   const styles: string[] = []
@@ -176,10 +121,10 @@ export default function MultiStep(props: MultiStepPropsBase) {
         >
           {
             stylesState[i] === 'doing' ?
-              <Doing style={doingStyle}>{s.title ?? i + 1}</Doing> :
+              <span style={doingStyle}>{s.title ?? i + 1}</span> :
             stylesState[i] === 'done' ?
-              <Done style={doneStyle}>{s.title ?? i + 1}</Done> :
-              <ToDo style={todoStyle}>{s.title ?? i + 1}</ToDo>
+              <span style={doneStyle}>{s.title ?? i + 1}</span> :
+              <span style={todoStyle}>{s.title ?? i + 1}</span>
           }
         </li>
       )

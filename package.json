@@ -28,7 +28,6 @@
     "url": "https://github.com/srdjan/react-multistep/issues"
   },
   "dependencies": {
-    "goober": "2.1.13"
   },
   "devDependencies": {
     "@types/react": "18.2.15",

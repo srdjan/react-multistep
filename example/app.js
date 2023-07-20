@@ -35,11 +35,11 @@ const Done = {
 
 const prevButton = {
   title: 'Back', 
-  style:{ borderColor: 'blue' }
+  style:{ borderColor: 'blue', marginRight: '1rem' }
 }
 const nextButton = {
   title: 'Forward', 
-  style:{ borderColor: 'yellow', marginLeft: '1rem' }
+  style:{ borderColor: 'yellow' }
 }
 
 const App = () => (
