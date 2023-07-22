@@ -110,8 +110,7 @@ export default function MultiStep(props: MultiStepPropsBase) {
   }
 
   const renderTopNav = () =>
-    steps.map((s, i) => {
-      return (
+    steps.map((s, i) => (
         <li
           style={{ ...topNavStepStyle }}
           onClick={() => handleOnClick(i)}
@@ -126,8 +125,8 @@ export default function MultiStep(props: MultiStepPropsBase) {
           }
         </li>
       )
-    })
-
+    )
+  
   const renderButtonsNav = () => (
     <>
       <button onClick={previous}
