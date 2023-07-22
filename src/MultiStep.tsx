@@ -22,13 +22,16 @@ const getButtonsState = (activeStep: number, length: number, stepIsValid: boolea
       nextDisabled: !stepIsValid
     }
   }
-  if (activeStep > 0 && activeStep <= (length - 1)) {
+  if (activeStep > 0 && activeStep < (length - 1)) {
     return {
       prevDisabled: false,
       nextDisabled: !stepIsValid
     }
   }
-  console.log(`Error: activeStep: ${activeStep} < length: ${length} `)
+  return {
+    prevDisabled: false,
+    nextDisabled: true
+  }
 }
 
 export default function MultiStep(props: MultiStepPropsBase) {
@@ -128,12 +131,12 @@ export default function MultiStep(props: MultiStepPropsBase) {
   const renderButtonsNav = () => (
     <>
       <button onClick={previous}
-        style={prevButton?.style}
+        style={buttonsState.prevDisabled ? prevButton?.disabledStyle : prevButton?.style}
         disabled={buttonsState.prevDisabled}>
           {prevButton && prevButton.title ? prevButton.title : 'Prev'}
       </button>
       <button onClick={next}
-        style={nextButton?.style}
+        style={buttonsState.nextDisabled ? nextButton?.disabledStyle : nextButton?.style}
         disabled={buttonsState.nextDisabled}>
           {nextButton && nextButton.title ? nextButton.title : 'Next'}
       </button>

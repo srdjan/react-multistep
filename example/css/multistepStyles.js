@@ -30,10 +30,12 @@ export const Done = {
 
 export const prevButton = {
   title: 'Back', 
-  style:{ borderColor: 'blue', marginRight: '1rem' }
+  style:{ color: 'white', marginRight: '1rem', marginTop: '1rem' },
+  disabledStyle:{ color: 'black', backgroundColor: 'gray', marginRight: '1rem', marginTop: '1rem' }
 }
 
 export const nextButton = {
   title: 'Forward', 
-  style:{ borderColor: 'blue' }
+  style:{ color: 'white', marginTop: '1rem' },
+  disabledStyle:{ color: 'black', backgroundColor: 'gray', marginTop: '1rem' }
 }

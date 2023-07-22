@@ -3,6 +3,7 @@ import React from "react"
 export interface NavButton {
   title?: string
   style?: React.CSSProperties
+  disabledStyle?: React.CSSProperties
 }
 
 export interface MultiStepPropsBase {
