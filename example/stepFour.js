@@ -2,16 +2,18 @@ import React, { useState, useEffect } from 'react'
 
 export const StepFour = (props) => {
   const [checked, setChecked] = useState(false)
+  const [confirmationMsg, setConfirmationMsg] = useState('')
 
   useEffect(() => {
-    props.signalParent({isValid: true, title: 'Submit me', nextStep: 0, action: handleSubmit})
-  }, [])
+    props.signalParent({isValid: checked, title: 'Submit', action: handleSubmit})
+  }, [checked])
 
   const handleSubmit = () => {
-    console.log('Submitted !')
-    // const resp = await axios.get(`https://api.github.com/users/${state.companyName}`);
-    // props.onSubmit(resp.data);
-    // setState({ companyName: '' });
+    setConfirmationMsg(() => 'Submitted & Confirmed')
+  }
+
+  const handleCheckbox = (e) => {
+    setChecked(e.target.checked)
   }
 
   return (
@@ -31,11 +33,12 @@ export const StepFour = (props) => {
             <input
               type='checkbox'
               checked={checked}
-              onChange={e => setChecked(e.target.checked)}
+              onChange={e => handleCheckbox(e)}
               autoFocus
             />
             <span> Accept </span>{' '}
           </label>
+          <span style={{color: 'green'}}>{confirmationMsg}</span>
         </div>
       </form>
   )

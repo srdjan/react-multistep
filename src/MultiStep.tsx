@@ -28,6 +28,7 @@ const getButtonsState = (activeStep: number, length: number, stepIsValid: boolea
       nextDisabled: !stepIsValid
     }
   }
+  console.log(`stepIsValid: ${stepIsValid}`)
   return {
     prevDisabled: false,
     nextDisabled: !stepIsValid
@@ -63,7 +64,7 @@ export default function MultiStep(props: MultiStepPropsBase) {
   const stepStateChanged = (stepState: StepState) => {
     console.debug(`stepStateChanged: ${JSON.stringify(stepState)}`)
 
-    if (stepState.isValid) setStepIsValid(() => stepState.isValid)
+    if (stepState.isValid !== undefined) setStepIsValid(() => stepState.isValid)
     if (stepState.title) nextButton.title = stepState.title
     if (stepState.action) {
       setStepAction(() => stepState.action)
@@ -91,7 +92,7 @@ export default function MultiStep(props: MultiStepPropsBase) {
 
   const setStepState = (activeStep: number) => {
     setStylesState(getTopNavStyles(activeStep, steps.length))
-    setActiveStep(activeStep < steps.length ? activeStep : activeStep)
+    setActiveStep(activeStep)
   }
 
   const next = () => {

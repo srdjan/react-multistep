@@ -1,8 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
-export const StepThree = () => {
+export const StepThree = (props) => {
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
+
+  useEffect(() => {
+    props.signalParent({isValid: true, title: 'Forward'})
+  }, [])
 
   return (
     <div>
