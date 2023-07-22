@@ -3,6 +3,23 @@ html {
   overflow-y: scroll;
 }
 
+.relative {
+  position: relative;
+}
+
+.relative input {
+  padding-right: 4rem;
+}
+
+.password-toggler {
+	width: 2rem;
+	position: absolute;
+	top: 3.8rem;
+	right: 1rem;
+	transition: opacity 0.5s;
+  outline: none;
+}
+
 /* footer */
 .app-footer {
   color: silver;
