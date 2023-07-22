@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { MultiStepPropsBase, NavButton } from './interfaces'
+import { MultiStepPropsBase, NavButton, StepState } from './interfaces'
 
 const getTopNavStyles = (activeStep: number, length: number): string[] => {
   const styles: string[] = []
@@ -30,28 +30,23 @@ const getButtonsState = (activeStep: number, length: number, stepIsValid: boolea
   }
   return {
     prevDisabled: false,
-    nextDisabled: true
+    nextDisabled: !stepIsValid
   }
 }
 
+
+//todo: update docs
+// 1) removed stepsArray
+// 2) removed const directionType = typeof props.direction === 'undefined' ? 'row' : props.direction
+// 3) removed const showTitles
+// ...
+// more like, redo docs from scratch :)
 export default function MultiStep(props: MultiStepPropsBase) {
   let { children } = props
   if (!children) {
     throw TypeError("Error: No steps to show")
   }
 
-  const [stepIsValid, setStepIsValid] = useState(false)
-  const stepStateChanged = (isValid: boolean) => {
-    console.debug(`stepStateChanged invoked, isValid: ${isValid}`)
-    setStepIsValid(() => isValid)
-  }
-
-  children = React.Children.map(children, child => React.cloneElement(child, { signalParent: stepStateChanged }))
-  let steps = children.map(child => ({
-    title: child.props.title,
-    component: child
-  }))
-  
   const containerStyle = typeof props.containerStyle === 'undefined' ? {} : props.containerStyle
   const topNavStyle = typeof props.topNav === 'undefined' ? {} : props.topNav
   const topNavStepStyle = typeof props.topNavStep === 'undefined' ? {} : props.topNavStep
@@ -61,14 +56,28 @@ export default function MultiStep(props: MultiStepPropsBase) {
 
   const prevButton: NavButton = typeof props.prevButton === 'undefined' ? {} : props.prevButton
   const nextButton: NavButton = typeof props.nextButton === 'undefined' ? {} : props.nextButton
-  
-  //todo: update docs
-  // 1) removed stepsArray
-  // 2) removed const directionType = typeof props.direction === 'undefined' ? 'row' : props.direction
-  // 3) removed const showTitles
-  // ... 
-  // more like, redo docs from scratch :)
 
+  const [stepIsValid, setStepIsValid] = useState(false)
+  const [stepAction, setStepAction] = useState(null)
+
+  const stepStateChanged = (stepState: StepState) => {
+    console.debug(`stepStateChanged: ${JSON.stringify(stepState)}`)
+
+    if (stepState.isValid) setStepIsValid(() => stepState.isValid)
+    if (stepState.title) nextButton.title = stepState.title
+    if (stepState.action) {
+      setStepAction(() => stepState.action)
+    } else {
+      setStepAction(null)
+    }
+  }
+
+  children = React.Children.map(children, child => React.cloneElement(child, { signalParent: stepStateChanged }))
+  let steps = children.map(child => ({
+    title: child.props.title,
+    component: child
+  }))
+  
   const [activeStep, setActiveStep] = useState(0)
   const [stylesState, setStylesState] = useState(getTopNavStyles(activeStep, steps.length))
   const [buttonsState, setButtonsState] = useState({
@@ -88,6 +97,9 @@ export default function MultiStep(props: MultiStepPropsBase) {
   const next = () => {
     let newActiveStep = activeStep === steps.length - 1 ? activeStep : activeStep + 1
     setStepState(newActiveStep)
+    if (stepAction) {
+      stepAction()
+    }
   }
   const previous = () => {
     let newActiveStep = activeStep > 0 ? activeStep - 1 : activeStep

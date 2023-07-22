@@ -21,8 +21,7 @@ export interface MultiStepPropsBase {
 
 export interface StepState {
   title?: string
-  isValid: boolean
-  prevStep?: number
+  isValid?: boolean
   nextStep?: number
-  warning?: string
+  action?: (arg0: any) => any 
 }

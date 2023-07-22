@@ -1,11 +1,21 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
-export const StepFour = () => {
+export const StepFour = (props) => {
   const [checked, setChecked] = useState(false)
 
+  useEffect(() => {
+    props.signalParent({isValid: true, title: 'Submit me', nextStep: 0, action: handleSubmit})
+  }, [])
+
+  const handleSubmit = () => {
+    console.log('Submitted !')
+    // const resp = await axios.get(`https://api.github.com/users/${state.companyName}`);
+    // props.onSubmit(resp.data);
+    // setState({ companyName: '' });
+  }
+
   return (
-    <div>
-      <div className='row'>
+      <form className='row'>
         <div className='ten columns terms'>
           <span>By clicking "Accept" I agree that:</span>
           <ul className='docs-terms'>
@@ -27,7 +37,8 @@ export const StepFour = () => {
             <span> Accept </span>{' '}
           </label>
         </div>
-      </div>
-    </div>
+      </form>
   )
 }
+
+ 

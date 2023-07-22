@@ -17,7 +17,7 @@ export const StepOne = (props) => {
 
   useEffect(() => {
     if(stepVisited == 0) {
-      props.signalParent(state.firstName.length > 0)
+      props.signalParent({isValid: state.firstName.length > 0})
     }
   }, [stepVisited])
 
@@ -28,10 +28,10 @@ export const StepOne = (props) => {
     setFirstName(val)
 
     if(prevFirstName.length === 0 && val.length === 1) {
-      props.signalParent(true)
+      props.signalParent({isValid: true})
     }
     else if(prevFirstName.length === 1 && val.length == 0) {
-      props.signalParent(false)
+      props.signalParent({isValid: false})
     }
   }
 
