@@ -5,7 +5,7 @@ import { StepOne } from './stepOne'
 import { StepTwo } from './stepTwo'
 import { StepThree } from './stepThree'
 import { StepFour } from './stepFour'
-import {prevButton, nextButton, containerStyle, topNavStepStyle, topNavStyle, Todo, Doing, Done} from './css/multistep'
+import {prevButton, nextButton, containerStyle, topNavStepStyle, topNavStyle, Todo, Doing, Done} from './css/multistepStyles'
 
 const App = () => (
   <div className='container'>

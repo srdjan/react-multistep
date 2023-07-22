@@ -18,7 +18,6 @@ export const topNavStepStyle = {
   paddingRight: '4rem',
   borderBottom: '1px solid silver'
 }
-
 export const Todo = {
   color: 'silver'
 }
@@ -36,5 +35,5 @@ export const prevButton = {
 
 export const nextButton = {
   title: 'Forward', 
-  style:{ borderColor: 'yellow' }
+  style:{ borderColor: 'blue' }
 }
