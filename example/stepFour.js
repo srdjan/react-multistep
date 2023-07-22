@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-export default () => {
+export const StepFour = () => {
   const [checked, setChecked] = useState(false)
 
   return (

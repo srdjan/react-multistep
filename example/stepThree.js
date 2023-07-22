@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-export default () => {
+export const StepThree = () => {
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
 

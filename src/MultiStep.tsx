@@ -17,20 +17,18 @@ const getTopNavStyles = (activeStep: number, length: number): string[] => {
 
 const getButtonsState = (activeStep: number, length: number, stepIsValid: boolean) => {
   if (activeStep === 0) {
-    console.log(`ActiveStep === 0, isValid: ${stepIsValid}`)
     return {
       prevDisabled: true,
       nextDisabled: !stepIsValid
     }
-  } else if (activeStep > 0 && activeStep <= (length - 1)) {
-    console.log(`ActiveStep > 0, isValid: ${stepIsValid}`)
+  }
+  if (activeStep > 0 && activeStep <= (length - 1)) {
     return {
       prevDisabled: false,
       nextDisabled: !stepIsValid
     }
-  } else {
-    console.log(`Error: activeStep: ${activeStep} < length: ${length} `)
   }
+  console.log(`Error: activeStep: ${activeStep} < length: ${length} `)
 }
 
 export default function MultiStep(props: MultiStepPropsBase) {
@@ -87,27 +85,24 @@ export default function MultiStep(props: MultiStepPropsBase) {
   const next = () => {
     let newActiveStep = activeStep === steps.length - 1 ? activeStep : activeStep + 1
     setStepState(newActiveStep)
-    console.log(`Next, ActiveStep: ${newActiveStep}`)
   }
   const previous = () => {
     let newActiveStep = activeStep > 0 ? activeStep - 1 : activeStep
     setStepState(newActiveStep)
-    console.log(`Prev, ActiveStep: ${newActiveStep}`)
   }
 
-  const handleOnClick = (evt: { currentTarget: { value: number } }) => {
+  const handleOnClick = (indx: number) => {
     if (!stepIsValid) {
       console.log('Error: Step validation failed')
       return
     }
-
     if (
-      evt.currentTarget.value === steps.length - 1 &&
+      indx === steps.length - 1 &&
       activeStep === steps.length - 1
     ) {
       setStepState(steps.length)
     } else {
-      setStepState(evt.currentTarget.value)
+      setStepState(indx)
     }
   }
 
@@ -116,7 +111,7 @@ export default function MultiStep(props: MultiStepPropsBase) {
       return (
         <li
           style={{ ...topNavStepStyle }}
-          onClick={handleOnClick}
+          onClick={() => handleOnClick(i)}
           key={i}
         >
           {
