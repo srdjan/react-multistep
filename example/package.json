@@ -1,7 +1,7 @@
 {
   "name": "react-multistep-example",
   "homepage": "https://srdjan.github.io/react-multistep",
-  "version": "2.0.0",
+  "version": "6.0.0-alpha",
   "license": "MIT",
   "scripts": {
     "debug": "esbuild app.js --bundle --format=cjs --outfile=./bundle.js --loader:.js=jsx --sourcemap --preserve-symlinks",
