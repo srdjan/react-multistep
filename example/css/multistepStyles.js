@@ -55,12 +55,12 @@ export const Done = {
 
 export const prevButton = {
   title: 'Back', 
-  style:{ color: '#23addb', backgroundColor: '#f1f1f1', marginRight: '1rem', marginTop: '1rem' },
-  disabledStyle:{ color: '#c0c0c0', backgroundColor: '#d1d1d1', marginRight: '1rem', marginTop: '1rem' }
+  style:{ color: '#23addb', backgroundColor: 'white', marginRight: '1rem', marginTop: '1rem' },
+  disabledStyle:{ color: '#817f7f', backgroundColor: '#d5d5da', marginRight: '1rem', borderColor: '#817f7f', marginTop: '1rem' }
 }
 
 export const nextButton = {
   title: 'Forward', 
-  style:{ color: '#23addb', backgroundColor: '#f1f1f1', marginTop: '1rem' },
-  disabledStyle:{ color: '#c0c0c0', backgroundColor: '#d1d1d1', marginTop: '1rem' }
+  style:{ color: '#23addb', backgroundColor: 'white', marginTop: '1rem' },
+  disabledStyle:{ color: '#817f7f', backgroundColor: '#d5d5da', borderColor: '#817f7f', marginTop: '1rem' }
 }
