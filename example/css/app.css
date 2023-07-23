@@ -3,10 +3,3 @@ html {
   overflow-y: scroll;
 }
 
-/* footer */
-.app-footer {
-  color: silver;
-  line-height: 0.1rem;
-  margin-top: 8rem;
-  font-size: 1.2rem;
-}

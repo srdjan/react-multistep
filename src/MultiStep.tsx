@@ -142,16 +142,16 @@ export default function MultiStep(props: MultiStepPropsBase) {
   
   const renderButtonsNav = () => (
     <>
-      <button onClick={previous}
-        style={buttonsState.prevDisabled ? prevButton?.disabledStyle : prevButton?.style}
-        disabled={buttonsState.prevDisabled}>
-          {prevButton && prevButton.title ? prevButton.title : 'Prev'}
-      </button>
+        <button onClick={previous}
+                style={buttonsState.prevDisabled ? prevButton?.disabledStyle : prevButton?.style}
+                disabled={buttonsState.prevDisabled}>
+          <span>&#60;</span>
+        </button>
       <button onClick={next}
-        style={buttonsState.nextDisabled ? nextButton?.disabledStyle : nextButton?.style}
-        disabled={buttonsState.nextDisabled}>
-          {nextButton && nextButton.title ? nextButton.title : 'Next'}
-      </button>
+              style={buttonsState.nextDisabled ? nextButton?.disabledStyle : nextButton?.style}
+              disabled={buttonsState.nextDisabled}>
+          <span>&#62;</span>
+        </button>
     </>
   )
 

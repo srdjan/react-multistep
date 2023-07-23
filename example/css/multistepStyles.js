@@ -55,12 +55,52 @@ export const Done = {
 
 export const prevButton = {
   title: 'Back', 
-  style:{ color: '#23addb', backgroundColor: 'white', marginRight: '1rem', marginTop: '1rem' },
-  disabledStyle:{ color: '#817f7f', backgroundColor: '#d5d5da', marginRight: '1rem', borderColor: '#817f7f', marginTop: '1rem' }
+  style: {
+    color: '#1EAEDB',
+    backgroundColor: 'white',
+    border: '0',
+    width: '5rem',
+    height: '5rem',
+    fontSize: '4rem',
+    fontWeight: '500',
+    float: 'left',
+    padding: '0'
+  }, 
+  disabledStyle:{ 
+    color: 'silver', 
+    backgroundColor: 'white',
+    border: '0',
+    width: '5rem',
+    height: '5rem',
+    fontSize: '4rem',
+    fontWeight: '500',
+    float: 'left',
+    padding: '0'
+  }
 }
 
 export const nextButton = {
   title: 'Forward', 
-  style:{ color: '#23addb', backgroundColor: 'white', marginTop: '1rem' },
-  disabledStyle:{ color: '#817f7f', backgroundColor: '#d5d5da', borderColor: '#817f7f', marginTop: '1rem' }
+  style: {
+    color: '#1EAEDB',
+    backgroundColor: 'white',
+    border: '0',
+    width: '5rem',
+    height: '5rem',
+    fontSize: '4rem',
+    fontWeight: '500',
+    float: 'right',
+    padding: '0'
+  }, 
+  disabledStyle:{ 
+    color: 'silver', 
+    backgroundColor: 'white',
+    border: '0',
+    width: '5rem',
+    height: '5rem',
+    fontSize: '4rem',
+    fontWeight: '500',
+    float: 'right',
+    padding: '0'
+  }
 }
