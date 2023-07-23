@@ -2,15 +2,10 @@ import React, { useState, useEffect } from 'react'
 
 export const StepFour = (props) => {
   const [checked, setChecked] = useState(false)
-  const [confirmationMsg, setConfirmationMsg] = useState('')
 
   useEffect(() => {
-    props.signalParent({isValid: checked, title: 'Submit', action: handleSubmit})
+    props.signalParent({isValid: checked})
   }, [checked])
-
-  const handleSubmit = () => {
-    setConfirmationMsg(() => 'Submitted & Confirmed')
-  }
 
   const handleCheckbox = (e) => {
     setChecked(e.target.checked)
@@ -38,7 +33,6 @@ export const StepFour = (props) => {
             />
             <span> Accept </span>{' '}
           </label>
-          <span style={{color: 'green'}}>{confirmationMsg}</span>
         </div>
       </form>
   )

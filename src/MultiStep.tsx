@@ -59,18 +59,12 @@ export default function MultiStep(props: MultiStepPropsBase) {
   const nextButton: NavButton = typeof props.nextButton === 'undefined' ? {} : props.nextButton
 
   const [stepIsValid, setStepIsValid] = useState(false)
-  const [stepAction, setStepAction] = useState(null)
 
   const stepStateChanged = (stepState: StepState) => {
     console.debug(`stepStateChanged: ${JSON.stringify(stepState)}`)
 
     if (stepState.isValid !== undefined) setStepIsValid(() => stepState.isValid)
     if (stepState.title) nextButton.title = stepState.title
-    if (stepState.action) {
-      setStepAction(() => stepState.action)
-    } else {
-      setStepAction(null)
-    }
   }
 
   children = React.Children.map(children, child => React.cloneElement(child, { signalParent: stepStateChanged }))
@@ -98,9 +92,6 @@ export default function MultiStep(props: MultiStepPropsBase) {
   const next = () => {
     let newActiveStep = activeStep === steps.length - 1 ? activeStep : activeStep + 1
     setStepState(newActiveStep)
-    if (stepAction) {
-      stepAction()
-    }
   }
   const previous = () => {
     let newActiveStep = activeStep > 0 ? activeStep - 1 : activeStep
