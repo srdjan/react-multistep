@@ -8,7 +8,7 @@ import { StepFour } from './stepFour'
 import {prevButton, nextButton, containerStyle, topNavStepStyle, topNavStyle, Todo, Doing, Done} from './css/multistepStyles'
 
 const App = () => (
-  <div className='container'>
+  <div className='container' style={{maxWidth: '639px'}}>
     <MultiStep prevButton={prevButton}
                nextButton={nextButton}  
                containerStyle={containerStyle} 
@@ -23,7 +23,7 @@ const App = () => (
       <StepThree title='Step 3'/>
       <StepFour title='Step 4'/>
     </MultiStep>
-    <div className='footer' style={{paddingTop: '6rem', fontSize: 'small'}}>
+    <div className='footer' style={{paddingTop: '6rem', paddingLeft: '2rem', fontSize: 'small'}}>
       Use navigation buttons or click on progress bar for next step. 
       <p>Code is on{' '}
         <a href='https://github.com/Srdjan/react-multistep' target='_blank' rel='noreferrer'>

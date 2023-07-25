@@ -1,5 +1,6 @@
-/* forcing vertical scroll */
+/* forcing vertical scroll
 html {
   overflow-y: scroll;
+  max-width: 639px;
 }
-
+ */

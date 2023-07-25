@@ -19,19 +19,22 @@ const getButtonsState = (activeStep: number, length: number, stepIsValid: boolea
   if (activeStep === 0) {
     return {
       prevDisabled: true,
-      nextDisabled: !stepIsValid
+      nextDisabled: !stepIsValid,
+      nextHidden: false
     }
   }
   if (activeStep > 0 && activeStep < (length - 1)) {
     return {
       prevDisabled: false,
-      nextDisabled: !stepIsValid
+      nextDisabled: !stepIsValid,
+      nextHidden: false
     }
   }
   console.log(`stepIsValid: ${stepIsValid}`)
   return {
     prevDisabled: false,
-    nextDisabled: !stepIsValid
+    nextDisabled: !stepIsValid,
+    nextHidden: true
   }
 }
 
@@ -48,6 +51,10 @@ export default function MultiStep(props: MultiStepPropsBase) {
     throw TypeError("Error: No steps to show")
   }
 
+  const [activeStep, setActiveStep] = useState(0)
+  const [nextStep, setNextStep] = useState(0)
+  const [stepIsValid, setStepIsValid] = useState(false)
+
   const containerStyle = typeof props.containerStyle === 'undefined' ? {} : props.containerStyle
   const topNavStyle = typeof props.topNav === 'undefined' ? {} : props.topNav
   const topNavStepStyle = typeof props.topNavStep === 'undefined' ? {} : props.topNavStep
@@ -58,26 +65,26 @@ export default function MultiStep(props: MultiStepPropsBase) {
   const prevButton: NavButton = typeof props.prevButton === 'undefined' ? {} : props.prevButton
   const nextButton: NavButton = typeof props.nextButton === 'undefined' ? {} : props.nextButton
 
-  const [stepIsValid, setStepIsValid] = useState(false)
-
   const stepStateChanged = (stepState: StepState) => {
-    console.debug(`stepStateChanged: ${JSON.stringify(stepState)}`)
+    console.debug(`stepStateChanged, isValid: ${stepState?.isValid}, nextStep: ${stepState?.nextStep}`)
 
     if (stepState.isValid !== undefined) setStepIsValid(() => stepState.isValid)
-    if (stepState.title) nextButton.title = stepState.title
+    if (stepState.nextStep) setNextStep(stepState.nextStep)
   }
 
-  children = React.Children.map(children, child => React.cloneElement(child, { signalParent: stepStateChanged }))
+  children = React.Children.map(children, child =>
+    React.cloneElement(child, { signalParent: stepStateChanged })
+  )
   let steps = children.map(child => ({
     title: child.props.title,
-    component: child
-  }))
-  
-  const [activeStep, setActiveStep] = useState(0)
+    component: child })
+  )
+
   const [stylesState, setStylesState] = useState(getTopNavStyles(activeStep, steps.length))
   const [buttonsState, setButtonsState] = useState({
     prevDisabled: true,
-    nextDisabled: true
+    nextDisabled: true,
+    nextHidden: false
   })
 
   useEffect(() => {
@@ -85,8 +92,8 @@ export default function MultiStep(props: MultiStepPropsBase) {
   }, [activeStep, stepIsValid])
 
   const setStepState = (activeStep: number) => {
-    setStylesState(getTopNavStyles(activeStep, steps.length))
-    setActiveStep(activeStep)
+    setStylesState(getTopNavStyles(activeStep+nextStep, steps.length))
+    setActiveStep(activeStep + nextStep)
   }
 
   const next = () => {
@@ -134,12 +141,12 @@ export default function MultiStep(props: MultiStepPropsBase) {
   const renderButtonsNav = () => (
     <>
         <button onClick={previous}
-                style={buttonsState.prevDisabled ? prevButton?.disabledStyle : prevButton?.style}
+                style={ prevButton?.style }
                 disabled={buttonsState.prevDisabled}>
           <span>&#60;</span>
         </button>
       <button onClick={next}
-              style={buttonsState.nextDisabled ? nextButton?.disabledStyle : nextButton?.style}
+        style={buttonsState.nextHidden ? { display: 'none' } : nextButton?.style}
               disabled={buttonsState.nextDisabled}>
           <span>&#62;</span>
         </button>

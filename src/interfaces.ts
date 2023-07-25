@@ -20,7 +20,6 @@ export interface MultiStepPropsBase {
 }
 
 export interface StepState {
-  title?: string
   isValid?: boolean
   nextStep?: number
 }

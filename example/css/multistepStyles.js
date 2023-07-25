@@ -64,18 +64,10 @@ export const prevButton = {
     fontSize: '4rem',
     fontWeight: '500',
     float: 'left',
-    padding: '0'
-  }, 
-  disabledStyle:{ 
-    color: 'silver', 
-    backgroundColor: 'white',
-    border: '0',
-    width: '5rem',
-    height: '5rem',
-    fontSize: '4rem',
-    fontWeight: '500',
-    float: 'left',
-    padding: '0'
+    padding: '0',
+    button_disabled: {
+      color: 'silver' 
+    }
   }
 }
 
@@ -90,17 +82,9 @@ export const nextButton = {
     fontSize: '4rem',
     fontWeight: '500',
     float: 'right',
-    padding: '0'
-  }, 
-  disabledStyle:{ 
-    color: 'silver', 
-    backgroundColor: 'white',
-    border: '0',
-    width: '5rem',
-    height: '5rem',
-    fontSize: '4rem',
-    fontWeight: '500',
-    float: 'right',
-    padding: '0'
+    padding: '0',
+    button_disabled: {
+      color: 'silver'
+    }
   }
 }

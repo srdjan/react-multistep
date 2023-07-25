@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react'
 
 export const StepTwo = (props) => {
+  const [passwdRequired, setPasswordRequired] = useState(true)
   const [email, setEmail] = useState('')
   const [emailConfirm, setEmailConfirm] = useState('')
 
   useEffect(() => {
-    props.signalParent({isValid: true, title: 'Forward'})
-  }, [])
+    props.signalParent({isValid: true, nextStep: passwdRequired ? 0 : 1})
+  }, [passwdRequired])
+
+  const handleCheckbox = (e) => {
+    setPasswordRequired(p => e.target.checked)
+  }
 
   return (
     <div>
@@ -35,6 +40,15 @@ export const StepTwo = (props) => {
           />
         </div>
       </div>
+      <label>
+        <input
+          type='checkbox'
+          checked={passwdRequired}
+          onChange={e => handleCheckbox(e)}
+          autoFocus
+        />
+        <span> Password required </span>{' '}
+      </label>
     </div>
   )
 }
