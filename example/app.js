@@ -5,18 +5,19 @@ import { StepOne } from './stepOne'
 import { StepTwo } from './stepTwo'
 import { StepThree } from './stepThree'
 import { StepFour } from './stepFour'
-import {prevButton, nextButton, containerStyle, topNavStepStyle, topNavStyle, Todo, Doing, Done} from './css/multistepStyles'
+import {prevButton, nextButton, containerStyle, topNavStepStyle, topNavStyle, Todo, Doing, Done, Skip} from './css/multistepStyles'
 
 const App = () => (
-  <div className='container' style={{maxWidth: '639px'}}>
+  <div className='container' style={{maxWidth: '639px', border: '1px'}}>
     <MultiStep prevButton={prevButton}
                nextButton={nextButton}  
                containerStyle={containerStyle} 
-               topNavStep={topNavStepStyle}
+               topNavStepStyle={topNavStepStyle}
                topNav={topNavStyle}
                todo={Todo}
                doing={Doing}
                done={Done}
+               skip={Skip}
                >
       <StepOne title='Step 1'/>
       <StepTwo title='Step 2'/>

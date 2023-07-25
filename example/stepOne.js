@@ -44,7 +44,7 @@ export const StepOne = (props) => {
     firstNameIsInvalid ? <span style={{fontSize: '1rem', color: 'red'}}>&nbsp;[ Required ]</span> : ''
     
   return (
-    <div>
+    <div className='container'>
       <div className='row'>
         <div className='six columns'>
           <label>First Name<Required /></label>
