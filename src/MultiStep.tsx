@@ -126,26 +126,24 @@ export default function MultiStep(props: MultiStepPropsBase) {
   }
 
   const renderTopNav = () =>
-    steps.map((s, i) => (
+    <ol style={{ ...topNavStyle }}>
+      {steps.map((s, i) => (
         <li
           style={{ ...topNavStepStyle }}
           onClick={() => handleOnClick(i)}
           key={i}
         >
           {
-            stylesState[i] === 'doing' ?
-              <span style={doingStyle}>{s.title ?? i + 1}</span> :
-            stylesState[i] === 'done' ?
-              <span style={doneStyle}>{s.title ?? i + 1}</span> :
-            stylesState[i] === 'skip' ?
-              <span style={skipStyle}>{s.title ?? i + 1}</span> :
-              <span style={todoStyle}>{s.title ?? i + 1}</span>
+            stylesState[i] === 'doing' ? <span style={doingStyle}>{s.title ?? i + 1}</span> :
+              stylesState[i] === 'done' ? <span style={doneStyle}>{s.title ?? i + 1}</span> :
+                stylesState[i] === 'skip' ? <span style={skipStyle}>{s.title ?? i + 1}</span> :
+                  <span style={todoStyle}>{s.title ?? i + 1}</span>
           }
         </li>
-      )
-    )
-  
-  const renderButtonsNav = () => (
+      ))}
+    </ol>
+
+  const renderBottomNav = () => (
     <>
       <button onClick={previous}
               style={ prevButton?.style }
@@ -162,9 +160,9 @@ export default function MultiStep(props: MultiStepPropsBase) {
 
   return (
     <div style = {{ ...containerStyle }} >
-      <ol style={{ ...topNavStyle }}>{renderTopNav()}</ol>
+      {renderTopNav()}
       {steps[activeStep].component}
-      <div>{renderButtonsNav()}</div>
+      {renderBottomNav()}
     </div>
   )
 }

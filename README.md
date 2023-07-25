@@ -1,18 +1,37 @@
 # Responsive React multistep form component
+  
+</br>
+</br>
+  
+## Take it for a [__SPIN!__](http://srdjan.github.io/react-multistep/) `:dizzy:`
 
-#### Take it for a [spin](http://srdjan.github.io/react-multistep/)
-#
-
+</br>
 
 <kbd>
 <img border=width="500px" height="300px" src="https://raw.githubusercontent.com/srdjan/react-multistep/master/assets/react-multistep.png"/>
-</kbd>
-
-
-#### List of contributors (:raised_hands:):
+</kbd>  
+  
+</br>
+</br>
+</br>
+  
+#### List of contributors `:raised_hands:`
 <a href = "https://github.com/react-multistep/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=srdjan/react-multistep" alt="AWESOME CONTRIBUTORS" />
 </a>
+  
+</br>
+</br>
+</br>
+  
+
+### Previous MultiStep major version, v5.4.0
+```
+To see/grab the last release form the previous, major verson (v5.4.0), go to the `v5.4.0` branch for developing/forking, or use this link (???) to install from NPM. The new version, v6.0.0 has a multiple improvements (see below) and is not backwards compatible.
+```
+  
+   
+  
 
 # 
 ### Instructions
