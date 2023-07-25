@@ -3,7 +3,7 @@
 </br>
 </br>
   
-## Take it for a [__SPIN!__](http://srdjan.github.io/react-multistep/) `:dizzy:`
+## Take it for a [__SPIN!__](http://srdjan.github.io/react-multistep/) :dizzy:
 
 </br>
 
@@ -15,7 +15,7 @@
 </br>
 </br>
   
-#### List of contributors `:raised_hands:`
+#### List of contributors :raised_hands:
 <a href = "https://github.com/react-multistep/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=srdjan/react-multistep" alt="AWESOME CONTRIBUTORS" />
 </a>
@@ -27,7 +27,7 @@
 
 ### Previous MultiStep major version, v5.4.0
 ```
-To see/grab the last release form the previous, major verson (v5.4.0), go to the `v5.4.0` branch for developing/forking, or use this link (???) to install from NPM. The new version, v6.0.0 has a multiple improvements (see below) and is not backwards compatible.
+Version 5.x.x is in a maintenance mode, the new development is ongoing on v6.x.x. Version (v5.x.x) bug fixes will still be available on NPM, if you would like to open a PR for a fix or make a fork, git checkout branch v5.x.x. The new version, v6.0.0 has a multiple improvements (see below) and is not backwards compatible.
 ```
   
    
