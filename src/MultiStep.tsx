@@ -98,11 +98,11 @@ export default function MultiStep(props: MultiStepProps) {
     setActiveStep(activeStep + nextStep)
   }
 
-  const next = () => {
+  const handleBottomNavNext = () => {
     let newActiveStep = activeStep === steps.length - 1 ? activeStep : activeStep + 1
     setStepState(newActiveStep)
   }
-  const previous = () => {
+  const handleBottomNavPrevious = () => {
     let newActiveStep = activeStep > 0 ? activeStep - 1 : activeStep
     setStepState(newActiveStep)
   }
@@ -112,10 +112,7 @@ export default function MultiStep(props: MultiStepProps) {
       console.log('Error: Step validation failed')
       return
     }
-    if (
-      indx === steps.length - 1 &&
-      activeStep === steps.length - 1
-    ) {
+    if (indx === steps.length - 1 && activeStep === steps.length - 1) {
       setStepState(steps.length)
     } else {
       setStepState(indx)
@@ -142,12 +139,12 @@ export default function MultiStep(props: MultiStepProps) {
 
   const renderBottomNav = () => (
     <>
-      <button onClick={previous}
+      <button onClick={handleBottomNavPrevious}
               style={ prevButtonStyle }
               disabled={buttonsState.prevDisabled}>
         <span>&#60;</span>
       </button>
-      <button onClick={next}
+      <button onClick={handleBottomNavNext}
               style={buttonsState.nextHidden ? { display: 'none' } : nextButtonStyle}
               disabled={buttonsState.nextDisabled}>
         <span>&#62;</span>
