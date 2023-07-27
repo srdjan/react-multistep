@@ -1,23 +1,21 @@
 import React from "react"
 
-export interface NavButton {
-  title?: string
-  style?: React.CSSProperties
-  disabledStyle?: React.CSSProperties
-}
-
-export interface MultiStepPropsBase {
-  showTitles?: boolean
-  containerStyle?: React.CSSProperties
+interface MultiStepStyles {
+  container?: React.CSSProperties,
   topNav?: React.CSSProperties
-  topNavStepStyle?: React.CSSProperties
+  topNavStep?: React.CSSProperties
   todo?: React.CSSProperties
   doing?: React.CSSProperties
   done?: React.CSSProperties
   skip?: React.CSSProperties
+  prevButton?: React.CSSProperties
+  nextButton?: React.CSSProperties
+}
+
+export interface MultiStepProps {
+  showTitles?: boolean,   //todo: remove, use topNav.display: none ?
+  styles: MultiStepStyles
   children?: React.ReactElement[]
-  prevButton?: NavButton
-  nextButton?: NavButton
 }
 
 export interface StepState {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { MultiStepPropsBase, NavButton, StepState } from './interfaces'
+import { MultiStepProps, StepState } from './interfaces'
 
 const getTopNavStyles = (activeStep: number, length: number): string[] => {
   const styles: string[] = []
@@ -19,7 +19,6 @@ const getTopNavStyles = (activeStep: number, length: number): string[] => {
 
 const getButtonsState = (activeStep: number, length: number, stepIsValid: boolean) => {
   if (activeStep === 0) {
-    console.log(`activeStep===0`)
     return {
       prevDisabled: true,
       nextDisabled: !stepIsValid,
@@ -48,7 +47,7 @@ const getButtonsState = (activeStep: number, length: number, stepIsValid: boolea
 // 3) removed const showTitles
 // ...
 // more like, redo docs from scratch :)
-export default function MultiStep(props: MultiStepPropsBase) {
+export default function MultiStep(props: MultiStepProps) {
   let { children } = props
   if (!children) {
     throw TypeError("Error: No steps to show")
@@ -58,17 +57,15 @@ export default function MultiStep(props: MultiStepPropsBase) {
   const [nextStep, setNextStep] = useState(0)
   const [stepIsValid, setStepIsValid] = useState(false)
 
-  const containerStyle = typeof props.containerStyle === 'undefined' ? {} : props.containerStyle
-  const topNavStyle = typeof props.topNav === 'undefined' ? {} : props.topNav
-  const topNavStepStyle = typeof props.topNavStepStyle === 'undefined' ? {} : props.topNavStepStyle
-
-  const todoStyle = typeof props.todo === 'undefined' ? {} : props.todo
-  const doingStyle = typeof props.doing === 'undefined' ? {} : props.doing
-  const doneStyle = typeof props.done === 'undefined' ? {} : props.done
-  const skipStyle = typeof props.skip === 'undefined' ? {} : props.skip
-
-  const prevButton: NavButton = typeof props.prevButton === 'undefined' ? {} : props.prevButton
-  const nextButton: NavButton = typeof props.nextButton === 'undefined' ? {} : props.nextButton
+  const containerStyle = typeof props.styles.container === 'undefined' ? {} : props.styles.container
+  const topNavStyle = typeof props.styles.topNav === 'undefined' ? {} : props.styles.topNav
+  const topNavStepStyle = typeof props.styles.topNavStep === 'undefined' ? {} : props.styles.topNavStep
+  const todoStyle = typeof props.styles.todo === 'undefined' ? {} : props.styles.todo
+  const doingStyle = typeof props.styles.doing === 'undefined' ? {} : props.styles.doing
+  const doneStyle = typeof props.styles.done === 'undefined' ? {} : props.styles.done
+  const skipStyle = typeof props.styles.skip === 'undefined' ? {} : props.styles.skip
+  const prevButtonStyle = typeof props.styles.prevButton === 'undefined' ? {} : props.styles.prevButton
+  const nextButtonStyle = typeof props.styles.nextButton === 'undefined' ? {} : props.styles.nextButton
 
   const stepStateChanged = (stepState: StepState) => {
     console.debug(`stepStateChanged, isValid: ${stepState?.isValid}, nextStep: ${stepState?.nextStep}`)
@@ -146,12 +143,12 @@ export default function MultiStep(props: MultiStepPropsBase) {
   const renderBottomNav = () => (
     <>
       <button onClick={previous}
-              style={ prevButton?.style }
+              style={ prevButtonStyle }
               disabled={buttonsState.prevDisabled}>
         <span>&#60;</span>
       </button>
       <button onClick={next}
-              style={buttonsState.nextHidden ? { display: 'none' } : nextButton?.style}
+              style={buttonsState.nextHidden ? { display: 'none' } : nextButtonStyle}
               disabled={buttonsState.nextDisabled}>
         <span>&#62;</span>
       </button>
@@ -159,7 +156,7 @@ export default function MultiStep(props: MultiStepPropsBase) {
   )
 
   return (
-    <div style = {{ ...containerStyle }} >
+    <div style={{ ...containerStyle }} >
       {renderTopNav()}
       {steps[activeStep].component}
       {renderBottomNav()}

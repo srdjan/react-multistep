@@ -1,58 +1,61 @@
-export const containerStyle = { 
+const container = { 
   padding: '5rem',
   marginTop: '5rem' 
 }
-
-export const topNavStyle = {
+const topNav = {
   display: 'flex',
   flexDirection: 'row',
   margin: '0',
   paddingBottom: '2.2rem',
   listStyleType: 'none',
 }
-
-export const topNavStepStyle = {
+const topNavStep = {
   color: 'silver',
   cursor: 'pointer',
+  width: '25%',
   paddingTop: '4rem',
   paddingRight: '4rem',
   borderBottom: '1px solid silver'
 }
-export const Todo = {
+const todo = {
   color: 'gray',
 }
-export const Doing = {
+const doing = {
   color: '#1EAEDB',
 }
-export const Done = {
+const done = {
   color: 'green',
 }
-export const Skip = {   //todo: add to multistep?
+const skip = {   //todo: add to multistep?
   color: 'silver',
 }
-
-export const prevButton = {
-  title: 'Back', 
-  style: {
-    color: '#1EAEDB',
-    backgroundColor: 'white',
-    border: '0',
-    fontSize: '4rem',
-    fontWeight: '500',
-    padding: '0',
-    float: 'left'    //only difference
-  }
+const prevButton = {
+  color: '#1EAEDB',
+  backgroundColor: 'white',
+  border: '0',
+  fontSize: '4rem',
+  fontWeight: '500',
+  padding: '0',
+  float: 'left'    //only difference
+}
+const nextButton = {
+  color: '#1EAEDB',
+  backgroundColor: 'white',
+  border: '0',
+  fontSize: '4rem',
+  fontWeight: '500',
+  padding: '0',
+  float: 'right'   // only difference
 }
 
-export const nextButton = {
-  title: 'Forward', 
-  style: {
-    color: '#1EAEDB',
-    backgroundColor: 'white',
-    border: '0',
-    fontSize: '4rem',
-    fontWeight: '500',
-    padding: '0',
-    float: 'right'   // only difference
-  }
+export const multiStepStyles = {
+  container,
+  topNav,
+  topNavStep,
+  prevButton,
+  nextButton,
+  todo,
+  doing,
+  done,
+  skip
 }
