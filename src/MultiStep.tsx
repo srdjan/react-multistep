@@ -72,16 +72,15 @@ export default function MultiStep(props: MultiStepProps) {
 
   useEffect(() => {
     setBottomNavState(getBottomNavState(activeChild, children.length, childIsValid))
+    setTopNavState(getTopNavState(activeChild, children.length))
   }, [activeChild, childIsValid])
 
   const handleBottomNavNext = () => {
     let newActiveStep = activeChild === children.length - 1 ? activeChild : activeChild + 1
-    setTopNavState(getTopNavState(newActiveStep + nextChild, children.length))
     setActiveChild(newActiveStep + nextChild)
   }
   const handleBottomNavPrevious = () => {
     let newActiveStep = activeChild > 0 ? activeChild - 1 : activeChild
-    setTopNavState(getTopNavState(newActiveStep + nextChild, children.length))
     setActiveChild(newActiveStep + nextChild)
   }
 
@@ -91,10 +90,8 @@ export default function MultiStep(props: MultiStepProps) {
       return
     }
     if (indx === children.length - 1 && activeChild === children.length - 1) {
-      setTopNavState(getTopNavState(activeChild + nextChild, children.length))
       setActiveChild(children.length + nextChild)
     } else {
-      setTopNavState(getTopNavState(activeChild + nextChild, children.length))
       setActiveChild(indx + nextChild)
     }
   }
