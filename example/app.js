@@ -9,7 +9,7 @@ import { StepFour } from './stepFour'
 
 const App = () => (
   <div className='container'>
-    <MultiStep styles={multiStepStyles} flow={flow}>
+    <MultiStep styles={multiStepStyles}>
       <StepOne title='Step 1'/>
       <StepTwo title='Step 2'/>
       <StepThree title='Step 3'/>
