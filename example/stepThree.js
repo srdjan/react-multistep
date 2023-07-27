@@ -5,7 +5,7 @@ export const StepThree = (props) => {
   const [passwordConfirm, setPasswordConfirm] = useState('')
 
   useEffect(() => {
-    props.signalParent({isValid: true, nextStep: 0})
+    props.signalParent({isValid: true, next: 0})
   }, [])
 
   return (

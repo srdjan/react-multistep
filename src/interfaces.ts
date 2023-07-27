@@ -18,7 +18,7 @@ export interface MultiStepProps {
   children?: React.ReactElement[]
 }
 
-export interface StepState {
+export interface ChildState {
   isValid?: boolean
-  nextStep?: number
+  next?: number
 }

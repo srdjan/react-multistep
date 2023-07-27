@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { MultiStepProps, StepState } from './interfaces'
+import { MultiStepProps, ChildState } from './interfaces'
 
 const getTopNavState = (activeStep: number, length: number): string[] => {
   const styles: string[] = []
@@ -46,9 +46,9 @@ export default function MultiStep(props: MultiStepProps) {
     throw TypeError("Error: Application has no children Components configured")
   }
 
-  const [activeStep, setActiveStep] = useState(0)
-  const [nextStep, setNextStep] = useState(0)
-  const [stepIsValid, setStepIsValid] = useState(false)
+  const [activeChild, setActiveChild] = useState(0)
+  const [nextChild, setNextChild] = useState(0)
+  const [childIsValid, setChildIsValid] = useState(false)
 
   const containerStyle = typeof props.styles.container === 'undefined' ? {} : props.styles.container
   const topNavStyle = typeof props.styles.topNav === 'undefined' ? {} : props.styles.topNav
@@ -60,43 +60,42 @@ export default function MultiStep(props: MultiStepProps) {
   const prevButtonStyle = typeof props.styles.prevButton === 'undefined' ? {} : props.styles.prevButton
   const nextButtonStyle = typeof props.styles.nextButton === 'undefined' ? {} : props.styles.nextButton
 
-  const childStateChanged = (stepState: StepState) => {
-    console.debug(`Child Component state changed, isValid: ${stepState?.isValid}, nextStep: ${stepState?.nextStep}`)
-    if (stepState.isValid !== undefined) setStepIsValid(() => stepState.isValid)
-    if (stepState.nextStep) setNextStep(stepState.nextStep)
+  const childStateChanged = (childState: ChildState) => {
+    console.debug(`Child state changed, isValid: ${childState?.isValid}, next: ${childState?.next}`)
+    if (childState.isValid !== undefined) setChildIsValid(() => childState.isValid)
+    if (childState.next) setNextChild(childState.next)
   }
   children = React.Children.map(children, child => React.cloneElement(child, { signalParent: childStateChanged }))
 
-  const [topNavState, setTopNavState] = useState(getTopNavState(activeStep, children.length))
-  const [bottomNavState, setBottomNavState] = useState(getBottomNavState(activeStep, children.length, stepIsValid))
+  const [topNavState, setTopNavState] = useState(getTopNavState(activeChild, children.length))
+  const [bottomNavState, setBottomNavState] = useState(getBottomNavState(activeChild, children.length, childIsValid))
 
   useEffect(() => {
-    setBottomNavState(getBottomNavState(activeStep, children.length, stepIsValid))
-  }, [activeStep, stepIsValid])
-
-  const setStepState = (activeStep: number) => {
-    setTopNavState(getTopNavState(activeStep+nextStep, children.length))
-    setActiveStep(activeStep + nextStep)
-  }
+    setBottomNavState(getBottomNavState(activeChild, children.length, childIsValid))
+  }, [activeChild, childIsValid])
 
   const handleBottomNavNext = () => {
-    let newActiveStep = activeStep === children.length - 1 ? activeStep : activeStep + 1
-    setStepState(newActiveStep)
+    let newActiveStep = activeChild === children.length - 1 ? activeChild : activeChild + 1
+    setTopNavState(getTopNavState(newActiveStep + nextChild, children.length))
+    setActiveChild(newActiveStep + nextChild)
   }
   const handleBottomNavPrevious = () => {
-    let newActiveStep = activeStep > 0 ? activeStep - 1 : activeStep
-    setStepState(newActiveStep)
+    let newActiveStep = activeChild > 0 ? activeChild - 1 : activeChild
+    setTopNavState(getTopNavState(newActiveStep + nextChild, children.length))
+    setActiveChild(newActiveStep + nextChild)
   }
 
   const handleTopNavOnClick = (indx: number) => {
-    if (!stepIsValid) {
-      console.log('Error: Step validation failed')
+    if (!childIsValid) {
+      console.log('Error: Child validation failed')
       return
     }
-    if (indx === children.length - 1 && activeStep === children.length - 1) {
-      setStepState(children.length)
+    if (indx === children.length - 1 && activeChild === children.length - 1) {
+      setTopNavState(getTopNavState(activeChild + nextChild, children.length))
+      setActiveChild(children.length + nextChild)
     } else {
-      setStepState(indx)
+      setTopNavState(getTopNavState(activeChild + nextChild, children.length))
+      setActiveChild(indx + nextChild)
     }
   }
 
@@ -135,7 +134,7 @@ export default function MultiStep(props: MultiStepProps) {
   return (
     <div style={{ ...containerStyle }} >
       {renderTopNav()}
-      {children[activeStep]}
+      {children[activeChild]}
       {renderBottomNav()}
     </div>
   )
