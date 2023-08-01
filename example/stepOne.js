@@ -17,7 +17,7 @@ export const StepOne = (props) => {
 
   useEffect(() => {
     if(stepVisited === 0) {
-      props.signalParent({isValid: state.firstName.length > 0, next: 0})
+      props.signalParent({isValid: state.firstName.length > 0, goto: 0})
     }
   }, [stepVisited])
 
@@ -28,10 +28,10 @@ export const StepOne = (props) => {
     setFirstName(val)
 
     if(prevFirstName.length === 0 && val.length === 1) {
-      props.signalParent({isValid: true})
+      props.signalParent({isValid: true, goto: 0})
     }
     else if(prevFirstName.length === 1 && val.length == 0) {
-      props.signalParent({isValid: false})
+      props.signalParent({isValid: false, goto: 0})
     }
   }
 
@@ -44,7 +44,7 @@ export const StepOne = (props) => {
     firstNameIsInvalid ? <span style={{fontSize: '1rem', color: 'red'}}>&nbsp;[ Required ]</span> : ''
     
   return (
-    <div className='container'>
+    <div className='container u-full-width'>
       <div className='row'>
         <div className='six columns'>
           <label>First Name<Required /></label>

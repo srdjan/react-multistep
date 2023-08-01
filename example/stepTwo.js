@@ -6,7 +6,7 @@ export const StepTwo = (props) => {
   const [emailConfirm, setEmailConfirm] = useState('')
 
   useEffect(() => {
-    props.signalParent({isValid: true, next: passwdRequired ? 0 : 1})
+    props.signalParent({isValid: true, goto: passwdRequired ? 0 : 3})
   }, [passwdRequired])
 
   const handleCheckbox = (e) => {
@@ -14,7 +14,7 @@ export const StepTwo = (props) => {
   }
 
   return (
-    <div>
+    <div className='container'>
       <div className='row'>
         <div className='six columns'>
           <label>Your email</label>

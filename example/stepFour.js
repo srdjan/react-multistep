@@ -4,7 +4,7 @@ export const StepFour = (props) => {
   const [checked, setChecked] = useState(false)
 
   useEffect(() => {
-    props.signalParent({isValid: checked})
+    props.signalParent({isValid: true, goto: 0})
   }, [checked])
 
   const handleCheckbox = (e) => {
@@ -12,6 +12,7 @@ export const StepFour = (props) => {
   }
 
   return (
+    <div  className='container'>
       <form className='row'>
         <div className='ten columns terms'>
           <span>By clicking "Accept" I agree that:</span>
@@ -24,17 +25,21 @@ export const StepFour = (props) => {
             </li>
             <li>I am at least 18 years old</li>
           </ul>
-          <label>
+          <span> 
+            <label>
+              Accept {': '}
             <input
               type='checkbox'
               checked={checked}
               onChange={e => handleCheckbox(e)}
               autoFocus
-            />
-            <span> Accept </span>{' '}
-          </label>
+              />
+              </label>
+          </span>
+          <button style={{float: 'right'}} disabled={!checked}>Submit</button>
         </div>
       </form>
+    </div>
   )
 }
 

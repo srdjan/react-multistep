@@ -5,11 +5,11 @@ export const StepThree = (props) => {
   const [passwordConfirm, setPasswordConfirm] = useState('')
 
   useEffect(() => {
-    props.signalParent({isValid: true, next: 0})
+    props.signalParent({isValid: true, goto: 0})
   }, [])
 
   return (
-    <div>
+    <div className='container'>
       <div className='row'>
         <div className='six columns'>
           <label>Password</label>

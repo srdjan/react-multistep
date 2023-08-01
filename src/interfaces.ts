@@ -1,12 +1,11 @@
 import React from "react"
 
-interface MultiStepStyles {
-  container?: React.CSSProperties,
+export interface MultiStepStyles {
+  multiStep?: React.CSSProperties,
   topNav?: React.CSSProperties
   topNavStep?: React.CSSProperties
   todo?: React.CSSProperties
   doing?: React.CSSProperties
-  done?: React.CSSProperties
   skip?: React.CSSProperties
   prevButton?: React.CSSProperties
   nextButton?: React.CSSProperties
@@ -19,6 +18,6 @@ export interface MultiStepProps {
 }
 
 export interface ChildState {
-  isValid?: boolean
-  next?: number
+  isValid: boolean
+  goto: number
 }
