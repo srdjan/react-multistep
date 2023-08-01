@@ -1,31 +1,22 @@
 const multiStep = { 
-  // display: 'flex',
-  // flexWrap: 'wrap',
-  // position: 'relative',
-  // gap: '1.6rem',
-  // maxWidth: '80vh',
-  // marginTop: '5rem',
-  // marginBottom: '5rem',
-  // backgroundColor: 'silver',
-  // boxSizing: 'border-box',
-  // width: '90%',
-  // border: 'solid #5B6DCD 1px',
-  // padding: '5px'
+  marginRight: '4rem',
+  marginBottom: '3rem',
+  maxWidth: '960px'
 }
+const content = { 
+  display: 'block',
+  justifyContent: 'space-around',
+  margin: '4rem',
+  maxWidth: '960px'
+} 
 const topNav = {
-  display: 'flex',
-  flexDirection: 'row',
-  margin: '0',
   paddingTop: '4rem',
-  paddingBottom: '2rem',
-  listStyleType: 'none'
+  listStyleType: 'none',
+  borderBottom: '1px solid silver'
 }
 const topNavStep = {
   color: 'silver',
   cursor: 'pointer',
-  width: '25%',
-  textAlign: 'center',
-  borderBottom: '1px solid silver'
 }
 const todo = {
   color: 'gray'
@@ -40,8 +31,7 @@ const prevButton = {
   color: '#1EAEDB',
   backgroundColor: 'white',
   border: '0',
-  fontSize: '4rem',
-  fontWeight: '500',
+  fontSize: '3rem',
   marginLeft: '2rem',
   paddingTop: '4rem',
   float: 'left'    //only difference
@@ -50,15 +40,15 @@ const nextButton = {
   color: '#1EAEDB',
   backgroundColor: 'white',
   border: '0',
-  fontSize: '4rem',
-  fontWeight: '500',
+  fontSize: '3rem',
   marginRight: '2rem',
   paddingTop: '4rem',
   float: 'right'   // only difference
 }
 
 export const BaseStyles = {
-  multistep: multiStep,
+  multiStep,
+  content,
   topNav,
   topNavStep,
   prevButton,

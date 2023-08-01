@@ -46,8 +46,9 @@ export default function MultiStep(props: MultiStepProps) {
   const [activeChild, setActiveChild] = useState(0)
   const [childIsValid, setChildIsValid] = useState(false)
 
-  const styles = typeof props.styles === 'undefined' ? BaseStyles as MultiStepStyles: props.styles
-  const containerStyle = styles.multiStep
+  const styles = typeof props.styles === 'undefined' ? BaseStyles as MultiStepStyles : props.styles
+  const multiStep = styles.multiStep
+  const content = styles.content
   const topNavStyle = styles.topNav
   const topNavStepStyle = styles.topNavStep
   const todoStyle = styles.todo
@@ -114,10 +115,13 @@ export default function MultiStep(props: MultiStepProps) {
       </button>
     </>
 
+  //todo: wrapper: https://dev.to/taiwobello/how-to-create-a-wrapper-component-in-react-29p
   return (
-    <div style={containerStyle}>
+    <div style={multiStep}>
       {renderTopNav()}
-      {children[activeChild]}
+      <div style={content}>
+        {children[activeChild]}
+      </div>
       {renderBottomNav()}
     </div>
   )
