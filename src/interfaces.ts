@@ -2,12 +2,11 @@ import React from "react"
 
 export interface MultiStepStyles {
   multiStep?: React.CSSProperties,
-  content?: React.CSSProperties,
+  childArea?: React.CSSProperties,
   topNav?: React.CSSProperties
   topNavStep?: React.CSSProperties
   todo?: React.CSSProperties
   doing?: React.CSSProperties
-  skip?: React.CSSProperties
   prevButton?: React.CSSProperties
   nextButton?: React.CSSProperties
 }

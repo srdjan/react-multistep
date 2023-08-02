@@ -48,7 +48,7 @@ export default function MultiStep(props: MultiStepProps) {
 
   const styles = typeof props.styles === 'undefined' ? BaseStyles as MultiStepStyles : props.styles
   const multiStep = styles.multiStep
-  const content = styles.content
+  const childArea = styles.childArea
   const topNavStyle = styles.topNav
   const topNavStepStyle = styles.topNavStep
   const todoStyle = styles.todo
@@ -119,7 +119,7 @@ export default function MultiStep(props: MultiStepProps) {
   return (
     <div style={multiStep}>
       {renderTopNav()}
-      <div style={content}>
+      <div style={childArea}>
         {children[activeChild]}
       </div>
       {renderBottomNav()}

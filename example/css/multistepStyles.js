@@ -3,6 +3,12 @@ const container = {
   marginBottom: '5rem',
   backgroundColor:'#f1f1f141'
 }
+const childArea = { 
+  display: 'block',
+  justifyContent: 'space-around',
+  margin: '4rem',
+  maxWidth: '960px'
+} 
 const topNav = {
   display: 'flex',
   flexDirection: 'row',
@@ -23,9 +29,6 @@ const todo = {
 }
 const doing = {
   color: '#1EAEDB',
-}
-const skip = {   //todo: add to multistep?
-  color: 'silver',
 }
 const prevButton = {
   color: '#1EAEDB',
@@ -48,11 +51,11 @@ const nextButton = {
 
 export const multiStepStyles = {
   container,
+  childArea,
   topNav,
   topNavStep,
   prevButton,
   nextButton,
   todo,
-  doing,
-  skip
+  doing
 }
