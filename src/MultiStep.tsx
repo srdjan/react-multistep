@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { MultiStepProps, ChildState, MultiStepStyles } from './interfaces'
-import { BaseStyles } from './multiStepBaseStyles'
+import { BaseStyles } from './baseStyles'
 
 const getTopNavState = (activeStep: number, length: number): string[] => {
   const styles: string[] = []
   for (let i = 0; i < length; i++) {
-    if (i === activeStep) {
-      styles.push('doing')
-    } else {
-      styles.push('todo')
-    }
+    i === activeStep ? styles.push('doing') : styles.push('todo')
   }
   return styles
 }
@@ -29,7 +25,6 @@ const getBottomNavState = (activeStep: number, length: number, stepIsValid: bool
       hideLast: false
     }
   }
-  console.log(`stepIsValid: ${stepIsValid}`)
   return {
     prevDisabled: false,
     nextDisabled: !stepIsValid,
@@ -43,19 +38,9 @@ export default function MultiStep(props: MultiStepProps) {
     throw TypeError("Error: Application has no children Components configured")
   }
 
+  const styles = typeof props.styles === 'undefined' ? BaseStyles as MultiStepStyles : props.styles
   const [activeChild, setActiveChild] = useState(0)
   const [childIsValid, setChildIsValid] = useState(false)
-
-  const styles = typeof props.styles === 'undefined' ? BaseStyles as MultiStepStyles : props.styles
-  const multiStep = styles.multiStep
-  const childArea = styles.childArea
-  const topNavStyle = styles.topNav
-  const topNavStepStyle = styles.topNavStep
-  const todoStyle = styles.todo
-  const doingStyle = styles.doing
-  const prevButtonStyle = styles.prevButton
-  const nextButtonStyle = styles.nextButton
-
   const [topNavState, setTopNavState] = useState(getTopNavState(activeChild, children.length))
   const [bottomNavState, setBottomNavState] = useState(getBottomNavState(activeChild, children.length, childIsValid))
 
@@ -74,52 +59,38 @@ export default function MultiStep(props: MultiStepProps) {
 
   const handleBottomNavPrevious = () => setActiveChild(activeChild > 0 ? activeChild - 1 : activeChild)
 
-  const handleTopNavOnClick = (indx: number) => {
-    if (!childIsValid) {
-      console.log('Error: Child not in Valid state')
-      return
-    }
-    if (indx === children.length - 1 && activeChild === children.length - 1) {
-      setActiveChild(children.length)
-    } else {
-      setActiveChild(indx)
-    }
-  }
+  const handleOnClick = (i: number) => childIsValid ? setActiveChild(i) : console.log('Error: Invalid state')
 
   const renderTopNav = () =>
-    <ol style={topNavStyle}>
-      {children.map((c, i) => (
-        <li
-          style={topNavStepStyle}
-          onClick={() => handleTopNavOnClick(i)}
-          key={i}>
+    <ol style={styles.topNav}>
+      {children.map((c, i) =>
+        <li style={styles.topNavStep} onClick={() => handleOnClick(i)} key={i}>
           {
-            topNavState[i] === 'doing' ? <span style={doingStyle}>{c.props.title ?? i + 1}</span> :
-                                         <span style={todoStyle}>{c.props.title ?? i + 1}</span>
+            topNavState[i] === 'doing' ? <span style={styles.doing}>{c.props.title ?? i + 1}</span> :
+                                         <span style={styles.todo}>{c.props.title ?? i + 1}</span>
           }
         </li>
-      ))}
+      )}
     </ol>
 
   const renderBottomNav = () =>
     <>
       <button onClick={handleBottomNavPrevious}
-              style={prevButtonStyle }
+              style={styles.prevButton}
               disabled={bottomNavState.prevDisabled}>
         <span>&#60;</span>
       </button>
       <button onClick={handleBottomNavNext}
-              style={bottomNavState.hideLast ? { display: 'none' } : nextButtonStyle}
+              style={bottomNavState.hideLast ? { display: 'none' } : styles.nextButton}
               disabled={bottomNavState.nextDisabled}>
         <span>&#62;</span>
       </button>
     </>
 
-  //todo: wrapper: https://dev.to/taiwobello/how-to-create-a-wrapper-component-in-react-29p
   return (
-    <div style={multiStep}>
+    <div style={styles.multiStep}>
       {renderTopNav()}
-      <div style={childArea}>
+      <div style={styles.childArea}>
         {children[activeChild]}
       </div>
       {renderBottomNav()}
