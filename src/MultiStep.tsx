@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { MultiStepProps, ChildState, MultiStepStyles } from './interfaces'
 import { BaseStyles } from './baseStyles'
 
-const getTopNavState = (activeStep: number, length: number): string[] => {
+const getTopNavStyles = (activeStep: number, length: number): string[] => {
   const styles: string[] = []
   for (let i = 0; i < length; i++) {
     i === activeStep ? styles.push('doing') : styles.push('todo')
@@ -39,11 +39,11 @@ export default function MultiStep(props: MultiStepProps) {
   const styles = typeof props.styles === 'undefined' ? BaseStyles as MultiStepStyles : props.styles
   const [activeChild, setActive] = useState(0)
   const [childIsValid, setChildIsValid] = useState(false)
-  const [topNavState, setTopNavState] = useState(getTopNavState(activeChild, children.length))
+  const [topNavState, setTopNavState] = useState(getTopNavStyles(activeChild, children.length))
   const [bottomNavState, setBottomNavState] = useState(getBottomNavState(activeChild, children.length, childIsValid))
 
   useEffect(() => {
-    setTopNavState(getTopNavState(activeChild, children.length))
+    setTopNavState(getTopNavStyles(activeChild, children.length))
     setBottomNavState(getBottomNavState(activeChild, children.length, childIsValid))
   }, [activeChild, childIsValid])
 
