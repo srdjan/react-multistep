@@ -1,8 +1,8 @@
 import React from "react"
 
 export interface MultiStepStyles {
-  multiStep?: React.CSSProperties,
-  childArea?: React.CSSProperties,
+  component?: React.CSSProperties
+  section?: React.CSSProperties
   topNav?: React.CSSProperties
   topNavStep?: React.CSSProperties
   todo?: React.CSSProperties
@@ -12,9 +12,8 @@ export interface MultiStepStyles {
 }
 
 export interface MultiStepProps {
-  showTitles?: boolean,   //todo: remove, use topNav.display: none ?
   styles: MultiStepStyles
-  children?: React.ReactElement[]
+  children: React.ReactElement[]
 }
 
 export interface ChildState {

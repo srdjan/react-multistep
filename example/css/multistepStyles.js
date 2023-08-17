@@ -1,13 +1,13 @@
-const container = { 
+const component = { 
   marginTop: '5rem',
   marginBottom: '5rem',
-  backgroundColor:'#f1f1f141'
+  backgroundColor:'#f1f1f141',
+  maxWidth: '960px',
 }
-const childArea = { 
+const section = { 
   display: 'block',
   justifyContent: 'space-around',
   margin: '4rem',
-  maxWidth: '960px'
 } 
 const topNav = {
   display: 'flex',
@@ -22,7 +22,7 @@ const topNavStep = {
   width: '25%',
   paddingTop: '4rem',
   paddingRight: '4rem',
-  borderBottom: '1px solid silver'
+  borderBottom: '1px solid silver',
 }
 const todo = {
   color: 'gray',
@@ -32,26 +32,25 @@ const doing = {
 }
 const prevButton = {
   color: '#1EAEDB',
-  backgroundColor: 'white',
+  backgroundColor: '#f7f7f7',
   border: '0',
   fontSize: '4rem',
   fontWeight: '500',
   padding: '0',
-  float: 'left'    //only difference
 }
 const nextButton = {
   color: '#1EAEDB',
-  backgroundColor: 'white',
+  backgroundColor: '#f7f7f7',
   border: '0',
   fontSize: '4rem',
   fontWeight: '500',
   padding: '0',
-  float: 'right'   // only difference
+  float: 'right',   // only difference
 }
 
 export const multiStepStyles = {
-  container,
-  childArea,
+  component,
+  section,
   topNav,
   topNavStep,
   prevButton,

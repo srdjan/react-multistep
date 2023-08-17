@@ -57,7 +57,6 @@ MultiStep component accepts following props (all optional, except Steps array):
 | PROPERTY       | DESCRIPTION                                                  | TYPE        | DEFAULT    | isRequired|
 |----------------|--------------------------------------------------------------|-------------|------------|-----------|
 | showTopNav     | controls if the navigation buttons are visible               |boolean      |true        |false      |
-| showTitles     | control either the steps title are visible or not            |boolean      |true        |false      |
 | prevButton     | configure the prev navigation button                          |NavButtonProp    |null        |false      |
 | nextButton     | configure the next the navigation button                      |NavButtonProp    |null        |false      |
 | stepCustomStyle| control style of step                                        |CSSProperties|null        |false      |

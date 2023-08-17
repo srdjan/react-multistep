@@ -67,7 +67,7 @@ export default function MultiStep(props: MultiStepProps) {
     </ol>
 
   const renderBottomNav = () =>
-    <>
+    <div style={styles.section} >
       <button onClick={handlePrevious}
               style={styles.prevButton}
               disabled={bottomNavState.prevDisabled}>
@@ -78,15 +78,15 @@ export default function MultiStep(props: MultiStepProps) {
               disabled={bottomNavState.nextDisabled}>
         <span>&#62;</span>
       </button>
-    </>
+    </div>
 
   return (
-    <div style={styles.multiStep}>
+    <div style={styles.component}>
       {renderTopNav()}
-      <div style={styles.childArea}>
+      <div style={styles.section}>
         {children[activeChild]}
       </div>
-      {renderBottomNav()}
+        {renderBottomNav()}
     </div>
   )
 }

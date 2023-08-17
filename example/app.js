@@ -16,10 +16,6 @@ const App = () => (
       <StepThree title='Step 3'/>
       <StepFour title='Step 4'/>
     </MultiStep>
-    <div className='appFooter'>
-      Use navigation buttons or click on progress bar for next step. Code is on{' '}
-      <a href='https://github.com/Srdjan/react-multistep' target='_blank' rel='noreferrer'>GitHub</a>
-    </div>
   </div>
 )
 
