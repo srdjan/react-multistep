@@ -33,7 +33,7 @@ and then, in your application, you add your custom components/forms this way:
 </MultiStep>
 ```
 
-MultiStep component accepts following props (all optional, except Steps array): 
+MultiStep component accepts the following props (all optional, except the Steps array): 
 
 | PROPERTY       | DESCRIPTION                                                  | TYPE        | DEFAULT    | isRequired|
 |----------------|--------------------------------------------------------------|-------------|------------|-----------|
@@ -57,13 +57,13 @@ MultiStep component accepts following props (all optional, except Steps array):
 
 
 #
-#### There are two ways to configure Multistep component, preferred way is with `Inlined` child components. Using this approach, enables the new feature that allows controlling the navigation based on the current step's form validation:
+#### There are two ways to configure Multistep component, the preferred way is with `Inlined` child components. Using this approach enables the new feature that allows controlling the navigation based on the current step's form validation:
 
 ```javascript
     <MultiStep  title: 'Order Workflow'} 
                 activeStep={2} 
-                prevButton={{title: 'Back','style:{ background: 'red' }}
-                nextButton={{title: 'Forward','style:{ background: 'green' }}
+                prevButton={{title: 'Back','style':{ background: 'red' }}
+                nextButton={{title: 'Forward','style':{ background: 'green' }}
     >
     <StepOne title='StepOne'/>
     <StepTwo title='StepTwo'/>
@@ -72,7 +72,7 @@ MultiStep component accepts following props (all optional, except Steps array):
 </MultiStep>
 ```
 
-####  The old way via `Steps`, a prop in the form of an array of components, is still supported for backwards compatibility. But, (:warning:) this way has being `deprecated`, and it will be removed in the future:
+####  The old way via `Steps`, a prop in the form of an array of components, is still supported for backward compatibility. But, (:warning:) this way has been `deprecated`, and it will be removed in the future:
 
 ```javascript
 const steps = [
@@ -86,7 +86,7 @@ const steps = [
 
 <MultiStep activeStep={1} showNavigation={true} steps={steps}/>
 ```
-When configured this way, each component (`Step`) of the array can have following two properties:
+When configured this way, each component (`Step`) of the array can have the following two properties:
 
 | PROPERTY  | DESCRIPTION                                 | TYPE       | DEFAULT    | isRequired|
 |-----------|---------------------------------------------|------------|------------|-----------|
@@ -97,11 +97,11 @@ When configured this way, each component (`Step`) of the array can have followin
 #
 #### 🚀 NEW! Feature: Controlling navigation to the next step with form validation
 
-To enable this feature, when the child form component needs to control 'Next' navigational button, based on it's local validation, MultiStep dynamically adds a new prop function to child components that should be used to signal validation status. MultiStep will disable /enable `Next` button accordingly. This function has follwing signature:
+To enable this feature, when the child form component needs to control 'Next' navigational button, based on its local validation, MultiStep dynamically adds a new prop function to child components that should be used to signal validation status. MultiStep will disable /enable `Next` button accordingly. This function has following signature:
 
   `signalParent(valid: boolean)`
 
-By default the state is `false` and child components invokes it based on current outcome of the validation. In the example app, a simple checkbox is used to simulate valid/not valid.
+By default the state is `false` and child components invokes it based on the current outcome of the validation. In the example app, a simple checkbox simulates valid/not valid.
 
 This can be seen in the `example` app, but here are the relevant parts, required inside of the form child component:
 
@@ -109,7 +109,7 @@ This can be seen in the `example` app, but here are the relevant parts, required
 
 
 ## Instructions for local development
-#### If you would like to explore further, contribute a PR or just try the included code example:
+#### If you would like to explore further, contribute a PR, or just try the included code example:
 
 Start by cloning the repo locally:
 ```sh
