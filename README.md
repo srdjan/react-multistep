@@ -60,10 +60,11 @@ MultiStep component accepts the following props (all optional, except the Steps 
 #### There are two ways to configure Multistep component, the preferred way is with `Inlined` child components. Using this approach enables the new feature that allows controlling the navigation based on the current step's form validation:
 
 ```javascript
-    <MultiStep  title: 'Order Workflow'} 
-                activeStep={2} 
-                prevButton={{title: 'Back','style':{ background: 'red' }}
-                nextButton={{title: 'Forward','style':{ background: 'green' }}
+    <MultiStep  
+            title='Order Workflow' 
+            activeStep={2} 
+            prevButton={{title: 'Back','style':{ background: 'red' }}}
+            nextButton={{title: 'Forward','style':{ background: 'green' }}}
     >
     <StepOne title='StepOne'/>
     <StepTwo title='StepTwo'/>
