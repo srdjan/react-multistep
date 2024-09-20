@@ -50,9 +50,19 @@ export default function MultiStep(props: MultiStepProps) {
   const childStateChanged = (childState: ChildState) => setChildIsValid(() => childState.isValid)  
   children = React.Children.map(children, child => React.cloneElement(child, { signalParent: childStateChanged }))
 
-  const handleNext = () => setActive(activeChild === children.length - 1 ? activeChild : activeChild + 1)
+  const handleNext = () => {
+    if (props.onNext) {
+      props.onNext()
+    }
+    setActive(activeChild === children.length - 1 ? activeChild : activeChild + 1)
+  }
 
-  const handlePrevious = () => setActive(activeChild > 0 ? activeChild - 1 : activeChild)
+  const handlePrevious = () => {
+    if (props.onPrev) {
+      props.onPrev()
+    }
+    setActive(activeChild > 0 ? activeChild - 1 : activeChild)
+  }
 
   const handleOnClick = (i: number) => childIsValid ? setActive(i) : console.log('Error: Invalid state')
 

@@ -14,6 +14,8 @@ export interface MultiStepStyles {
 export interface MultiStepProps {
   styles: MultiStepStyles
   children: React.ReactElement[]
+  onNext?: () => void
+  onPrev?: () => void
 }
 
 export interface ChildState {
