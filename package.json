@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@types/react": "18.3.18",
-    "esbuild": "0.19.0",
+    "esbuild": "0.25.0",
     "typescript": "5.7.3"
   },
   "peerDependencies": {
