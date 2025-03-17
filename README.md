@@ -79,7 +79,7 @@ MultiStep component accepts following props (all optional, except Steps array):
 #### To configure Multistep component, we `inline` child components:
 
 ```javascript
-    <MultiStep  title: 'Order Workflow'}
+    <MultiStep 
                 activeStep={2}
                   prevButton={{title: 'Back','style:{ background: 'red' }}}
                 nextButton={{title: 'Forward','style:{ background: 'green' }}}
