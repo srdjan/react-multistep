@@ -12,6 +12,7 @@ export interface MultiStepStyles {
 }
 
 export interface MultiStepProps {
+  activeStep?: number
   styles: MultiStepStyles
   children: React.ReactElement[]
   onNext?: () => void
