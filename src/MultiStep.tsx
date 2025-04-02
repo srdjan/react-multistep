@@ -37,7 +37,7 @@ export default function MultiStep(props: MultiStepProps) {
   if (!children) throw TypeError("Error: Application has no children Components configured")
 
   const styles = typeof props.styles === 'undefined' ? BaseStyles as MultiStepStyles : props.styles
-  const [activeChild, setActive] = useState(0)
+  const [activeChild, setActive] = useState(props.activeStep)
   const [childIsValid, setChildIsValid] = useState(false)
   const [topNavState, setTopNavState] = useState(getTopNavStyles(activeChild, children.length))
   const [bottomNavState, setBottomNavState] = useState(getBottomNavState(activeChild, children.length, childIsValid))
