@@ -6,7 +6,7 @@
   "scripts": {
     "debug": "esbuild app.js --bundle --format=cjs --outfile=./bundle.js --loader:.js=jsx --sourcemap --preserve-symlinks",
     "build:comp": "cd .. && tsc && cd ./example",   
-    "inst:comp": "mkdir -p node_modules/react-multistep && cp -f ../build/** node_modules/react-multistep/",
+    "inst:comp": "mkdir node_modules\\react-multistep && xcopy /E /Y ..\\build\\* node_modules\\react-multistep\\",
     "build:app": "esbuild app.js --bundle --format=cjs --outfile=./bundle.js --loader:.js=jsx",
     "build": "npm run build:comp && npm run inst:comp && npm run build:app",
     "start": "npm run build:app && npx http-server ./ -p 3000"
@@ -19,6 +19,6 @@
     "react-dom": "18.3.1"
   },
   "devDependencies": {
-    "esbuild": "0.24.2.0"
+    "esbuild": "0.25.0"
   }
 }
