@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import MultiStep from 'react-multistep'
-import { multiStepStyles } from './css/multistepStyles'
 import { StepOne } from './stepOne'
 import { StepTwo } from './stepTwo'
 import { StepThree } from './stepThree'
@@ -15,7 +14,6 @@ function App() {
       <MultiStep
         activeStep={activeStep}
         onStepChange={setActiveStep}
-        styles={multiStepStyles}
       >
         <StepOne title='Step 1' />
         <StepTwo title='Step 2' />

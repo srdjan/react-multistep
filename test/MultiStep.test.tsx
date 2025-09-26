@@ -1,21 +1,89 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import MultiStep from '../src/MultiStep';
 import React, { useEffect } from 'react';
+import MultiStep from '../src/MultiStep';
+import { useMultiStep } from '../src/MultiStepContext';
+
+const WizardChrome = ({ children }: { children: React.ReactNode }) => {
+  const { steps, activeStep, goToStep, next, previous, currentStepValid } = useMultiStep();
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      previous();
+    }
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      next();
+    }
+  };
+
+  return (
+    <div onKeyDown={handleKeyDown} tabIndex={-1}>
+      <ol role="tablist" aria-label="Form steps" style={{ listStyle: 'none', padding: 0 }}>
+        {steps.map((step) => {
+          const isActive = step.index === activeStep;
+          return (
+            <li key={step.index} style={{ display: 'inline-block', marginRight: '1rem' }}>
+              <button
+                role="tab"
+                type="button"
+                aria-selected={isActive}
+                onClick={() => goToStep(step.index)}
+              >
+                {step.title ?? `Step ${step.index + 1}`}
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+      <div role="tabpanel">
+        {children}
+      </div>
+      <div style={{ marginTop: '1rem' }}>
+        <button
+          type="button"
+          aria-label="Previous step"
+          onClick={previous}
+          disabled={activeStep === 0}
+        >
+          ‹
+        </button>
+        {activeStep < steps.length - 1 && (
+          <button
+            type="button"
+            aria-label="Next step"
+            onClick={next}
+            disabled={!currentStepValid}
+            style={{ marginLeft: '0.5rem' }}
+          >
+            ›
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const TestStep = ({ title, signalParent, isValid = true }: any) => {
   useEffect(() => {
     signalParent?.({ isValid });
   }, [isValid, signalParent]);
 
-  return <div>{title}</div>;
+  return (
+    <WizardChrome>
+      <div>{title}</div>
+    </WizardChrome>
+  );
 };
+
+const renderWizard = (ui: React.ReactElement) => render(ui);
 
 describe('MultiStep', () => {
   describe('Basic Rendering', () => {
     it('renders multiple children as steps', () => {
-      render(
+      renderWizard(
         <MultiStep>
           <TestStep title="Step 1" />
           <TestStep title="Step 2" />
@@ -23,37 +91,50 @@ describe('MultiStep', () => {
         </MultiStep>
       );
 
-      expect(screen.getByText('Step 1')).toBeInTheDocument();
-      expect(screen.getByText('Step 2')).toBeInTheDocument();
-      expect(screen.getByText('Step 3')).toBeInTheDocument();
+      const tabs = screen.getAllByRole('tab');
+      expect(tabs).toHaveLength(3);
+      expect(tabs.map((tab) => tab.textContent)).toEqual([
+        'Step 1',
+        'Step 2',
+        'Step 3',
+      ]);
+
+      const panel = screen.getByRole('tabpanel');
+      expect(within(panel).getByText('Step 1')).toBeInTheDocument();
     });
 
     it('renders single child', () => {
-      render(
+      renderWizard(
         <MultiStep>
           <TestStep title="Only Step" />
         </MultiStep>
       );
 
-      expect(screen.getByText('Only Step')).toBeInTheDocument();
+      const tabs = screen.getAllByRole('tab');
+      expect(tabs).toHaveLength(1);
+      expect(tabs[0]).toHaveTextContent('Only Step');
+
+      const panel = screen.getByRole('tabpanel');
+      expect(within(panel).getByText('Only Step')).toBeInTheDocument();
     });
 
     it('throws error when no children provided', () => {
-      expect(() => render(<MultiStep>{null as any}</MultiStep>)).toThrow(
+      expect(() => renderWizard(<MultiStep>{null as any}</MultiStep>)).toThrow(
         'Error: MultiStep requires at least one child component'
       );
     });
 
     it('displays step content', () => {
-      render(
+      renderWizard(
         <MultiStep>
-          <div>First step content</div>
-          <div>Second step content</div>
+          <TestStep title="Step 1" />
+          <TestStep title="Step 2" />
         </MultiStep>
       );
 
-      expect(screen.getByText('First step content')).toBeInTheDocument();
-      expect(screen.queryByText('Second step content')).not.toBeInTheDocument();
+      const panel = screen.getByRole('tabpanel');
+      expect(within(panel).getByText('Step 1')).toBeInTheDocument();
+      expect(within(panel).queryByText('Step 2')).not.toBeInTheDocument();
     });
   });
 
@@ -61,7 +142,7 @@ describe('MultiStep', () => {
     it('navigates to next step on next button click', async () => {
       const user = userEvent.setup();
 
-      render(
+      renderWizard(
         <MultiStep>
           <TestStep title="Step 1" isValid={true} />
           <TestStep title="Step 2" />
@@ -71,27 +152,38 @@ describe('MultiStep', () => {
       const nextButton = screen.getByLabelText('Next step');
       await user.click(nextButton);
 
-      expect(screen.getByText('Step 2')).toBeInTheDocument();
+      const activeTab = screen.getByRole('tab', { selected: true });
+      expect(activeTab).toHaveTextContent('Step 2');
+
+      const panel = screen.getByRole('tabpanel');
+      expect(within(panel).getByText('Step 2')).toBeInTheDocument();
     });
 
     it('navigates to previous step on prev button click', async () => {
       const user = userEvent.setup();
 
-      render(
-        <MultiStep activeStep={1}>
-          <TestStep title="Step 1" />
+      renderWizard(
+        <MultiStep>
+          <TestStep title="Step 1" isValid={true} />
           <TestStep title="Step 2" isValid={true} />
         </MultiStep>
       );
 
+      const nextButton = screen.getByLabelText('Next step');
+      await user.click(nextButton);
+
       const prevButton = screen.getByLabelText('Previous step');
       await user.click(prevButton);
 
-      expect(screen.getByText('Step 1')).toBeInTheDocument();
+      const activeTab = screen.getByRole('tab', { selected: true });
+      expect(activeTab).toHaveTextContent('Step 1');
+
+      const panel = screen.getByRole('tabpanel');
+      expect(within(panel).getByText('Step 1')).toBeInTheDocument();
     });
 
     it('disables prev button on first step', () => {
-      render(
+      renderWizard(
         <MultiStep>
           <TestStep title="Step 1" />
           <TestStep title="Step 2" />
@@ -103,7 +195,7 @@ describe('MultiStep', () => {
     });
 
     it('hides next button on last step', () => {
-      render(
+      renderWizard(
         <MultiStep activeStep={1}>
           <TestStep title="Step 1" />
           <TestStep title="Step 2" />
@@ -116,7 +208,7 @@ describe('MultiStep', () => {
     it('allows clicking on step indicators to navigate', async () => {
       const user = userEvent.setup();
 
-      render(
+      renderWizard(
         <MultiStep>
           <TestStep title="Step 1" isValid={true} />
           <TestStep title="Step 2" />
@@ -124,16 +216,20 @@ describe('MultiStep', () => {
         </MultiStep>
       );
 
-      const step3Indicator = screen.getByText('Step 3').closest('li');
-      await user.click(step3Indicator!);
+      const step3Indicator = screen.getByRole('tab', { name: 'Step 3' });
+      await user.click(step3Indicator);
 
-      expect(screen.getByText('Step 3')).toBeInTheDocument();
+      const activeTab = screen.getByRole('tab', { selected: true });
+      expect(activeTab).toHaveTextContent('Step 3');
+
+      const panel = screen.getByRole('tabpanel');
+      expect(within(panel).getByText('Step 3')).toBeInTheDocument();
     });
   });
 
   describe('Validation', () => {
     it('disables next button when step is invalid', () => {
-      render(
+      renderWizard(
         <MultiStep>
           <TestStep title="Step 1" isValid={false} />
           <TestStep title="Step 2" />
@@ -148,31 +244,33 @@ describe('MultiStep', () => {
       const onValidationError = vi.fn();
       const user = userEvent.setup();
 
-      render(
+      renderWizard(
         <MultiStep onValidationError={onValidationError}>
           <TestStep title="Step 1" isValid={false} />
           <TestStep title="Step 2" />
         </MultiStep>
       );
 
-      const step2Indicator = screen.getByText('Step 2').closest('li');
-      await user.click(step2Indicator!);
+      const step2Indicator = screen.getByRole('tab', { name: 'Step 2' });
+      await user.click(step2Indicator);
 
       expect(onValidationError).toHaveBeenCalledWith(0);
-      expect(screen.getByText('Step 1')).toBeInTheDocument();
+      const activeTab = screen.getByRole('tab', { selected: true });
+      expect(activeTab).toHaveTextContent('Step 1');
     });
   });
 
   describe('Controlled Mode', () => {
     it('uses controlled activeStep prop', () => {
-      const { rerender } = render(
+      const { rerender } = renderWizard(
         <MultiStep activeStep={0}>
           <TestStep title="Step 1" />
           <TestStep title="Step 2" />
         </MultiStep>
       );
 
-      expect(screen.getByText('Step 1')).toBeInTheDocument();
+      let activeTab = screen.getByRole('tab', { selected: true });
+      expect(activeTab).toHaveTextContent('Step 1');
 
       rerender(
         <MultiStep activeStep={1}>
@@ -181,14 +279,18 @@ describe('MultiStep', () => {
         </MultiStep>
       );
 
-      expect(screen.getByText('Step 2')).toBeInTheDocument();
+      activeTab = screen.getByRole('tab', { selected: true });
+      expect(activeTab).toHaveTextContent('Step 2');
+
+      const panel = screen.getByRole('tabpanel');
+      expect(within(panel).getByText('Step 2')).toBeInTheDocument();
     });
 
     it('calls onStepChange callback', async () => {
       const onStepChange = vi.fn();
       const user = userEvent.setup();
 
-      render(
+      renderWizard(
         <MultiStep onStepChange={onStepChange}>
           <TestStep title="Step 1" isValid={true} />
           <TestStep title="Step 2" />
@@ -203,8 +305,8 @@ describe('MultiStep', () => {
   });
 
   describe('Keyboard Navigation', () => {
-    it('navigates with arrow keys', async () => {
-      render(
+    it('navigates with arrow keys', () => {
+      renderWizard(
         <MultiStep>
           <TestStep title="Step 1" isValid={true} />
           <TestStep title="Step 2" />
@@ -212,33 +314,36 @@ describe('MultiStep', () => {
         </MultiStep>
       );
 
-      const container = screen.getByText('Step 1').closest('div')?.parentElement;
+      const getWizardRoot = () => screen.getByRole('tablist').parentElement as HTMLElement;
 
-      fireEvent.keyDown(container!, { key: 'ArrowRight' });
-      expect(screen.getByText('Step 2')).toBeInTheDocument();
+      fireEvent.keyDown(getWizardRoot(), { key: 'ArrowRight' });
+      let activeTab = screen.getByRole('tab', { selected: true });
+      expect(activeTab).toHaveTextContent('Step 2');
 
-      fireEvent.keyDown(container!, { key: 'ArrowLeft' });
-      expect(screen.getByText('Step 1')).toBeInTheDocument();
+      fireEvent.keyDown(getWizardRoot(), { key: 'ArrowLeft' });
+      activeTab = screen.getByRole('tab', { selected: true });
+      expect(activeTab).toHaveTextContent('Step 1');
     });
 
     it('respects validation when navigating with arrow keys', () => {
-      render(
+      renderWizard(
         <MultiStep>
           <TestStep title="Step 1" isValid={false} />
           <TestStep title="Step 2" />
         </MultiStep>
       );
 
-      const container = screen.getByText('Step 1').closest('div')?.parentElement;
+      const wizardRoot = screen.getByRole('tablist').parentElement!;
 
-      fireEvent.keyDown(container!, { key: 'ArrowRight' });
-      expect(screen.getByText('Step 1')).toBeInTheDocument();
+      fireEvent.keyDown(wizardRoot, { key: 'ArrowRight' });
+      const activeTab = screen.getByRole('tab', { selected: true });
+      expect(activeTab).toHaveTextContent('Step 1');
     });
   });
 
   describe('Accessibility', () => {
     it('includes proper ARIA attributes', () => {
-      render(
+      renderWizard(
         <MultiStep>
           <TestStep title="Step 1" />
           <TestStep title="Step 2" />
@@ -254,7 +359,7 @@ describe('MultiStep', () => {
     });
 
     it('has proper button labels', () => {
-      render(
+      renderWizard(
         <MultiStep>
           <TestStep title="Step 1" />
           <TestStep title="Step 2" />
@@ -267,43 +372,86 @@ describe('MultiStep', () => {
   });
 
   describe('Customization', () => {
-    it('accepts custom button content', () => {
-      render(
-        <MultiStep prevButtonContent="Back" nextButtonContent="Forward">
-          <TestStep title="Step 1" isValid={true} />
-          <TestStep title="Step 2" />
-        </MultiStep>
-      );
+    it('accepts custom button content via context usage', async () => {
+      const user = userEvent.setup();
 
-      expect(screen.getByText('Back')).toBeInTheDocument();
-      expect(screen.getByText('Forward')).toBeInTheDocument();
-    });
+      const CustomStep = ({ title, signalParent, isValid = true }: any) => {
+        useEffect(() => {
+          signalParent?.({ isValid });
+        }, [isValid, signalParent]);
 
-    it('can hide navigation with showNavigation prop', () => {
-      render(
-        <MultiStep showNavigation={false}>
-          <TestStep title="Step 1" />
-          <TestStep title="Step 2" />
-        </MultiStep>
-      );
+        const { next, previous } = useMultiStep();
 
-      expect(screen.queryByLabelText('Previous step')).not.toBeInTheDocument();
-      expect(screen.queryByLabelText('Next step')).not.toBeInTheDocument();
-    });
-
-    it('applies custom styles', () => {
-      const customStyles = {
-        component: { backgroundColor: 'red' },
+        return (
+          <WizardChrome>
+            <div>{title}</div>
+            <div style={{ marginTop: '1rem' }}>
+              <button aria-label="custom-prev" onClick={previous}>Prev</button>
+              <button aria-label="custom-next" onClick={next} style={{ marginLeft: '0.5rem' }}>Next</button>
+            </div>
+          </WizardChrome>
+        );
       };
 
-      render(
-        <MultiStep styles={customStyles}>
-          <TestStep title="Step 1" />
+      renderWizard(
+        <MultiStep>
+          <CustomStep title="Step 1" isValid={true} />
+          <CustomStep title="Step 2" />
         </MultiStep>
       );
 
-      const component = screen.getByText('Step 1').closest('div')?.parentElement?.parentElement;
-      expect(component).toHaveStyle({ backgroundColor: 'red' });
+      await user.click(screen.getByLabelText('custom-next'));
+      expect(screen.getByRole('tab', { selected: true })).toHaveTextContent('Step 2');
+    });
+
+    it('can hide navigation if consumer omits chrome', () => {
+      const BareStep = ({ title, signalParent }: any) => {
+        useEffect(() => {
+          signalParent?.({ isValid: true });
+        }, [signalParent]);
+        return <div>{title}</div>;
+      };
+
+      renderWizard(
+        <MultiStep>
+          <BareStep title="Step 1" />
+        </MultiStep>
+      );
+
+      expect(screen.queryByLabelText('Next step')).not.toBeInTheDocument();
+      expect(screen.queryByLabelText('Previous step')).not.toBeInTheDocument();
+    });
+
+    it('applies custom styles via consumer provided chrome', () => {
+      const StyledChrome = ({ children }: { children: React.ReactNode }) => {
+        const wizard = useMultiStep();
+        return (
+          <div style={{ backgroundColor: 'red' }}>
+            <button aria-label='noop' onClick={() => wizard.next()} disabled={!wizard.currentStepValid}>Next</button>
+            <div>{children}</div>
+          </div>
+        );
+      };
+
+      const StyledStep = ({ title, signalParent }: any) => {
+        useEffect(() => {
+          signalParent?.({ isValid: true });
+        }, [signalParent]);
+        return (
+          <StyledChrome>
+            <div>{title}</div>
+          </StyledChrome>
+        );
+      };
+
+      renderWizard(
+        <MultiStep>
+          <StyledStep title="Step 1" />
+        </MultiStep>
+      );
+
+      const container = screen.getByLabelText('noop').parentElement as HTMLElement;
+      expect(window.getComputedStyle(container).backgroundColor).toBe('rgb(255, 0, 0)');
     });
   });
 });

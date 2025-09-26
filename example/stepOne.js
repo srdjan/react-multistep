@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { WizardChrome } from './WizardChrome'
 
 export const StepOne = (props) => {
   const [firstName, setFirstName] = useState('')
@@ -22,7 +23,8 @@ export const StepOne = (props) => {
     ) : null
 
   return (
-    <div className='container u-full-width'>
+    <WizardChrome>
+      <div className='container u-full-width'>
       <div className='row'>
         <div className='six columns'>
           <label>
@@ -51,5 +53,6 @@ export const StepOne = (props) => {
         </div>
       </div>
     </div>
+    </WizardChrome>
   )
 }

@@ -50,67 +50,124 @@ import MultiStep from "react-multistep";
 and then, in your application, you add your custom components/forms this way:
 
 ```jsx
-<MultiStep styles={multiStepStyles}>
+<MultiStep>
   <StepOne title="Step 1" />
   <StepTwo title="Step 2" />
 </MultiStep>;
 ```
 
-MultiStep v6 props:
+Because v6 is headless, you provide the surrounding chrome yourself. A minimal
+layout might be:
 
-- styles?: MultiStepStyles — Inline style objects to customize the component
-  parts. Optional; defaults to BaseStyles.
-- children: React elements — Each child is rendered as a step; you can pass a
-  `title` prop for the top nav label.
+```tsx
+import { MultiStep, useMultiStep } from 'react-multistep';
 
-Usage:
+function WizardChrome({ children }: { children: React.ReactNode }) {
+  const { steps, activeStep, goToStep, next, previous, currentStepValid } = useMultiStep();
 
-```jsx
-<MultiStep styles={multiStepStyles}>
-  <StepOne title="Step 1" />
-  <StepTwo title="Step 2" />
-  <StepThree title="Step 3" />
-  <StepFour title="Step 4" />
-</MultiStep>;
+  return (
+    <div>
+      <ol role="tablist" aria-label="Wizard steps">
+        {steps.map((step) => (
+          <li key={step.index}>
+            <button
+              role="tab"
+              aria-selected={step.index === activeStep}
+              onClick={() => goToStep(step.index)}
+            >
+              {step.title ?? `Step ${step.index + 1}`}
+            </button>
+          </li>
+        ))}
+      </ol>
+      <div role="tabpanel">{children}</div>
+      <div>
+        <button onClick={previous} disabled={activeStep === 0}>Prev</button>
+        {activeStep < steps.length - 1 && (
+          <button onClick={next} disabled={!currentStepValid}>Next</button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function StepOne({ signalParent }: any) {
+  const [value, setValue] = useState('');
+
+  useEffect(() => {
+    signalParent?.({ isValid: value.trim().length > 0 });
+  }, [value, signalParent]);
+
+  return (
+    <WizardChrome>
+      <input value={value} onChange={(event) => setValue(event.target.value)} />
+    </WizardChrome>
+  );
+}
 ```
 
-Validation control (v6): Each child receives a prop `signalParent` that it can
-call to control the Next button:
+### MultiStep API
+
+| Prop | Type | Default | Description |
+| ---- | ---- | ------- | ----------- |
+| `children` | `React.ReactNode` | – | Steps to render. Each child is cloned and receives a `signalParent` prop. |
+| `activeStep` | `number` | uncontrolled | Controls the active step index. Leave undefined for internal state. |
+| `initialStep` | `number` | `0` | Starting step when using internal state. |
+| `onStepChange` | `(step: number) => void` | `undefined` | Fires whenever the active step changes (manual or programmatic). |
+| `onValidationError` | `(activeStep: number) => void` | `undefined` | Called when the user tries to advance while the current step is invalid. |
+
+Each child receives a `signalParent` callback used to report validation state:
 
 ```js
-props.signalParent({ isValid: boolean, goto: number });
+props.signalParent({ isValid: boolean, goto?: number });
 ```
 
-If `isValid` is false, Next is disabled and clicking other steps is blocked.
+If `isValid` is `false`, the Next button is disabled and step jumping forward is blocked. The optional `goto` field lets you hint which step should become active (for example, jump back to the first invalid step in a summary view).
 
-When configured this way, each component (`Step`) of the array can have
-following two properties:
+### Reading wizard state with `useMultiStep`
 
-| PROPERTY  | DESCRIPTION                                 | TYPE        | DEFAULT    | isRequired |
-| --------- | ------------------------------------------- | ----------- | ---------- | ---------- |
-| component | the step representing component             | JSX.Element | null       | true       |
-| title     | the step title, present above the steps nav | text        | step index | false      |
+Any descendant of `MultiStep` can call the hook to inspect navigation state or drive custom controls:
 
-# 
+```tsx
+import { useMultiStep } from "react-multistep";
 
-#### 🚀 NEW! Feature: Controlling navigation to the next step with form validation
+function StepFour(props) {
+  const { activeStep, stepCount, next, previous, steps, currentStepValid } = useMultiStep();
 
-To enable this feature, when the child form component needs to control 'Next'
-navigational button, based on it's local validation, MultiStep dynamically adds
-a new prop function to child components that should be used to signal validation
-status. MultiStep will disable /enable `Next` button accordingly. This function
-has follwing signature:
+  return (
+    <div>
+      <p>{`Step ${activeStep + 1} of ${stepCount}`}</p>
+      <button onClick={previous} disabled={activeStep === 0}>Prev</button>
+      <button onClick={next} disabled={!currentStepValid}>Next</button>
+      {/* ... */}
+    </div>
+  );
+}
+```
 
-`signalParent(valid: boolean)`
+The hook returns the following shape:
 
-By default the state is `false` and child components invokes it based on current
-outcome of the validation. In the example app, a simple checkbox is used to
-simulate valid/not valid.
+- `activeStep`: current index (0-based)
+- `stepCount`: total number of registered steps
+- `steps`: array describing each step `{ index, isActive, isValid, title }`
+- `goToStep(step)`: programmatically navigate to any step (respects validation rules)
+- `next()` / `previous()`: shortcuts for relative navigation
+- `setStepValidity(index, isValid)`: manually toggle a step’s validity (useful for async workflows)
+- `isStepValid(index)`: read cached validity for any step
+- `currentStepValid`: convenience boolean for the active step
 
-This can be seen in the `example` app, but here are the relevant parts, required
-inside of the form child component:
+### Validation workflow
 
-<img width="600" alt="child-step-component-changes" src="https://user-images.githubusercontent.com/61190/213932636-5f2d8dfe-0f98-457e-9f0f-6a890174a834.png">
+When the child form component needs to control the Next button, call `signalParent` inside your component whenever validity changes:
+
+```tsx
+useEffect(() => {
+  props.signalParent({ isValid: formIsValid });
+}, [formIsValid, props.signalParent]);
+```
+
+The example app demonstrates a reusable chrome component that consumes the
+hook and renders the navigation UI for each step.
 
 ## Instructions for local development
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { WizardChrome } from './WizardChrome'
 
 export const StepThree = (props) => {
   const [password, setPassword] = useState('')
@@ -12,7 +13,8 @@ export const StepThree = (props) => {
   }, [password, passwordConfirm, requirePassword, props.signalParent])
 
   return (
-    <div className='container'>
+    <WizardChrome>
+      <div className='container'>
       <div className='row'>
         <div className='six columns'>
           <label>Password</label>
@@ -49,6 +51,7 @@ export const StepThree = (props) => {
         />
         <span> Password required </span>
       </label>
-    </div>
+      </div>
+    </WizardChrome>
   )
 }

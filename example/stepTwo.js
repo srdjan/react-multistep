@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { WizardChrome } from './WizardChrome'
 
 export const StepTwo = (props) => {
   const [email, setEmail] = useState('')
@@ -10,11 +11,12 @@ export const StepTwo = (props) => {
   }, [email, emailConfirm, props.signalParent])
 
   return (
-    <div className='container'>
-      <div className='row'>
-        <div className='six columns'>
-          <label>Your email</label>
-          <input
+    <WizardChrome>
+      <div className='container'>
+        <div className='row'>
+          <div className='six columns'>
+            <label>Your email</label>
+            <input
             className='u-full-width required'
             placeholder='test@mailbox.com'
             type='email'
@@ -38,6 +40,7 @@ export const StepTwo = (props) => {
       <p style={{ fontStyle: 'italic', fontSize: '0.9rem' }}>
         Email addresses must match to proceed.
       </p>
-    </div>
+      </div>
+    </WizardChrome>
   )
 }

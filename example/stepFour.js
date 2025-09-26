@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react'
+import { WizardChrome } from './WizardChrome'
 
 export const StepFour = (props) => {
   const [checked, setChecked] = useState(false)
+  const { signalParent } = props
 
   useEffect(() => {
-    props.signalParent({isValid: true, goto: 0})
-  }, [checked])
+    signalParent?.({ isValid: checked })
+  }, [checked, signalParent])
 
   const handleCheckbox = (e) => {
     setChecked(e.target.checked)
   }
 
   return (
-    <div  className='container'>
-      <form className='row'>
+    <WizardChrome>
+      <div  className='container'>
+        <form className='row'>
         <div className='ten columns terms'>
           <span>By clicking "Accept" I agree that:</span>
           <ul className='docs-terms'>
@@ -32,14 +35,14 @@ export const StepFour = (props) => {
               type='checkbox'
               checked={checked}
               onChange={e => handleCheckbox(e)}
-              autoFocus
               />
               </label>
           </span>
           <button style={{float: 'right'}} disabled={!checked}>Submit</button>
         </div>
       </form>
-    </div>
+      </div>
+    </WizardChrome>
   )
 }
 
