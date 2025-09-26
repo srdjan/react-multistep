@@ -31,7 +31,134 @@
 Version 5.x.x is in a maintenance mode, the new development is ongoing on v6.x.x. Version (v5.x.x) bug fixes will still be available on NPM, if you would like to open a PR for a fix or make a fork, git checkout branch v5.x.x. The new version, v6.0.0 has a multiple improvements (see below) and is not backwards compatible.
 ```
 
-# 
+## What's New in v6.0.0
+
+Version 6.0.0 is a **complete rewrite** with modern React patterns and architecture. This is a **breaking change** from v5.x.x.
+
+### 🎨 Headless Component Architecture
+
+v6 is now **headless** - the `MultiStep` component manages state and logic, but **you control the UI**. This gives you complete flexibility over how steps, navigation, and progress indicators look and behave.
+
+**Before (v5):** Built-in navigation UI with limited customization
+```jsx
+<MultiStep showNavigation activeStep={0} prevButton={...} nextButton={...}>
+  {/* steps */}
+</MultiStep>
+```
+
+**Now (v6):** Bring your own UI, powered by the `useMultiStep` hook
+```jsx
+<MultiStep>
+  <StepOne title="Personal Info" />
+  <StepTwo title="Address" />
+</MultiStep>
+```
+
+### 🪝 useMultiStep Hook
+
+The **`useMultiStep` hook** is the core of v6. Any component inside `<MultiStep>` can access wizard state and navigation:
+
+```tsx
+import { useMultiStep } from 'react-multistep';
+
+function CustomNavigation() {
+  const {
+    activeStep,      // Current step index (0-based)
+    stepCount,       // Total number of steps
+    steps,           // Array of step metadata
+    next,            // Go to next step
+    previous,        // Go to previous step
+    goToStep,        // Jump to specific step
+    currentStepValid // Is current step valid?
+  } = useMultiStep();
+
+  return (
+    <nav>
+      <button onClick={previous} disabled={activeStep === 0}>
+        Back
+      </button>
+      <span>Step {activeStep + 1} of {stepCount}</span>
+      <button onClick={next} disabled={!currentStepValid}>
+        Next
+      </button>
+    </nav>
+  );
+}
+```
+
+**Key capabilities:**
+- Access wizard state from any nested component
+- Build custom navigation (tabs, progress bars, breadcrumbs)
+- Implement complex flows (skip steps, conditional navigation)
+- Full TypeScript support
+
+### 🔄 Context-Based State Management
+
+v6 uses React Context internally, eliminating prop drilling:
+
+- **Automatic state injection:** Every child receives `signalParent` callback
+- **Decoupled architecture:** Navigation UI doesn't need to be at the top level
+- **Flexible composition:** Mix and match custom chrome components
+
+### ✅ Validation Pattern
+
+Steps control their own validity via the `signalParent` callback:
+
+```tsx
+function AddressStep({ signalParent }) {
+  const [zip, setZip] = useState('');
+
+  useEffect(() => {
+    // Signal validity whenever state changes
+    signalParent({ isValid: zip.length === 5 });
+  }, [zip, signalParent]);
+
+  return <input value={zip} onChange={(e) => setZip(e.target.value)} />;
+}
+```
+
+**Automatic enforcement:**
+- Next button disabled when `isValid: false`
+- Can't jump forward to invalid steps
+- Optional `onValidationError` callback
+
+### 🎨 Optional Modern CSS
+
+v6 includes an **optional** modern CSS stylesheet with:
+- Mobile-first responsive design (container queries)
+- Automatic dark mode (`color-scheme: light dark`)
+- Fluid typography with `clamp()`
+- Touch-optimized tap targets (44px)
+- CSS custom properties for easy theming
+
+```jsx
+import 'react-multistep/styles'; // Optional!
+```
+
+### 📦 Smaller & More Flexible
+
+- **Core:** 10.3kb (logic only)
+- **CSS:** 4.4kb (optional)
+- **Total:** ~15kb vs ~45kb in v5
+
+### 🔧 Migration from v5
+
+**Removed:**
+- `showNavigation` prop
+- `prevButton` / `nextButton` props
+- Built-in navigation UI
+- Style props (`prevStyle`, `nextStyle`, etc.)
+
+**Added:**
+- `useMultiStep` hook
+- `signalParent` callback for validation
+- Context-based architecture
+- Optional modern CSS import
+- TypeScript-first design
+
+**See the example app** for a complete working implementation.
+
+#
 
 ### Instructions
 
