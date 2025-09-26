@@ -1,4 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { ChildState, MultiStepProps, MultiStepStyles } from "./interfaces";
 import { BaseStyles } from "./baseStyles";
 
@@ -31,58 +36,85 @@ export default function MultiStep(props: MultiStepProps) {
   if (!children) {
     throw new TypeError("Error: MultiStep requires at least one child component");
   }
-
   const styles = customStyles ?? (BaseStyles as MultiStepStyles);
 
-  const childrenArray = useMemo(
-    () => (Array.isArray(children) ? children : [children]),
-    [children]
-  );
-  const totalSteps = childrenArray.length;
+  const childrenArray = useMemo(() => {
+    const parsed = React.Children.toArray(children).filter(React.isValidElement);
+    if (parsed.length === 0) {
+      throw new TypeError("Error: MultiStep requires at least one valid React element as a child");
+    }
+    return parsed as React.ReactElement[];
+  }, [children]);
 
-  const [internalActiveStep, setInternalActiveStep] = useState(controlledActiveStep ?? 0);
-  const [stepValidStates, setStepValidStates] = useState<boolean[]>(
-    new Array(totalSteps).fill(true)
+  const totalSteps = childrenArray.length;
+  const lastStepIndex = Math.max(totalSteps - 1, 0);
+
+  const [internalActiveStep, setInternalActiveStep] = useState(() => {
+    const initial = controlledActiveStep ?? 0;
+    return Math.min(Math.max(initial, 0), lastStepIndex);
+  });
+
+  const [stepValidStates, setStepValidStates] = useState<boolean[]>(() =>
+    Array(totalSteps).fill(false),
   );
 
   const activeChild = controlledActiveStep ?? internalActiveStep;
 
   useEffect(() => {
-    if (controlledActiveStep !== undefined && controlledActiveStep !== internalActiveStep) {
-      setInternalActiveStep(controlledActiveStep);
+    setStepValidStates((prev) => {
+      if (prev.length === totalSteps) {
+        return prev;
+      }
+      const next = Array(totalSteps).fill(false);
+      for (let i = 0; i < Math.min(prev.length, totalSteps); i += 1) {
+        next[i] = prev[i];
+      }
+      return next;
+    });
+    setInternalActiveStep((prev) => Math.min(Math.max(prev, 0), lastStepIndex));
+  }, [totalSteps, lastStepIndex]);
+
+  useEffect(() => {
+    if (controlledActiveStep === undefined) {
+      return;
     }
-  }, [controlledActiveStep]);
+    const next = Math.min(Math.max(controlledActiveStep, 0), lastStepIndex);
+    if (next !== internalActiveStep) {
+      setInternalActiveStep(next);
+    }
+  }, [controlledActiveStep, internalActiveStep, lastStepIndex]);
 
   const handleStepChange = useCallback(
     (newStep: number) => {
       if (newStep < 0 || newStep >= totalSteps) return;
 
-      setInternalActiveStep(newStep);
+      if (controlledActiveStep === undefined) {
+        setInternalActiveStep(newStep);
+      }
       onStepChange?.(newStep);
     },
-    [totalSteps, onStepChange]
+    [totalSteps, controlledActiveStep, onStepChange],
   );
 
-  const childStateChanged = useCallback(
-    (childState: ChildState) => {
-      setStepValidStates((prev) => {
-        const newStates = [...prev];
-        newStates[activeChild] = childState.isValid;
-        return newStates;
-      });
-    },
-    [activeChild]
-  );
+  const handleChildStateChange = useCallback((index: number, childState: ChildState) => {
+    setStepValidStates((prev) => {
+      const next = [...prev];
+      next[index] = childState.isValid;
+      return next;
+    });
+  }, []);
 
   const childrenWithProps = useMemo(
     () =>
-      React.Children.map(childrenArray, (child) =>
-        React.cloneElement(child, { signalParent: childStateChanged })
+      childrenArray.map((child, index) =>
+        React.cloneElement(child, {
+          signalParent: (childState: ChildState) => handleChildStateChange(index, childState),
+        }),
       ),
-    [childrenArray, childStateChanged]
+    [childrenArray, handleChildStateChange],
   );
 
-  const currentStepValid = stepValidStates[activeChild] ?? true;
+  const currentStepValid = stepValidStates[activeChild] ?? false;
 
   const handleNext = useCallback(() => {
     if (activeChild < totalSteps - 1 && currentStepValid) {
@@ -98,13 +130,13 @@ export default function MultiStep(props: MultiStepProps) {
 
   const handleStepClick = useCallback(
     (targetStep: number) => {
-      if (!currentStepValid) {
+      if (targetStep > activeChild && !currentStepValid) {
         onValidationError?.(activeChild);
         return;
       }
       handleStepChange(targetStep);
     },
-    [currentStepValid, activeChild, onValidationError, handleStepChange]
+    [currentStepValid, activeChild, onValidationError, handleStepChange],
   );
 
   const handleKeyDown = useCallback(

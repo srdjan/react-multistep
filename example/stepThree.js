@@ -3,10 +3,13 @@ import React, { useState, useEffect } from 'react'
 export const StepThree = (props) => {
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
+  const [requirePassword, setRequirePassword] = useState(true)
 
   useEffect(() => {
-    props.signalParent({isValid: true, goto: 0})
-  }, [])
+    const trimmedPassword = password.trim()
+    const isValid = !requirePassword || (trimmedPassword.length > 0 && trimmedPassword === passwordConfirm.trim())
+    props.signalParent?.({ isValid })
+  }, [password, passwordConfirm, requirePassword, props.signalParent])
 
   return (
     <div className='container'>
@@ -19,7 +22,8 @@ export const StepThree = (props) => {
             type='password'
             onChange={e => setPassword(e.target.value)}
             value={password}
-            autoFocus
+            disabled={!requirePassword}
+            required={requirePassword}
           />
         </div>
       </div>
@@ -32,9 +36,19 @@ export const StepThree = (props) => {
             type='password'
             onChange={e => setPasswordConfirm(e.target.value)}
             value={passwordConfirm}
+            disabled={!requirePassword}
+            required={requirePassword}
           />
         </div>
       </div>
+      <label>
+        <input
+          type='checkbox'
+          checked={requirePassword}
+          onChange={(e) => setRequirePassword(e.target.checked)}
+        />
+        <span> Password required </span>
+      </label>
     </div>
   )
 }

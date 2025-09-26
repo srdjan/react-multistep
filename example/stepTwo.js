@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react'
 
 export const StepTwo = (props) => {
-  const [passwdRequired, setPasswordRequired] = useState(true)
   const [email, setEmail] = useState('')
   const [emailConfirm, setEmailConfirm] = useState('')
 
   useEffect(() => {
-    props.signalParent?.({ isValid: true })
-  }, [passwdRequired, props.signalParent])
-
-  const handleCheckbox = (e) => {
-    setPasswordRequired(e.target.checked)
-  }
+    const isValid = email.trim().length > 0 && email === emailConfirm
+    props.signalParent?.({ isValid })
+  }, [email, emailConfirm, props.signalParent])
 
   return (
     <div className='container'>
@@ -39,14 +35,9 @@ export const StepTwo = (props) => {
           />
         </div>
       </div>
-      <label>
-        <input
-          type='checkbox'
-          checked={passwdRequired}
-          onChange={(e) => handleCheckbox(e)}
-        />
-        <span> Password required </span>
-      </label>
+      <p style={{ fontStyle: 'italic', fontSize: '0.9rem' }}>
+        Email addresses must match to proceed.
+      </p>
     </div>
   )
 }

@@ -37,7 +37,7 @@ export interface MultiStepProps {
   /** Custom styles to override default BaseStyles */
   styles?: MultiStepStyles;
   /** Child components representing each step */
-  children: React.ReactElement | React.ReactElement[];
+  children: React.ReactNode;
   /** Controlled active step index (0-based) */
   activeStep?: number;
   /** Callback fired when active step changes */
