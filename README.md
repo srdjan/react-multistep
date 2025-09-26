@@ -169,6 +169,41 @@ useEffect(() => {
 The example app demonstrates a reusable chrome component that consumes the
 hook and renders the navigation UI for each step.
 
+### Styling with Modern CSS
+
+Version 6.0.0 includes an optional modern CSS stylesheet with mobile-first, responsive design:
+
+```jsx
+// Import the optional stylesheet
+import 'react-multistep/styles';
+```
+
+**Features:**
+- **Mobile-first responsive design** with container queries
+- **Automatic dark mode** support via `color-scheme: light dark`
+- **Fluid typography** using `clamp()` for adaptive sizing
+- **Touch-optimized** tap targets (44px minimum)
+- **CSS custom properties** for easy theming
+- **Modern CSS features**: `@layer`, `light-dark()`, logical properties
+- **Backward compatible**: Works without the CSS, enhanced with it
+
+**Customization:**
+
+All styles use CSS custom properties with sensible defaults:
+
+```css
+:root {
+  --multistep-primary: #1EAEDB;
+  --multistep-inactive: silver;
+  --multistep-bg: #f1f1f141;
+  --multistep-spacing-md: clamp(2rem, 3vw, 4rem);
+  --multistep-button-size: clamp(2.5rem, 5vw, 4rem);
+  /* ...and more */
+}
+```
+
+Override any variable in your own CSS to customize colors, spacing, or typography. The component adapts automatically to small screens (mobile) and large screens (desktop) without media queries using container queries.
+
 ## Instructions for local development
 
 #### If you would like to explore further, contribute a PR or just try the included code example:
