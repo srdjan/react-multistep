@@ -2,9 +2,9 @@
     "compilerOptions": {
       "jsx": "react-jsx",
       "target": "ES2015",
-      "module": "CommonJS",
+      "module": "Node16",
       "lib": ["dom","dom.iterable","esnext"],
-      "moduleResolution": "node",
+      "moduleResolution": "Node16",
       "resolveJsonModule": true,
       "isolatedModules": true,
       "removeComments": true,
