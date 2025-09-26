@@ -1,29 +1,29 @@
 # Responsive React multistep form component
- New version from moreteza mehrdad
+
 </br>
 </br>
-  
-## Take it for a [__SPIN!__](http://srdjan.github.io/react-multistep/) :dizzy:
+
+## Take it for a [**SPIN!**](http://srdjan.github.io/react-multistep/) :dizzy:
 
 </br>
 
 <kbd>
 <img border=width="500px" height="300px" src="https://raw.githubusercontent.com/srdjan/react-multistep/master/assets/react-multistep.png"/>
-</kbd>  
-  
-</br>
-</br>
-</br>
-  
-#### List of contributors :raised_hands:
-<a href = "https://github.com/react-multistep/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=srdjan/react-multistep" alt="AWESOME CONTRIBUTORS" />
-</a>
-  
+</kbd>
+
 </br>
 </br>
 </br>
 
+#### List of contributors :raised_hands:
+
+<a href = "https://github.com/react-multistep/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=srdjan/react-multistep" alt="AWESOME CONTRIBUTORS" />
+</a>
+
+</br>
+</br>
+</br>
 
 ### Previous MultiStep major version, v5.4.0
 
@@ -31,7 +31,7 @@
 Version 5.x.x is in a maintenance mode, the new development is ongoing on v6.x.x. Version (v5.x.x) bug fixes will still be available on NPM, if you would like to open a PR for a fix or make a fork, git checkout branch v5.x.x. The new version, v6.0.0 has a multiple improvements (see below) and is not backwards compatible.
 ```
 
-#
+# 
 
 ### Instructions
 
@@ -50,65 +50,65 @@ import MultiStep from "react-multistep";
 and then, in your application, you add your custom components/forms this way:
 
 ```jsx
-<MultiStep activeStep={0} prevButton={prevButton} nextButton={nextButton}>
+<MultiStep styles={multiStepStyles}>
   <StepOne title="Step 1" />
   <StepTwo title="Step 2" />
-</MultiStep>
+</MultiStep>;
 ```
 
-MultiStep component accepts following props (all optional, except Steps array):
+MultiStep v6 props:
 
-| PROPERTY        | DESCRIPTION                                               | TYPE          | DEFAULT | isRequired |
-| --------------- | --------------------------------------------------------- | ------------- | ------- | ---------- |
-| showTopNav      | controls if the navigation buttons are visible            | boolean       | true    | false      |
-| prevButton      | configure the prev navigation button                      | NavButtonProp | null    | false      |
-| nextButton      | configure the next the navigation button                  | NavButtonProp | null    | false      |
-| stepCustomStyle | control style of step                                     | CSSProperties | null    | false      |
-| direction       | control the steps nav direction                           | column        | row     | false      |
-| activeStep      | it takes a number representing representing starting step | number        | 0       | false      |
+- styles?: MultiStepStyles — Inline style objects to customize the component
+  parts. Optional; defaults to BaseStyles.
+- children: React elements — Each child is rendered as a step; you can pass a
+  `title` prop for the top nav label.
 
-#### 🚀 NEW! you can also use style props for the navigation buttons and change how they look with two props 'prevButton' & 'nextButton':
+Usage:
 
-| PROPERTY | DESCRIPTION                                       | TYPE          | DEFAULT     | isRequired |
-| -------- | ------------------------------------------------- | ------------- | ----------- | ---------- |
-| title    | The display string value of the navigation button | string        | Prev / Next | false      |
-| style    | The css style of the navigation button            | CSSProperties | null        | false      |
-
-#
-
-#### To configure Multistep component, we `inline` child components:
-
-```javascript
-    <MultiStep 
-                activeStep={2}
-                  prevButton={{title: 'Back','style:{ background: 'red' }}}
-                nextButton={{title: 'Forward','style:{ background: 'green' }}}
-    >
-    <StepOne title='StepOne'/>
-    <StepTwo title='StepTwo'/>
-    <StepThree title='StepThree'/>
-    <StepFour title='StepFour'/>
-</MultiStep>
+```jsx
+<MultiStep styles={multiStepStyles}>
+  <StepOne title="Step 1" />
+  <StepTwo title="Step 2" />
+  <StepThree title="Step 3" />
+  <StepFour title="Step 4" />
+</MultiStep>;
 ```
 
-When configured this way, each component (`Step`) of the array can have following two properties:
+Validation control (v6): Each child receives a prop `signalParent` that it can
+call to control the Next button:
+
+```js
+props.signalParent({ isValid: boolean, goto: number });
+```
+
+If `isValid` is false, Next is disabled and clicking other steps is blocked.
+
+When configured this way, each component (`Step`) of the array can have
+following two properties:
 
 | PROPERTY  | DESCRIPTION                                 | TYPE        | DEFAULT    | isRequired |
 | --------- | ------------------------------------------- | ----------- | ---------- | ---------- |
 | component | the step representing component             | JSX.Element | null       | true       |
 | title     | the step title, present above the steps nav | text        | step index | false      |
 
-#
+# 
 
 #### 🚀 NEW! Feature: Controlling navigation to the next step with form validation
 
-To enable this feature, when the child form component needs to control 'Next' navigational button, based on it's local validation, MultiStep dynamically adds a new prop function to child components that should be used to signal validation status. MultiStep will disable /enable `Next` button accordingly. This function has follwing signature:
+To enable this feature, when the child form component needs to control 'Next'
+navigational button, based on it's local validation, MultiStep dynamically adds
+a new prop function to child components that should be used to signal validation
+status. MultiStep will disable /enable `Next` button accordingly. This function
+has follwing signature:
 
 `signalParent(valid: boolean)`
 
-By default the state is `false` and child components invokes it based on current outcome of the validation. In the example app, a simple checkbox is used to simulate valid/not valid.
+By default the state is `false` and child components invokes it based on current
+outcome of the validation. In the example app, a simple checkbox is used to
+simulate valid/not valid.
 
-This can be seen in the `example` app, but here are the relevant parts, required inside of the form child component:
+This can be seen in the `example` app, but here are the relevant parts, required
+inside of the form child component:
 
 <img width="600" alt="child-step-component-changes" src="https://user-images.githubusercontent.com/61190/213932636-5f2d8dfe-0f98-457e-9f0f-6a890174a834.png">
 

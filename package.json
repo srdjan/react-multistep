@@ -5,12 +5,16 @@
   "main": "dist/index.js",
   "files": [
     "build/*.d.ts",
-    "dist/index.js",
-    "src/index.js",
-    "src/MultiStep.jsx"
+    "dist/**"
   ],
   "types": "build/index.d.ts",
   "license": "MIT",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "types": "./build/index.d.ts"
+    }
+  },
   "author": {
     "name": "@djidja8",
     "email": "srdjan@timok.com",
@@ -40,6 +44,7 @@
   "scripts": {
     "build": "tsc",
     "bundle": "esbuild ./build/index.js \"--define:process.env.NODE_ENV='production'\" --external:react --bundle --format=cjs --loader:.js=jsx --outdir=dist",
+    "prepublishOnly": "npm run build && npm run bundle",
     "publish": "npm publish ./"
   }
 }
