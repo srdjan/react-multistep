@@ -16,8 +16,14 @@
       "declaration": true,
       "declarationMap": true,
       "outDir": "./build",
-      "sourceMap": false
+      "sourceMap": false,
+      "strict": true,
+      "noUncheckedIndexedAccess": true,
+      "noImplicitAny": true,
+      "strictNullChecks": true,
+      "noImplicitReturns": true,
+      "noFallthroughCasesInSwitch": true
     },
     "include": ["src/**/*"],
-    "exclude": ["node_modules", "**/*.spec.ts"]
+    "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"]
   }

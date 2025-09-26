@@ -1,128 +1,210 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ChildState, MultiStepProps, MultiStepStyles } from "./interfaces";
 import { BaseStyles } from "./baseStyles";
 
-const getTopNavStyles = (activeStep: number, length: number): string[] => {
-  const styles: string[] = [];
-  for (let i = 0; i < length; i++) {
-    i === activeStep ? styles.push("doing") : styles.push("todo");
-  }
-  return styles;
-};
-
-const getBottomNavState = (
-  activeStep: number,
-  length: number,
-  stepIsValid: boolean,
-) => {
-  if (activeStep === 0) {
-    return {
-      prevDisabled: true,
-      nextDisabled: !stepIsValid,
-      hideLast: false,
-    };
-  }
-  if (activeStep > 0 && activeStep < (length - 1)) {
-    return {
-      prevDisabled: false,
-      nextDisabled: !stepIsValid,
-      hideLast: false,
-    };
-  }
-  return {
-    prevDisabled: false,
-    nextDisabled: !stepIsValid,
-    hideLast: true,
-  };
-};
-
+/**
+ * MultiStep component for creating multi-step forms with validation
+ *
+ * @param props - MultiStepProps configuration object
+ * @returns A multi-step form component with navigation
+ *
+ * @example
+ * ```tsx
+ * <MultiStep styles={customStyles} activeStep={0} onStepChange={(step) => console.log(step)}>
+ *   <StepOne title="Step 1" />
+ *   <StepTwo title="Step 2" />
+ * </MultiStep>
+ * ```
+ */
 export default function MultiStep(props: MultiStepProps) {
-  let { children } = props;
+  const {
+    children,
+    styles: customStyles,
+    activeStep: controlledActiveStep,
+    onStepChange,
+    prevButtonContent = "‹",
+    nextButtonContent = "›",
+    showNavigation = true,
+    onValidationError,
+  } = props;
+
   if (!children) {
-    throw TypeError("Error: Application has no children Components configured");
+    throw new TypeError("Error: MultiStep requires at least one child component");
   }
 
-  const styles = typeof props.styles === "undefined"
-    ? BaseStyles as MultiStepStyles
-    : props.styles;
-  const [activeChild, setActive] = useState(0);
-  const [childIsValid, setChildIsValid] = useState(false);
-  const [topNavState, setTopNavState] = useState(
-    getTopNavStyles(activeChild, children.length),
+  const styles = customStyles ?? (BaseStyles as MultiStepStyles);
+
+  const childrenArray = useMemo(
+    () => (Array.isArray(children) ? children : [children]),
+    [children]
   );
-  const [bottomNavState, setBottomNavState] = useState(
-    getBottomNavState(activeChild, children.length, childIsValid),
+  const totalSteps = childrenArray.length;
+
+  const [internalActiveStep, setInternalActiveStep] = useState(controlledActiveStep ?? 0);
+  const [stepValidStates, setStepValidStates] = useState<boolean[]>(
+    new Array(totalSteps).fill(true)
   );
+
+  const activeChild = controlledActiveStep ?? internalActiveStep;
 
   useEffect(() => {
-    setTopNavState(getTopNavStyles(activeChild, children.length));
-    setBottomNavState(
-      getBottomNavState(activeChild, children.length, childIsValid),
-    );
-  }, [activeChild, childIsValid]);
+    if (controlledActiveStep !== undefined && controlledActiveStep !== internalActiveStep) {
+      setInternalActiveStep(controlledActiveStep);
+    }
+  }, [controlledActiveStep]);
+
+  const handleStepChange = useCallback(
+    (newStep: number) => {
+      if (newStep < 0 || newStep >= totalSteps) return;
+
+      setInternalActiveStep(newStep);
+      onStepChange?.(newStep);
+    },
+    [totalSteps, onStepChange]
+  );
 
   const childStateChanged = useCallback(
-    (childState: ChildState) => setChildIsValid(childState.isValid),
-    [],
+    (childState: ChildState) => {
+      setStepValidStates((prev) => {
+        const newStates = [...prev];
+        newStates[activeChild] = childState.isValid;
+        return newStates;
+      });
+    },
+    [activeChild]
   );
-  children = React.Children.map(
-    children,
-    (child) => React.cloneElement(child, { signalParent: childStateChanged }),
+
+  const childrenWithProps = useMemo(
+    () =>
+      React.Children.map(childrenArray, (child) =>
+        React.cloneElement(child, { signalParent: childStateChanged })
+      ),
+    [childrenArray, childStateChanged]
   );
 
-  const handleNext = () =>
-    setActive(
-      activeChild === children.length - 1 ? activeChild : activeChild + 1,
-    );
+  const currentStepValid = stepValidStates[activeChild] ?? true;
 
-  const handlePrevious = () =>
-    setActive(activeChild > 0 ? activeChild - 1 : activeChild);
+  const handleNext = useCallback(() => {
+    if (activeChild < totalSteps - 1 && currentStepValid) {
+      handleStepChange(activeChild + 1);
+    }
+  }, [activeChild, totalSteps, currentStepValid, handleStepChange]);
 
-  const handleOnClick = (i: number) =>
-    childIsValid ? setActive(i) : console.log("Error: Invalid state");
+  const handlePrevious = useCallback(() => {
+    if (activeChild > 0) {
+      handleStepChange(activeChild - 1);
+    }
+  }, [activeChild, handleStepChange]);
+
+  const handleStepClick = useCallback(
+    (targetStep: number) => {
+      if (!currentStepValid) {
+        onValidationError?.(activeChild);
+        return;
+      }
+      handleStepChange(targetStep);
+    },
+    [currentStepValid, activeChild, onValidationError, handleStepChange]
+  );
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "ArrowLeft" && activeChild > 0) {
+        e.preventDefault();
+        handlePrevious();
+      } else if (e.key === "ArrowRight" && activeChild < totalSteps - 1 && currentStepValid) {
+        e.preventDefault();
+        handleNext();
+      }
+    },
+    [activeChild, totalSteps, currentStepValid, handlePrevious, handleNext]
+  );
 
   const renderTopNav = () => (
-    <ol style={styles.topNav}>
-      {children.map((c, i) => (
-        <li
-          style={styles.topNavStep}
-          onClick={() => handleOnClick(i)}
-          key={i}
-        >
-          {topNavState[i] === "doing"
-            ? <span style={styles.doing}>{c.props.title ?? i + 1}</span>
-            : <span style={styles.todo}>{c.props.title ?? i + 1}</span>}
-        </li>
-      ))}
+    <ol
+      style={styles.topNav}
+      role="tablist"
+      aria-label="Form steps"
+    >
+      {childrenWithProps?.map((c, i) => {
+        const isActive = i === activeChild;
+
+        return (
+          <li
+            style={styles.topNavStep}
+            onClick={() => handleStepClick(i)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleStepClick(i);
+              }
+            }}
+            key={i}
+            role="tab"
+            aria-selected={isActive}
+            aria-controls={`step-panel-${i}`}
+            tabIndex={isActive ? 0 : -1}
+          >
+            {isActive ? (
+              <span style={styles.doing} aria-current="step">
+                {c.props.title ?? i + 1}
+              </span>
+            ) : (
+              <span style={styles.todo}>
+                {c.props.title ?? i + 1}
+              </span>
+            )}
+          </li>
+        );
+      })}
     </ol>
   );
 
-  const renderBottomNav = () => (
-    <div style={styles.section}>
-      <button
-        onClick={handlePrevious}
-        style={styles.prevButton}
-        disabled={bottomNavState.prevDisabled}
-      >
-        <span>&#60;</span>
-      </button>
-      <button
-        onClick={handleNext}
-        style={bottomNavState.hideLast
-          ? { display: "none" }
-          : styles.nextButton}
-        disabled={bottomNavState.nextDisabled}
-      >
-        <span>&#62;</span>
-      </button>
-    </div>
-  );
+  const renderBottomNav = () => {
+    if (!showNavigation) return null;
+
+    const isPrevDisabled = activeChild === 0;
+    const isNextDisabled = !currentStepValid;
+    const isLastStep = activeChild === totalSteps - 1;
+
+    return (
+      <div style={styles.section}>
+        <button
+          onClick={handlePrevious}
+          style={styles.prevButton}
+          disabled={isPrevDisabled}
+          aria-label="Previous step"
+          type="button"
+        >
+          {prevButtonContent}
+        </button>
+        {!isLastStep && (
+          <button
+            onClick={handleNext}
+            style={styles.nextButton}
+            disabled={isNextDisabled}
+            aria-label="Next step"
+            type="button"
+          >
+            {nextButtonContent}
+          </button>
+        )}
+      </div>
+    );
+  };
+
+  const currentChild = childrenWithProps?.[activeChild];
 
   return (
-    <div style={styles.component}>
+    <div style={styles.component} onKeyDown={handleKeyDown}>
       {renderTopNav()}
-      <div style={styles.section}>
-        {children[activeChild]}
+      <div
+        style={styles.section}
+        role="tabpanel"
+        id={`step-panel-${activeChild}`}
+        aria-labelledby={`step-${activeChild}`}
+      >
+        {currentChild}
       </div>
       {renderBottomNav()}
     </div>

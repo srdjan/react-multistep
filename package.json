@@ -11,8 +11,9 @@
   "license": "MIT",
   "exports": {
     ".": {
+      "types": "./build/index.d.ts",
       "require": "./dist/index.js",
-      "types": "./build/index.d.ts"
+      "import": "./dist/index.js"
     }
   },
   "author": {
@@ -32,9 +33,22 @@
     "url": "https://github.com/srdjan/react-multistep/issues"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.5.2",
     "@types/react": "18.2.20",
+    "@typescript-eslint/eslint-plugin": "^8.44.1",
+    "@typescript-eslint/parser": "^8.44.1",
     "esbuild": "^0.25.10",
-    "typescript": "5.1.6"
+    "eslint": "^9.36.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "jsdom": "^27.0.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "react": "18.3.1"
@@ -42,6 +56,13 @@
   "scripts": {
     "build": "tsc",
     "bundle": "esbuild ./build/index.js \"--define:process.env.NODE_ENV='production'\" --external:react --bundle --format=cjs --loader:.js=jsx --outdir=dist",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src test --ext .ts,.tsx",
+    "lint:fix": "eslint src test --ext .ts,.tsx --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\" \"test/**/*.{ts,tsx}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx}\" \"test/**/*.{ts,tsx}\"",
     "prepublishOnly": "npm run build && npm run bundle",
     "publish": "npm publish ./"
   }

@@ -6,11 +6,11 @@ export const StepTwo = (props) => {
   const [emailConfirm, setEmailConfirm] = useState('')
 
   useEffect(() => {
-    props.signalParent({isValid: true, goto: passwdRequired ? 0 : 3})
-  }, [passwdRequired])
+    props.signalParent?.({ isValid: true })
+  }, [passwdRequired, props.signalParent])
 
   const handleCheckbox = (e) => {
-    setPasswordRequired(p => e.target.checked)
+    setPasswordRequired(e.target.checked)
   }
 
   return (
@@ -22,9 +22,8 @@ export const StepTwo = (props) => {
             className='u-full-width required'
             placeholder='test@mailbox.com'
             type='email'
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             value={email}
-            autoFocus
           />
         </div>
       </div>
@@ -35,7 +34,7 @@ export const StepTwo = (props) => {
             className='u-full-width'
             placeholder='Confirm email'
             type='email'
-            onChange={e => setEmailConfirm(e.target.value)}
+            onChange={(e) => setEmailConfirm(e.target.value)}
             value={emailConfirm}
           />
         </div>
@@ -44,10 +43,9 @@ export const StepTwo = (props) => {
         <input
           type='checkbox'
           checked={passwdRequired}
-          onChange={e => handleCheckbox(e)}
-          autoFocus
+          onChange={(e) => handleCheckbox(e)}
         />
-        <span> Password required </span>{' '}
+        <span> Password required </span>
       </label>
     </div>
   )
