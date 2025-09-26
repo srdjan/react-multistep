@@ -14,7 +14,8 @@
       "types": "./build/index.d.ts",
       "require": "./dist/index.js",
       "import": "./dist/index.js"
-    }
+    },
+    "./styles": "./dist/multistep.css"
   },
   "author": {
     "name": "@djidja8",
@@ -65,7 +66,7 @@
     "lint:fix": "eslint src test --ext .ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx}\" \"test/**/*.{ts,tsx}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\" \"test/**/*.{ts,tsx}\"",
-    "prepublishOnly": "npm run build && npm run bundle",
+    "prepublishOnly": "npm run build && npm run bundle && cp src/base.css dist/multistep.css",
     "publish": "npm publish ./"
   }
 }
