@@ -1,22 +1,21 @@
 {
   "name": "react-multistep-example",
-  "homepage": "https://srdjan.github.io/react-multistep",
-  "version": "6.0.0",
+  "version": "6.1.0",
+  "private": true,
   "license": "MIT",
   "scripts": {
-    "debug": "esbuild app.js --bundle --format=cjs --outfile=./bundle.js --loader:.js=jsx --sourcemap --preserve-symlinks",
-    "build:comp": "cd ../.. && tsc && cd ./examples/client-side",
-    "inst:comp": "mkdir -p node_modules/react-multistep && cp -Rf ../../build/** node_modules/react-multistep/",
-    "build:app": "esbuild app.js --bundle --format=cjs --outfile=./bundle.js --loader:.js=jsx --minify --define:process.env.NODE_ENV='\"production\"'",
-    "build": "npm run build:comp && npm run inst:comp && cp ../../src/base.css ./css/multistep.css && npm run build:app",
-    "start": "npm run build:app && npx http-server ./ -p 3000"
-  },
-  "alias": {
-    "react": "./node_modules/react"
+    "build": "npm run build:lib && npm run build:app",
+    "build:app": "esbuild app.js --bundle --format=esm --outdir=./dist --loader:.js=jsx --loader:.css=css --minify --define:process.env.NODE_ENV='\"production\"'",
+    "build:lib": "node -e \"const fs=require('fs');const path=require('path');const dist=path.join(__dirname,'..','..','dist','index.js');if(!fs.existsSync(dist)){console.error('Missing ../../dist. Run `npm run prepublishOnly` from the repo root first.');process.exit(1);}\"",
+    "dev": "npm run build:lib && esbuild app.js --bundle --format=esm --outdir=./dist --loader:.js=jsx --loader:.css=css --sourcemap --watch --servedir=.",
+    "start": "npm run dev",
+    "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true });\"",
+    "postinstall": "node -e \"const fs=require('fs');const path=require('path');const target=path.join(__dirname,'node_modules','react-multistep','node_modules');if(fs.existsSync(target))fs.rmSync(target,{recursive:true,force:true});\""
   },
   "dependencies": {
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "react-multistep": "file:../.."
   },
   "devDependencies": {
     "esbuild": "^0.25.10"

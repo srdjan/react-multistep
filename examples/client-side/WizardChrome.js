@@ -1,17 +1,10 @@
 import React from 'react'
-import { useMultiStep } from 'react-multistep'
+import { useMultiStepState, useStepNavigation } from 'react-multistep'
 import { multiStepStyles } from './css/multistepStyles'
 
 export const WizardChrome = ({ children }) => {
-  const {
-    steps,
-    activeStep,
-    goToStep,
-    next,
-    previous,
-    currentStepValid,
-    stepCount,
-  } = useMultiStep()
+  const { steps, activeStep, stepCount, currentStepValid } = useMultiStepState()
+  const { goToStep, next, previous } = useStepNavigation()
 
   const isLast = activeStep === stepCount - 1
 

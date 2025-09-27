@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { WizardChrome } from './WizardChrome'
 
-export const StepTwo = (props) => {
+/**
+ * @param {import('react-multistep').StepComponentProps<{ title: string }>} props
+ */
+export const StepTwo = ({ signalParent }) => {
   const [email, setEmail] = useState('')
   const [emailConfirm, setEmailConfirm] = useState('')
 
   useEffect(() => {
     const isValid = email.trim().length > 0 && email === emailConfirm
-    props.signalParent?.({ isValid })
-  }, [email, emailConfirm, props.signalParent])
+    signalParent({ isValid })
+  }, [email, emailConfirm, signalParent])
 
   return (
     <WizardChrome>

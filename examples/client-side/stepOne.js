@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { WizardChrome } from './WizardChrome'
 
-export const StepOne = (props) => {
+/**
+ * @param {import('react-multistep').StepComponentProps<{ title: string }>} props
+ */
+export const StepOne = ({ signalParent }) => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
 
   useEffect(() => {
-    props.signalParent?.({ isValid: firstName.length > 0 })
-  }, [firstName, props.signalParent])
+    signalParent({ isValid: firstName.length > 0 })
+  }, [firstName, signalParent])
 
   const handleFirstNameChange = (val) => {
     setFirstName(val)

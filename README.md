@@ -788,8 +788,10 @@ On a successful build, try the example app:
 ```sh
 cd ./examples/client-side     // (1) navigate to the example folder
 npm install                   // (2) install dependencies
-npm run build                 // (3) build the example
-npm start                     // (4) start the local server
+npm run dev                   // (3) build the library + run esbuild dev server (http://localhost:8000)
+
+# optional
+npm run build                 // production bundle to ./dist
 ```
 
 Now, you can open the example in your favorite browser...

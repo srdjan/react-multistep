@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import MultiStep from 'react-multistep'
+import 'react-multistep/styles'
 import { StepOne } from './stepOne'
 import { StepTwo } from './stepTwo'
 import { StepThree } from './stepThree'

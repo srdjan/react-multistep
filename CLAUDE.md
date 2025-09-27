@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is **react-multistep**, a published npm package (v6.0.0-alpha) providing a responsive React component for multi-step forms with validation control. The package is built with TypeScript and uses esbuild for bundling.
+This is **react-multistep**, a published npm package (v6.1.x) providing a responsive React component for multi-step forms with validation control. The package is built with TypeScript and uses esbuild for bundling.
 
 ## Common Development Commands
 
@@ -22,16 +22,15 @@ The build pipeline:
 
 ### Working with the Example App
 ```bash
-cd example
+cd examples/client-side
 npm install
-npm run build            # Builds library + copies to example's node_modules + builds example
-npm start                # Build and serve on http://localhost:3000
+npm run dev              # Builds library, bundles example, serves with esbuild
 ```
 
 Example build workflow:
-- `build:comp` - Compiles library TypeScript in parent directory
-- `inst:comp` - Copies built files to example's node_modules/react-multistep
-- `build:app` - Bundles example app with esbuild (minified production build)
+- `build:lib` - Runs the root `npm run build` to compile the library
+- `build:app` - Bundles the example with esbuild (`dist/app.js`)
+- `dev` - Builds the library once, then runs esbuild in watch + serve mode
 
 ## Architecture
 

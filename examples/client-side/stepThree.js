@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { WizardChrome } from './WizardChrome'
 
-export const StepThree = (props) => {
+/**
+ * @param {import('react-multistep').StepComponentProps<{ title: string }>} props
+ */
+export const StepThree = ({ signalParent }) => {
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [requirePassword, setRequirePassword] = useState(true)
@@ -9,8 +12,8 @@ export const StepThree = (props) => {
   useEffect(() => {
     const trimmedPassword = password.trim()
     const isValid = !requirePassword || (trimmedPassword.length > 0 && trimmedPassword === passwordConfirm.trim())
-    props.signalParent?.({ isValid })
-  }, [password, passwordConfirm, requirePassword, props.signalParent])
+    signalParent({ isValid })
+  }, [password, passwordConfirm, requirePassword, signalParent])
 
   return (
     <WizardChrome>

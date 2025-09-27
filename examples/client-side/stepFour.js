@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { WizardChrome } from './WizardChrome'
 
-export const StepFour = (props) => {
+/**
+ * @param {import('react-multistep').StepComponentProps<{ title: string }>} props
+ */
+export const StepFour = ({ signalParent }) => {
   const [checked, setChecked] = useState(false)
-  const { signalParent } = props
 
   useEffect(() => {
-    signalParent?.({ isValid: checked })
+    signalParent({ isValid: checked })
   }, [checked, signalParent])
 
   const handleCheckbox = (e) => {
