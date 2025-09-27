@@ -31,9 +31,9 @@
 Version 5.x.x is in a maintenance mode, the new development is ongoing on v6.x.x. Version (v5.x.x) bug fixes will still be available on NPM, if you would like to open a PR for a fix or make a fork, git checkout branch v5.x.x. The new version, v6.0.0 has a multiple improvements (see below) and is not backwards compatible.
 ```
 
-## What's New in v6.0.0
+## What's New in v6
 
-Version 6.0.0 is a **complete rewrite** with modern React patterns and
+Version 6 is a **complete rewrite** with modern React patterns and
 architecture. This is a **breaking change** from v5.x.x.
 
 ### 🎨 Headless Component Architecture
