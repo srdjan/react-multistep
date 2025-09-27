@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Server-Side Wizard Test</title>
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .step-indicators {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    .step-indicator {
+      padding: 10px 15px;
+      background: #f0f0f0;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .step-indicator.current {
+      background: #1EAEDB;
+      color: white;
+    }
+    .step-indicator.complete {
+      background: #5cb85c;
+      color: white;
+    }
+    .step-indicator.clickable {
+      cursor: pointer;
+      border: none;
+    }
+    .form-field {
+      margin-bottom: 20px;
+    }
+    .form-field label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    .form-field input[type="text"],
+    .form-field input[type="email"] {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .error {
+      color: #d9534f;
+      font-size: 12px;
+      margin-top: 4px;
+      display: block;
+    }
+    .wizard-nav {
+      display: flex;
+      gap: 10px;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+    }
+    .wizard-button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .wizard-button-prev {
+      background: #f0f0f0;
+    }
+    .wizard-button-next,
+    .wizard-button-submit {
+      background: #1EAEDB;
+      color: white;
+    }
+    .wizard-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    fieldset {
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 4px;
+    }
+    legend {
+      font-size: 18px;
+      font-weight: 600;
+      padding: 0 10px;
+    }
+    .review dl {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+    }
+    .review dt {
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <h1>Server-Side Multi-Step Wizard</h1>
+  <p>This wizard uses HTMX to update form fields on change. Try filling out the fields and watch the Next button enable automatically.</p>
+
+  <div id="wizard-content" hx-get="/wizard/browser-test-session" hx-trigger="load" hx-swap="outerHTML">
+    Loading...
+  </div>
+</body>
+</html>
