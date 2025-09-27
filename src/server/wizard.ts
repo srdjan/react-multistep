@@ -38,6 +38,19 @@ export const getAvailableActions = (
       if (index < 0 || index >= config.steps.length) return false;
       if (index === session.currentStep) return false;
       if (index < session.currentStep) return true;
+
+      if (index > session.currentStep + 1) {
+        if (!currentStepValid) return false;
+        for (let i = session.currentStep + 1; i < index; i++) {
+          const step = config.steps[i];
+          const canSkip = step?.canSkip?.(session) ?? false;
+          if (!canSkip && !session.stepValidity[i]) {
+            return false;
+          }
+        }
+        return true;
+      }
+
       return index === session.currentStep + 1 && currentStepValid;
     },
     canSubmit: isLastStep && allStepsValid,

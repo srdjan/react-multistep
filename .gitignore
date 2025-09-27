@@ -3,7 +3,7 @@ node_modules
 package-lock.json
 dist
 build
-example/bundle.js
-example/index.js
+examples/client-side/bundle.js
+examples/client-side/index.js
 storybook/
 .git
