@@ -1,3 +1,5 @@
+import type React from "react";
+
 /**
  * State object passed from child components to parent via signalParent callback
  */
@@ -7,6 +9,19 @@ export interface ChildState {
   /** Optional hint for a step the user should navigate to when invalid */
   goto?: number;
 }
+
+/** Callback invoked by steps to inform MultiStep of their current state */
+export type SignalParent = (state: ChildState) => void;
+
+/**
+ * Shared props injected into every step component rendered by MultiStep.
+ * Extend this with your own props to get full TypeScript coverage.
+ */
+export type StepComponentProps<ExtraProps extends object = Record<string, never>> =
+  ExtraProps & {
+    signalParent: SignalParent;
+    title?: React.ReactNode;
+  };
 
 /**
  * Props for MultiStep component

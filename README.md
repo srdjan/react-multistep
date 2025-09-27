@@ -555,6 +555,7 @@ layout might be:
 
 ```tsx
 import { MultiStep, useMultiStep } from "react-multistep";
+import type { StepComponentProps } from "react-multistep";
 
 function WizardChrome({ children }: { children: React.ReactNode }) {
   const { steps, activeStep, goToStep, next, previous, currentStepValid } =
@@ -586,11 +587,11 @@ function WizardChrome({ children }: { children: React.ReactNode }) {
   );
 }
 
-function StepOne({ signalParent }: any) {
+function StepOne({ signalParent }: StepComponentProps) {
   const [value, setValue] = useState("");
 
   useEffect(() => {
-    signalParent?.({ isValid: value.trim().length > 0 });
+    signalParent({ isValid: value.trim().length > 0 });
   }, [value, signalParent]);
 
   return (
@@ -613,38 +614,72 @@ function StepOne({ signalParent }: any) {
 
 Each child receives a `signalParent` callback used to report validation state:
 
-```js
+```ts
 props.signalParent({ isValid: boolean, goto?: number });
 ```
 
 If `isValid` is `false`, the Next button is disabled and step jumping forward is
-blocked. The optional `goto` field lets you hint which step should become active
-(for example, jump back to the first invalid step in a summary view).
+blocked. The optional `goto` field lets you hint which step the wizard should
+focus when navigation fails. When the user tries to advance past an invalid
+step, MultiStep will attempt to redirect to `goto` (clamped to the available
+steps) if that target is already valid—handy for summary/review screens that
+need to bounce the user back to the first incomplete section.
 
-### Reading wizard state with `useMultiStep`
+> **TypeScript tip:** extend the provided `StepComponentProps` type to get full
+> autocomplete for `signalParent` and the optional `title` prop:
+>
+> ```ts
+> import type { StepComponentProps } from "react-multistep";
+>
+> type AccountStepProps = StepComponentProps<{ plan: Plan }>
+> ```
 
-Any descendant of `MultiStep` can call the hook to inspect navigation state or
-drive custom controls:
+### Reading wizard state with hooks
+
+Any descendant of `MultiStep` can tap into a hook family to inspect navigation
+state or drive custom controls:
 
 ```tsx
-import { useMultiStep } from "react-multistep";
+import { useMultiStepState, useStepNavigation } from "react-multistep";
 
-function StepFour(props) {
-  const { activeStep, stepCount, next, previous, steps, currentStepValid } =
-    useMultiStep();
+function WizardChrome({ children }: React.PropsWithChildren) {
+  const { steps, activeStep, currentStepValid, stepCount } = useMultiStepState();
+  const { previous, next, goToStep } = useStepNavigation();
 
   return (
     <div>
       <p>{`Step ${activeStep + 1} of ${stepCount}`}</p>
+      <ol role="tablist">
+        {steps.map((step) => (
+          <li key={step.index}>
+            <button onClick={() => goToStep(step.index)}>{step.title}</button>
+          </li>
+        ))}
+      </ol>
+      <div role="tabpanel">{children}</div>
       <button onClick={previous} disabled={activeStep === 0}>Prev</button>
       <button onClick={next} disabled={!currentStepValid}>Next</button>
-      {/* ... */}
     </div>
   );
 }
 ```
 
-The hook returns the following shape:
+#### `useMultiStep()`
+
+Returns the full context object for cases where you need everything at once.
+The shape matches the bullet list below.
+
+#### `useMultiStepState()` & `useStepNavigation()`
+
+Prefer these slice hooks for most real-world UIs—they only trigger re-renders
+when the specific slice changes, which keeps custom chrome components snappy.
+
+#### `useStepList()`
+
+Convenience helper that just gives you `steps` (useful for read-only indicators
+or analytics).
+
+All hooks share the same data model:
 
 - `activeStep`: current index (0-based)
 - `stepCount`: total number of registered steps
@@ -652,8 +687,8 @@ The hook returns the following shape:
 - `goToStep(step)`: programmatically navigate to any step (respects validation
   rules)
 - `next()` / `previous()`: shortcuts for relative navigation
-- `setStepValidity(index, isValid)`: manually toggle a step’s validity (useful
-  for async workflows)
+- `setStepValidity(index, isValid)`: manually toggle a step’s validity (exposed
+  via `useMultiStep()` and `useStepNavigation()` for async workflows)
 - `isStepValid(index)`: read cached validity for any step
 - `currentStepValid`: convenience boolean for the active step
 

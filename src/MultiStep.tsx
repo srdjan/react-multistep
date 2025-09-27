@@ -4,7 +4,7 @@ import React, {
   useMemo,
   useReducer,
 } from "react";
-import { ChildState, MultiStepProps } from "./interfaces";
+import { ChildState, MultiStepProps, SignalParent } from "./interfaces";
 import {
   MultiStepContextValue,
   MultiStepProvider,
@@ -13,13 +13,14 @@ import {
 interface MultiStepReducerState {
   internalActiveStep: number;
   stepValidity: boolean[];
+  stepGoto: Array<number | undefined>;
   totalSteps: number;
 }
 
 type MultiStepReducerAction =
   | { type: "SYNC_STEPS"; totalSteps: number }
   | { type: "SET_ACTIVE"; step: number }
-  | { type: "SET_STEP_VALIDITY"; index: number; isValid: boolean };
+  | { type: "SET_STEP_STATE"; index: number; childState: ChildState };
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
@@ -30,6 +31,7 @@ const createInitialState = (
 ): MultiStepReducerState => ({
   internalActiveStep: initialActive,
   stepValidity: Array(totalSteps).fill(false),
+  stepGoto: Array(totalSteps).fill(undefined),
   totalSteps,
 });
 
@@ -41,14 +43,17 @@ const multiStepReducer = (
     case "SYNC_STEPS": {
       const nextTotal = action.totalSteps;
       const nextValidity = Array(nextTotal).fill(false);
+      const nextGoto = Array<number | undefined>(nextTotal).fill(undefined);
       for (let i = 0; i < Math.min(state.stepValidity.length, nextTotal); i += 1) {
         nextValidity[i] = state.stepValidity[i];
+        nextGoto[i] = state.stepGoto[i];
       }
       const lastIndex = Math.max(nextTotal - 1, 0);
       const clampedActive = clamp(state.internalActiveStep, 0, lastIndex);
       return {
         internalActiveStep: clampedActive,
         stepValidity: nextValidity,
+        stepGoto: nextGoto,
         totalSteps: nextTotal,
       };
     }
@@ -59,17 +64,23 @@ const multiStepReducer = (
         internalActiveStep: clamp(action.step, 0, lastIndex),
       };
     }
-    case "SET_STEP_VALIDITY": {
-      if (state.stepValidity[action.index] === action.isValid) {
+    case "SET_STEP_STATE": {
+      const { index, childState } = action;
+      const currentGoto = state.stepGoto[index];
+      const currentValid = state.stepValidity[index];
+      if (currentGoto === childState.goto && currentValid === childState.isValid) {
         return state;
       }
       const nextValidity = [...state.stepValidity];
-      if (action.index < nextValidity.length) {
-        nextValidity[action.index] = action.isValid;
+      const nextGoto = [...state.stepGoto];
+      if (index < nextValidity.length) {
+        nextValidity[index] = childState.isValid;
+        nextGoto[index] = childState.goto;
       }
       return {
         ...state,
         stepValidity: nextValidity,
+        stepGoto: nextGoto,
       };
     }
     default:
@@ -138,21 +149,36 @@ export default function MultiStep(props: MultiStepProps) {
     [totalSteps, controlledActiveStep, onStepChange],
   );
 
-  const setStepValidity = useCallback((index: number, isValid: boolean) => {
-    dispatch({ type: "SET_STEP_VALIDITY", index, isValid });
+  const setStepValidity = useCallback(
+    (index: number, isValid: boolean) => {
+      dispatch({
+        type: "SET_STEP_STATE",
+        index,
+        childState: { isValid, goto: state.stepGoto[index] },
+      });
+    },
+    [state.stepGoto],
+  );
+
+  const setChildState = useCallback((index: number, childState: ChildState) => {
+    dispatch({ type: "SET_STEP_STATE", index, childState });
   }, []);
 
-  const handleChildStateChange = useCallback((index: number, childState: ChildState) => {
-    setStepValidity(index, childState.isValid);
-  }, [setStepValidity]);
+  const handleChildStateChange = useCallback(
+    (index: number, childState: ChildState) => {
+      setChildState(index, childState);
+    },
+    [setChildState],
+  );
 
   const childrenWithProps = useMemo(
     () =>
-      childrenArray.map((child, index) =>
-        React.cloneElement(child, {
-          signalParent: (childState: ChildState) => handleChildStateChange(index, childState),
-        }),
-      ),
+      childrenArray.map((child, index) => {
+        const signalParent: SignalParent = (childState: ChildState) => {
+          handleChildStateChange(index, childState);
+        };
+        return React.cloneElement(child, { signalParent });
+      }),
     [childrenArray, handleChildStateChange],
   );
 
@@ -163,6 +189,13 @@ export default function MultiStep(props: MultiStepProps) {
     const ensureCanNavigate = (targetStep: number) => {
       if (targetStep > activeChild && !currentStepValid) {
         onValidationError?.(activeChild);
+        const suggestedStep = state.stepGoto[activeChild];
+        if (suggestedStep !== undefined) {
+          const clamped = clamp(suggestedStep, 0, totalSteps - 1);
+          if (clamped !== activeChild) {
+            handleStepChange(clamped);
+          }
+        }
         return false;
       }
       return true;
@@ -213,6 +246,7 @@ export default function MultiStep(props: MultiStepProps) {
     onValidationError,
     setStepValidity,
     state.stepValidity,
+    state.stepGoto,
   ]);
 
   return (
