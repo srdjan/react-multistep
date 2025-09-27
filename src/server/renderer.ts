@@ -11,6 +11,45 @@ import { getAvailableActions } from "./wizard";
 // PURE RENDERING FUNCTIONS
 // ============================================================================
 
+export interface WizardRendererTemplateContext {
+  containerId: string;
+  indicators: string;
+  stepContent: string;
+  navigation: string;
+}
+
+export type WizardRendererTemplate = (
+  ctx: WizardRendererTemplateContext,
+) => string;
+
+export interface WizardRenderOptions {
+  /** Override the wrapper div ID (default: `wizard-content`). */
+  containerId?: string;
+  /** Provide a custom template to arrange the rendered pieces. */
+  template?: WizardRendererTemplate;
+  /** Override the navigation renderer entirely. */
+  renderNavigation?: (config: WizardConfig, session: WizardSession) => string;
+  /** Override the step indicators renderer entirely. */
+  renderStepIndicators?: (config: WizardConfig, session: WizardSession) => string;
+}
+
+export const DEFAULT_WIZARD_CONTAINER_ID = "wizard-content";
+
+export const defaultWizardTemplate: WizardRendererTemplate = ({
+  containerId,
+  indicators,
+  stepContent,
+  navigation,
+}) => `
+    <div id="${containerId}">
+      ${indicators}
+      <div class="step-content">
+        ${stepContent}
+      </div>
+      ${navigation}
+    </div>
+  `;
+
 /**
  * Render the current step (delegates to step's render function).
  * Pure: session + config + errors → HTML string
@@ -147,19 +186,28 @@ export const renderWizard = (
   config: WizardConfig,
   session: WizardSession,
   errors: Record<string, string> | null = null,
+  options: WizardRenderOptions | undefined = undefined,
 ): Result<string, WizardError> => {
   const stepResult = renderCurrentStep(config, session, errors);
   if (!stepResult.ok) return stepResult;
 
-  const html = `
-    <div id="wizard-content">
-      ${renderStepIndicators(config, session)}
-      <div class="step-content">
-        ${stepResult.value}
-      </div>
-      ${renderNavigation(config, session)}
-    </div>
-  `;
+  const template = options?.template ?? defaultWizardTemplate;
+  const containerId = options?.containerId ?? DEFAULT_WIZARD_CONTAINER_ID;
+  const navigationMarkup = (options?.renderNavigation ?? renderNavigation)(
+    config,
+    session,
+  );
+  const indicatorsMarkup = (options?.renderStepIndicators ?? renderStepIndicators)(
+    config,
+    session,
+  );
+
+  const html = template({
+    containerId,
+    indicators: indicatorsMarkup,
+    stepContent: stepResult.value,
+    navigation: navigationMarkup,
+  });
 
   return ok(html);
 };

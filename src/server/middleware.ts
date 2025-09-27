@@ -13,6 +13,7 @@ import {
   initializeSession,
 } from "./wizard";
 import { renderWizard } from "./renderer";
+import type { WizardRenderOptions } from "./renderer";
 
 // ============================================================================
 // EFFECTFUL ORCHESTRATION (I/O happens here)
@@ -32,6 +33,7 @@ export const handleStepSubmit = async (
   ports: Ports,
   sessionId: SessionId,
   formData: unknown,
+  renderOptions?: WizardRenderOptions,
 ): Promise<Result<string, WizardError>> => {
   const sessionResult = await ports.store.get(sessionId);
   if (!sessionResult.ok) return sessionResult;
@@ -67,7 +69,7 @@ export const handleStepSubmit = async (
   if (!saveResult.ok) return saveResult;
 
   const errors = !validation.ok ? validation.errors : null;
-  return renderWizard(config, updatedSession, errors);
+  return renderWizard(config, updatedSession, errors, renderOptions);
 };
 
 /**
@@ -79,6 +81,7 @@ export const handleNavigation = async (
   ports: Ports,
   sessionId: SessionId,
   action: "next" | "previous" | { goto: number },
+  renderOptions?: WizardRenderOptions,
 ): Promise<Result<string, WizardError>> => {
   const sessionResult = await ports.store.get(sessionId);
   if (!sessionResult.ok) return sessionResult;
@@ -103,7 +106,7 @@ export const handleNavigation = async (
   const saveResult = await ports.store.set(sessionId, newSession);
   if (!saveResult.ok) return saveResult;
 
-  return renderWizard(config, newSession);
+  return renderWizard(config, newSession, null, renderOptions);
 };
 
 /**
@@ -114,6 +117,7 @@ export const handleInitialize = async (
   config: WizardConfig,
   ports: Ports,
   sessionId: SessionId,
+  renderOptions?: WizardRenderOptions,
 ): Promise<Result<string, WizardError>> => {
   const now = ports.clock.now();
   const session = initializeSession(sessionId, config, now);
@@ -121,5 +125,5 @@ export const handleInitialize = async (
   const saveResult = await ports.store.set(sessionId, session);
   if (!saveResult.ok) return saveResult;
 
-  return renderWizard(config, session);
+  return renderWizard(config, session, null, renderOptions);
 };

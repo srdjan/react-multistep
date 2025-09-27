@@ -261,7 +261,16 @@ const config: WizardConfig = { steps };
 const handler = createWizardHandler(
   config,
   inMemorySessionStore(),
-  systemClock()
+  systemClock(),
+  {
+    containerId: 'wizard-shell',
+    template: ({ containerId, indicators, stepContent, navigation }) => `
+      <main id="${containerId}">
+        <aside class="wizard-sidebar">${indicators}</aside>
+        <section class="wizard-panel">${stepContent}${navigation}</section>
+      </main>
+    `,
+  }
 );
 
 // Use with any HTTP framework
@@ -270,6 +279,16 @@ app.all("/wizard/*", async (req, res) => {
   res.status(response.status).send(await response.text());
 });
 ```
+
+Pass a fourth `renderOptions` argument to fully customize the generated HTML:
+
+- `containerId` – override the wrapper element ID (default `wizard-content`)
+- `template(ctx)` – replace the default layout while reusing rendered pieces
+- `renderNavigation` / `renderStepIndicators` – swap in bespoke markup
+
+Errors are serialized as JSON with sensible HTTP status codes (`422` for
+validation failures, `404` for missing sessions/steps, `409` for navigation
+conflicts, etc.), so clients can react appropriately.
 
 ### Architecture
 
@@ -387,6 +406,7 @@ See `examples/server-side/` for:
 - Custom HTML rendering
 - Session management
 - Error handling
+- 📘 Extended guide: [Server example README](examples/server-side/README.md)
 
 ### Step Skipping & Conditional Navigation
 

@@ -26,4 +26,15 @@ export { inMemorySessionStore } from "./adapters/session";
 export { createWizardHandler } from "./http";
 
 export { getAvailableActions, validateStepData } from "./wizard";
-export { renderWizard } from "./renderer";
+export {
+  renderWizard,
+  renderNavigation,
+  renderStepIndicators,
+  defaultWizardTemplate,
+  DEFAULT_WIZARD_CONTAINER_ID,
+} from "./renderer";
+export type {
+  WizardRenderOptions,
+  WizardRendererTemplate,
+  WizardRendererTemplateContext,
+} from "./renderer";

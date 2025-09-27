@@ -58,6 +58,38 @@ node examples/server-side/example.js
 - `POST /wizard/:sessionId/previous` - Navigate to previous step
 - `POST /wizard/:sessionId/goto/:index` - Jump to specific step
 
+### Customizing the HTML Shell
+
+`createWizardHandler` accepts an optional fourth argument that lets you
+restructure the rendered markup while reusing the core wizard building blocks.
+
+```ts
+import { createWizardHandler } from "react-multistep/server";
+
+const handler = createWizardHandler(config, store, clock, {
+  containerId: "wizard-shell",
+  template: ({ containerId, indicators, stepContent, navigation }) => `
+    <main id="${containerId}" class="wizard-layout">
+      <aside class="wizard-sidebar">${indicators}</aside>
+      <section class="wizard-panel">${stepContent}${navigation}</section>
+    </main>
+  `,
+  renderNavigation: () => '<nav class="wizard-actions">…</nav>',
+});
+```
+
+Available options:
+
+- `containerId` – override the wrapper element ID (default `wizard-content`)
+- `template(ctx)` – full control over layout using rendered fragments
+- `renderNavigation` / `renderStepIndicators` – drop in custom components
+
+All wizard routes continue to return HTML for successful requests and JSON for
+errors. Error responses automatically pick sensible HTTP status codes (`422`
+for validation failures, `404` for missing sessions/steps, `409` when
+navigation is blocked, `500` for renderer/store failures), so front-ends can
+react appropriately.
+
 ## Light FP Compliance
 
 ✅ **No classes** - Only types + functions
