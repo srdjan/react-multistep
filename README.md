@@ -25,11 +25,13 @@
 </br>
 </br>
 
-### Previous MultiStep major version, v5.4.0
+## Current Version: v7.0.0
 
-```
-Version 5.x.x is in a maintenance mode, the new development is ongoing on v6.x.x. Version (v5.x.x) bug fixes will still be available on NPM, if you would like to open a PR for a fix or make a fork, git checkout branch v5.x.x. The new version, v6.0.0 has a multiple improvements (see below) and is not backwards compatible.
-```
+v7 removes the server-side module from this package (see [breaking changes](#breaking-changes-in-v700) below). The client API is unchanged from v6.
+
+### Previous major versions
+
+Version 5.x.x is in maintenance mode. For bug fixes or forks, check out branch `v5.x.x`. Version 6.x.x is also available if you need the `react-multistep/server` export - pin to `6.1.0`.
 
 ## What's New in v6
 
