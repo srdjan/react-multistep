@@ -5,7 +5,6 @@
   "main": "dist/index.js",
   "files": [
     "build/*.d.ts",
-    "build/server/**/*.d.ts",
     "dist/**"
   ],
   "types": "build/index.d.ts",
@@ -16,12 +15,7 @@
       "require": "./dist/index.js",
       "import": "./dist/index.js"
     },
-    "./styles": "./dist/multistep.css",
-    "./server": {
-      "types": "./build/server/index.d.ts",
-      "require": "./dist/server/index.js",
-      "import": "./dist/server/index.js"
-    }
+    "./styles": "./dist/multistep.css"
   },
   "author": {
     "name": "@djidja8",
@@ -64,9 +58,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "bundle": "npm run bundle:client && npm run bundle:server",
-    "bundle:client": "esbuild ./build/index.js \"--define:process.env.NODE_ENV='production'\" --external:react --bundle --format=cjs --loader:.js=jsx --outdir=dist",
-    "bundle:server": "esbuild ./build/server/index.js --bundle --format=cjs --platform=node --outdir=dist/server",
+    "bundle": "esbuild ./build/index.js \"--define:process.env.NODE_ENV='production'\" --external:react --bundle --minify --format=cjs --loader:.js=jsx --outdir=dist",
     "example:server": "npm run build && esbuild examples/server-side/example.ts --platform=node --format=cjs --outfile=examples/server-side/example.js && node examples/server-side/example.js",
     "test": "vitest",
     "test:ui": "vitest --ui",
