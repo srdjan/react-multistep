@@ -18,9 +18,7 @@ export interface WizardRendererTemplateContext {
   navigation: string;
 }
 
-export type WizardRendererTemplate = (
-  ctx: WizardRendererTemplateContext,
-) => string;
+export type WizardRendererTemplate = (ctx: WizardRendererTemplateContext) => string;
 
 export interface WizardRenderOptions {
   /** Override the wrapper div ID (default: `wizard-content`). */
@@ -57,7 +55,7 @@ export const defaultWizardTemplate: WizardRendererTemplate = ({
 export const renderCurrentStep = (
   config: WizardConfig,
   session: WizardSession,
-  errors: Record<string, string> | null,
+  errors: Record<string, string> | null
 ): Result<string, WizardError> => {
   const step = config.steps[session.currentStep];
   if (!step) {
@@ -91,10 +89,7 @@ export const renderCurrentStep = (
  * Render navigation controls with HTMX attributes.
  * Pure: session + config → HTML string
  */
-export const renderNavigation = (
-  config: WizardConfig,
-  session: WizardSession,
-): string => {
+export const renderNavigation = (config: WizardConfig, session: WizardSession): string => {
   const actions = getAvailableActions(config, session);
 
   const prevButton = actions.canGoPrevious
@@ -139,10 +134,7 @@ export const renderNavigation = (
  * Render step indicators (progress).
  * Pure: session + config → HTML string
  */
-export const renderStepIndicators = (
-  config: WizardConfig,
-  session: WizardSession,
-): string => {
+export const renderStepIndicators = (config: WizardConfig, session: WizardSession): string => {
   const actions = getAvailableActions(config, session);
 
   const indicators = config.steps
@@ -186,21 +178,15 @@ export const renderWizard = (
   config: WizardConfig,
   session: WizardSession,
   errors: Record<string, string> | null = null,
-  options: WizardRenderOptions | undefined = undefined,
+  options: WizardRenderOptions | undefined = undefined
 ): Result<string, WizardError> => {
   const stepResult = renderCurrentStep(config, session, errors);
   if (!stepResult.ok) return stepResult;
 
   const template = options?.template ?? defaultWizardTemplate;
   const containerId = options?.containerId ?? DEFAULT_WIZARD_CONTAINER_ID;
-  const navigationMarkup = (options?.renderNavigation ?? renderNavigation)(
-    config,
-    session,
-  );
-  const indicatorsMarkup = (options?.renderStepIndicators ?? renderStepIndicators)(
-    config,
-    session,
-  );
+  const navigationMarkup = (options?.renderNavigation ?? renderNavigation)(config, session);
+  const indicatorsMarkup = (options?.renderStepIndicators ?? renderStepIndicators)(config, session);
 
   const html = template({
     containerId,

@@ -418,6 +418,16 @@ npm install                   // (2) install dependencies
 npm run build                 // (3) build the component
 ```
 
+Run the test suite:
+
+```sh
+npm test                      // bundles the tests with esbuild and runs them against jsdom
+```
+
+Tests use a small in-repo runner instead of an external framework: `test/run.mjs`
+sets up a jsdom DOM, and `test/harness.ts` supplies the `describe`/`it`/`expect` and
+render helpers. There is no watch mode or coverage report.
+
 On a successful build, try the example app:
 
 ```sh

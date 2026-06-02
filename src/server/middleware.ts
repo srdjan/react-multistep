@@ -6,12 +6,7 @@
 import type { SessionStore, Clock } from "./ports";
 import type { WizardConfig, SessionId, Result, WizardError } from "./types";
 import { err } from "./types";
-import {
-  validateStepData,
-  updateSessionData,
-  navigateToStep,
-  initializeSession,
-} from "./wizard";
+import { validateStepData, updateSessionData, navigateToStep, initializeSession } from "./wizard";
 import { renderWizard } from "./renderer";
 import type { WizardRenderOptions } from "./renderer";
 
@@ -33,7 +28,7 @@ export const handleStepSubmit = async (
   ports: Ports,
   sessionId: SessionId,
   formData: unknown,
-  renderOptions?: WizardRenderOptions,
+  renderOptions?: WizardRenderOptions
 ): Promise<Result<string, WizardError>> => {
   const sessionResult = await ports.store.get(sessionId);
   if (!sessionResult.ok) return sessionResult;
@@ -60,7 +55,7 @@ export const handleStepSubmit = async (
     session.currentStep,
     mergedData,
     isValid,
-    now,
+    now
   );
   if (!updatedSessionResult.ok) return updatedSessionResult;
   const updatedSession = updatedSessionResult.value;
@@ -81,7 +76,7 @@ export const handleNavigation = async (
   ports: Ports,
   sessionId: SessionId,
   action: "next" | "previous" | { goto: number },
-  renderOptions?: WizardRenderOptions,
+  renderOptions?: WizardRenderOptions
 ): Promise<Result<string, WizardError>> => {
   const sessionResult = await ports.store.get(sessionId);
   if (!sessionResult.ok) return sessionResult;
@@ -117,7 +112,7 @@ export const handleInitialize = async (
   config: WizardConfig,
   ports: Ports,
   sessionId: SessionId,
-  renderOptions?: WizardRenderOptions,
+  renderOptions?: WizardRenderOptions
 ): Promise<Result<string, WizardError>> => {
   const now = ports.clock.now();
   const session = initializeSession(sessionId, config, now);

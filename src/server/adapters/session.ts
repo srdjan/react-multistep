@@ -4,7 +4,7 @@
  */
 
 import type { SessionStore } from "../ports";
-import type { SessionId, WizardSession, Result, WizardError } from "../types";
+import type { SessionId, WizardSession } from "../types";
 import { ok, err } from "../types";
 
 // ============================================================================

@@ -24,7 +24,7 @@ import { ok, err, createSession } from "./types";
  */
 export const getAvailableActions = (
   config: WizardConfig,
-  session: WizardSession,
+  session: WizardSession
 ): WizardActions => {
   const currentStepValid = session.stepValidity[session.currentStep] ?? false;
   const isFirstStep = session.currentStep === 0;
@@ -64,7 +64,7 @@ export const getAvailableActions = (
 export const validateStepData = (
   config: WizardConfig,
   stepIndex: number,
-  data: unknown,
+  data: unknown
 ): Result<ValidationResult, WizardError> => {
   const step = config.steps[stepIndex];
   if (!step) {
@@ -95,7 +95,7 @@ export const updateSessionData = (
   stepIndex: number,
   data: unknown,
   isValid: boolean,
-  now: string,
+  now: string
 ): Result<WizardSession, WizardError> => {
   if (stepIndex < 0 || stepIndex >= session.stepData.length) {
     return err({
@@ -126,7 +126,7 @@ export const updateSessionData = (
 export const navigateToStep = (
   config: WizardConfig,
   session: WizardSession,
-  targetIndex: number,
+  targetIndex: number
 ): Result<WizardSession, WizardError> => {
   const actions = getAvailableActions(config, session);
 
@@ -150,7 +150,7 @@ export const navigateToStep = (
 export const initializeSession = (
   id: SessionId,
   config: WizardConfig,
-  now: string,
+  now: string
 ): WizardSession => {
   return createSession(id, config.steps.length, now);
 };

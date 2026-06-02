@@ -17,11 +17,10 @@ export type SignalParent = (state: ChildState) => void;
  * Shared props injected into every step component rendered by MultiStep.
  * Extend this with your own props to get full TypeScript coverage.
  */
-export type StepComponentProps<ExtraProps extends object = Record<string, never>> =
-  ExtraProps & {
-    signalParent: SignalParent;
-    title?: React.ReactNode;
-  };
+export type StepComponentProps<ExtraProps extends object = Record<string, never>> = ExtraProps & {
+  signalParent: SignalParent;
+  title?: React.ReactNode;
+};
 
 /**
  * Props for MultiStep component

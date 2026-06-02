@@ -1,14 +1,6 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useReducer } from "react";
 import { ChildState, MultiStepProps, SignalParent } from "./interfaces";
-import {
-  MultiStepContextValue,
-  MultiStepProvider,
-} from "./MultiStepContext";
+import { MultiStepContextValue, MultiStepProvider } from "./MultiStepContext";
 
 interface MultiStepReducerState {
   internalActiveStep: number;
@@ -22,13 +14,9 @@ type MultiStepReducerAction =
   | { type: "SET_ACTIVE"; step: number }
   | { type: "SET_STEP_STATE"; index: number; childState: ChildState };
 
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(Math.max(value, min), max);
+const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
-const createInitialState = (
-  totalSteps: number,
-  initialActive: number,
-): MultiStepReducerState => ({
+const createInitialState = (totalSteps: number, initialActive: number): MultiStepReducerState => ({
   internalActiveStep: initialActive,
   stepValidity: Array(totalSteps).fill(false),
   stepGoto: Array(totalSteps).fill(undefined),
@@ -37,7 +25,7 @@ const createInitialState = (
 
 const multiStepReducer = (
   state: MultiStepReducerState,
-  action: MultiStepReducerAction,
+  action: MultiStepReducerAction
 ): MultiStepReducerState => {
   switch (action.type) {
     case "SYNC_STEPS": {
@@ -116,7 +104,7 @@ export default function MultiStep(props: MultiStepProps) {
   const [state, dispatch] = useReducer(
     multiStepReducer,
     { totalSteps, initialActive: initialActiveIndex },
-    ({ totalSteps: steps, initialActive }) => createInitialState(steps, initialActive),
+    ({ totalSteps: steps, initialActive }) => createInitialState(steps, initialActive)
   );
 
   useEffect(() => {
@@ -133,9 +121,10 @@ export default function MultiStep(props: MultiStepProps) {
     });
   }, [controlledActiveStep, lastStepIndex]);
 
-  const activeChild = controlledActiveStep !== undefined
-    ? clamp(controlledActiveStep, 0, lastStepIndex)
-    : state.internalActiveStep;
+  const activeChild =
+    controlledActiveStep !== undefined
+      ? clamp(controlledActiveStep, 0, lastStepIndex)
+      : state.internalActiveStep;
 
   const handleStepChange = useCallback(
     (newStep: number) => {
@@ -146,7 +135,7 @@ export default function MultiStep(props: MultiStepProps) {
       }
       onStepChange?.(newStep);
     },
-    [totalSteps, controlledActiveStep, onStepChange],
+    [totalSteps, controlledActiveStep, onStepChange]
   );
 
   const setStepValidity = useCallback(
@@ -157,29 +146,22 @@ export default function MultiStep(props: MultiStepProps) {
         childState: { isValid, goto: state.stepGoto[index] },
       });
     },
-    [state.stepGoto],
+    [state.stepGoto]
   );
 
   const setChildState = useCallback((index: number, childState: ChildState) => {
     dispatch({ type: "SET_STEP_STATE", index, childState });
   }, []);
 
-  const handleChildStateChange = useCallback(
-    (index: number, childState: ChildState) => {
-      setChildState(index, childState);
-    },
-    [setChildState],
-  );
-
   const childrenWithProps = useMemo(
     () =>
       childrenArray.map((child, index) => {
         const signalParent: SignalParent = (childState: ChildState) => {
-          handleChildStateChange(index, childState);
+          setChildState(index, childState);
         };
         return React.cloneElement(child, { signalParent });
       }),
-    [childrenArray, handleChildStateChange],
+    [childrenArray, setChildState]
   );
 
   const currentStepValid = state.stepValidity[activeChild] ?? false;
@@ -249,9 +231,5 @@ export default function MultiStep(props: MultiStepProps) {
     state.stepGoto,
   ]);
 
-  return (
-    <MultiStepProvider value={contextValue}>
-      {currentChild}
-    </MultiStepProvider>
-  );
+  return <MultiStepProvider value={contextValue}>{currentChild}</MultiStepProvider>;
 }

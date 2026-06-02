@@ -34,9 +34,6 @@
     "url": "https://github.com/srdjan/react-multistep/issues"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.8.0",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^24.5.2",
     "@types/react": "18.2.20",
     "@typescript-eslint/eslint-plugin": "^8.44.1",
@@ -50,8 +47,7 @@
     "prettier": "^3.6.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "typescript": "^5.9.2",
-    "vitest": "^3.2.4"
+    "typescript": "^5.9.2"
   },
   "peerDependencies": {
     "react": "18.3.1"
@@ -60,9 +56,7 @@
     "build": "tsc",
     "bundle": "esbuild ./build/index.js \"--define:process.env.NODE_ENV='production'\" --external:react --bundle --minify --format=cjs --loader:.js=jsx --outdir=dist",
     "example:server": "npm run build && esbuild examples/server-side/example.ts --platform=node --format=cjs --outfile=examples/server-side/example.js && node examples/server-side/example.js",
-    "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage",
+    "test": "node test/run.mjs",
     "lint": "eslint src test --ext .ts,.tsx",
     "lint:fix": "eslint src test --ext .ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx}\" \"test/**/*.{ts,tsx}\"",

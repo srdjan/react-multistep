@@ -4,7 +4,7 @@
  */
 
 import type { SessionStore, Clock } from "./ports";
-import type { WizardConfig, SessionId, WizardError, Result } from "./types";
+import type { WizardConfig, WizardError, Result } from "./types";
 import { SessionId as mkSessionId } from "./types";
 import { handleStepSubmit, handleNavigation, handleInitialize } from "./middleware";
 import type { WizardRenderOptions } from "./renderer";
@@ -14,8 +14,7 @@ type Handler = (req: Request) => Promise<Response> | Response;
 const HTML_HEADERS = { "Content-Type": "text/html" } as const;
 const JSON_HEADERS = { "Content-Type": "application/json" } as const;
 
-const textResponse = (message: string, status: number) =>
-  new Response(message, { status });
+const textResponse = (message: string, status: number) => new Response(message, { status });
 
 const htmlResponse = (markup: string, status = 200) =>
   new Response(markup, { status, headers: HTML_HEADERS });
@@ -42,7 +41,9 @@ const wizardErrorStatus = (error: WizardError): number => {
 };
 
 const respondWizard = (result: Result<string, WizardError>) =>
-  result.ok ? htmlResponse(result.value) : jsonResponse(result.error, wizardErrorStatus(result.error));
+  result.ok
+    ? htmlResponse(result.value)
+    : jsonResponse(result.error, wizardErrorStatus(result.error));
 
 const parseRequestPayload = async (req: Request): Promise<unknown> => {
   const contentType = req.headers.get("content-type")?.toLowerCase() ?? "";
@@ -63,7 +64,7 @@ export const createWizardHandler = (
   config: WizardConfig,
   store: SessionStore,
   clock: Clock,
-  renderOptions?: WizardRenderOptions,
+  renderOptions?: WizardRenderOptions
 ): Handler => {
   const ports = { store, clock };
 
@@ -127,7 +128,7 @@ export const createWizardHandler = (
           ports,
           sessionId,
           { goto: targetIndex },
-          renderOptions,
+          renderOptions
         );
         return respondWizard(result);
       }

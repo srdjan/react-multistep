@@ -32,7 +32,9 @@ type MultiStepNavigationContextValue = Pick<
 >;
 
 const MultiStepStateContext = React.createContext<MultiStepStateContextValue | null>(null);
-const MultiStepNavigationContext = React.createContext<MultiStepNavigationContextValue | null>(null);
+const MultiStepNavigationContext = React.createContext<MultiStepNavigationContextValue | null>(
+  null
+);
 
 interface MultiStepProviderProps {
   value: MultiStepContextValue;
@@ -47,7 +49,7 @@ export function MultiStepProvider({ value, children }: MultiStepProviderProps) {
       steps: value.steps,
       currentStepValid: value.currentStepValid,
     }),
-    [value.activeStep, value.stepCount, value.steps, value.currentStepValid],
+    [value.activeStep, value.stepCount, value.steps, value.currentStepValid]
   );
 
   const navigationValue = React.useMemo<MultiStepNavigationContextValue>(
@@ -58,13 +60,7 @@ export function MultiStepProvider({ value, children }: MultiStepProviderProps) {
       setStepValidity: value.setStepValidity,
       isStepValid: value.isStepValid,
     }),
-    [
-      value.goToStep,
-      value.next,
-      value.previous,
-      value.setStepValidity,
-      value.isStepValid,
-    ],
+    [value.goToStep, value.next, value.previous, value.setStepValidity, value.isStepValid]
   );
 
   return (

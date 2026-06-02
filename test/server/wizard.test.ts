@@ -1,14 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from "../harness";
 
-import {
-  getAvailableActions,
-  navigateToStep,
-} from '../../src/server/wizard';
+import { getAvailableActions, navigateToStep } from "../../src/server/wizard";
 import {
   renderWizard,
   DEFAULT_WIZARD_CONTAINER_ID,
   type WizardRendererTemplate,
-} from '../../src/server/renderer';
+} from "../../src/server/renderer";
 import {
   makeSessionId,
   makeStepId,
@@ -17,28 +14,28 @@ import {
   err,
   type WizardConfig,
   type WizardSession,
-} from '../../src/server';
-import { createSession } from '../../src/server/types';
+} from "../../src/server";
+import { createSession } from "../../src/server/types";
 
 const baseConfig: WizardConfig = {
   steps: [
     {
-      id: makeStepId('step-one'),
-      title: 'Step One',
+      id: makeStepId("step-one"),
+      title: "Step One",
       validate: () => validationOk(),
-      render: () => ok('<p>One</p>'),
+      render: () => ok("<p>One</p>"),
     },
     {
-      id: makeStepId('step-two'),
-      title: 'Step Two',
+      id: makeStepId("step-two"),
+      title: "Step Two",
       validate: () => validationOk(),
-      render: () => ok('<p>Two</p>'),
+      render: () => ok("<p>Two</p>"),
     },
     {
-      id: makeStepId('step-three'),
-      title: 'Step Three',
+      id: makeStepId("step-three"),
+      title: "Step Three",
       validate: () => validationOk(),
-      render: () => ok('<p>Three</p>'),
+      render: () => ok("<p>Three</p>"),
     },
   ],
 };
@@ -55,17 +52,17 @@ const withSkippableSecondStep: WizardConfig = {
 };
 
 const makeSession = (config: WizardConfig, overrides: Partial<WizardSession>): WizardSession => {
-  const sessionId = makeSessionId('session-123');
-  const base = createSession(sessionId, config.steps.length, '2025-01-01T00:00:00.000Z');
+  const sessionId = makeSessionId("session-123");
+  const base = createSession(sessionId, config.steps.length, "2025-01-01T00:00:00.000Z");
   return {
     ...base,
     ...overrides,
   };
 };
 
-describe('server wizard domain helpers', () => {
-  describe('getAvailableActions', () => {
-    it('blocks forward navigation when current step invalid', () => {
+describe("server wizard domain helpers", () => {
+  describe("getAvailableActions", () => {
+    it("blocks forward navigation when current step invalid", () => {
       const session = makeSession(baseConfig, {
         currentStep: 0,
         stepValidity: [false, false, false],
@@ -78,7 +75,7 @@ describe('server wizard domain helpers', () => {
       expect(actions.canGoToStep(1)).toBe(false);
     });
 
-    it('allows skipping future steps when canSkip returns true', () => {
+    it("allows skipping future steps when canSkip returns true", () => {
       const session = makeSession(withSkippableSecondStep, {
         currentStep: 0,
         stepValidity: [true, false, false],
@@ -91,8 +88,8 @@ describe('server wizard domain helpers', () => {
     });
   });
 
-  describe('navigateToStep', () => {
-    it('returns ok when navigating past skippable steps', () => {
+  describe("navigateToStep", () => {
+    it("returns ok when navigating past skippable steps", () => {
       const session = makeSession(withSkippableSecondStep, {
         currentStep: 0,
         stepValidity: [true, false, false],
@@ -105,7 +102,7 @@ describe('server wizard domain helpers', () => {
       }
     });
 
-    it('returns error when attempting to skip non-skippable invalid steps', () => {
+    it("returns error when attempting to skip non-skippable invalid steps", () => {
       const session = makeSession(baseConfig, {
         currentStep: 0,
         stepValidity: [true, false, false],
@@ -114,24 +111,24 @@ describe('server wizard domain helpers', () => {
       const result = navigateToStep(baseConfig, session, 2);
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        expect(result.error.type).toBe('CANNOT_PROCEED');
+        expect(result.error.type).toBe("CANNOT_PROCEED");
       }
     });
   });
 
-  describe('renderWizard', () => {
+  describe("renderWizard", () => {
     const renderConfig: WizardConfig = {
       steps: [
         {
-          id: makeStepId('render-step'),
-          title: 'Render Step',
+          id: makeStepId("render-step"),
+          title: "Render Step",
           validate: () => validationOk(),
-          render: () => ok('<p>render</p>'),
+          render: () => ok("<p>render</p>"),
         },
       ],
     };
 
-    it('renders using default template', () => {
+    it("renders using default template", () => {
       const session = makeSession(renderConfig, {
         currentStep: 0,
         stepValidity: [true],
@@ -141,43 +138,48 @@ describe('server wizard domain helpers', () => {
       expect(result.ok).toBe(true);
       if (result.ok) {
         expect(result.value).toContain(`id="${DEFAULT_WIZARD_CONTAINER_ID}`);
-        expect(result.value).toContain('<p>render</p>');
+        expect(result.value).toContain("<p>render</p>");
       }
     });
 
-    it('supports overriding template and renderers', () => {
+    it("supports overriding template and renderers", () => {
       const session = makeSession(renderConfig, {
         currentStep: 0,
         stepValidity: [true],
       });
 
-      const template: WizardRendererTemplate = ({ containerId, indicators, stepContent, navigation }) =>
+      const template: WizardRendererTemplate = ({
+        containerId,
+        indicators,
+        stepContent,
+        navigation,
+      }) =>
         `<section id="${containerId}"><header>${indicators}</header><article>${stepContent}</article>${navigation}</section>`;
 
       const result = renderWizard(renderConfig, session, null, {
-        containerId: 'custom-shell',
+        containerId: "custom-shell",
         template,
-        renderNavigation: () => '<nav>custom-nav</nav>',
-        renderStepIndicators: () => '<ul>custom-indicators</ul>',
+        renderNavigation: () => "<nav>custom-nav</nav>",
+        renderStepIndicators: () => "<ul>custom-indicators</ul>",
       });
 
       expect(result.ok).toBe(true);
       if (result.ok) {
         expect(result.value).toContain('id="custom-shell"');
-        expect(result.value).toContain('<nav>custom-nav</nav>');
-        expect(result.value).toContain('<ul>custom-indicators</ul>');
-        expect(result.value).toContain('<article><p>render</p></article>');
+        expect(result.value).toContain("<nav>custom-nav</nav>");
+        expect(result.value).toContain("<ul>custom-indicators</ul>");
+        expect(result.value).toContain("<article><p>render</p></article>");
       }
     });
 
-    it('propagates render errors from steps', () => {
+    it("propagates render errors from steps", () => {
       const failingConfig: WizardConfig = {
         steps: [
           {
-            id: makeStepId('broken'),
-            title: 'Broken',
+            id: makeStepId("broken"),
+            title: "Broken",
             validate: () => validationOk(),
-            render: () => err('boom'),
+            render: () => err("boom"),
           },
         ],
       };
@@ -190,7 +192,7 @@ describe('server wizard domain helpers', () => {
       const result = renderWizard(failingConfig, session);
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        expect(result.error.type).toBe('RENDER_FAILED');
+        expect(result.error.type).toBe("RENDER_FAILED");
       }
     });
   });

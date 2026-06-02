@@ -51,11 +51,7 @@ export type WizardSession = {
   readonly updatedAt: string;
 };
 
-export const createSession = (
-  id: SessionId,
-  totalSteps: number,
-  now: string,
-): WizardSession => ({
+export const createSession = (id: SessionId, totalSteps: number, now: string): WizardSession => ({
   id,
   currentStep: 0,
   stepData: Array(totalSteps).fill(null),

@@ -36,12 +36,27 @@ export default [
       ...reactHooksPlugin.configs.recommended.rules,
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
+      // TypeScript already checks for undefined identifiers, and no-undef
+      // false-positives on DOM lib type names (Element, HTMLElement, ...).
+      'no-undef': 'off',
+      // Branded type constructors intentionally share names with their types.
+      'no-redeclare': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
     settings: {
       react: {
         version: 'detect',
+      },
+    },
+  },
+  {
+    // Plain Node scripts (e.g. the test runner entry).
+    files: ['**/*.{js,mjs,cjs}'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
       },
     },
   },
