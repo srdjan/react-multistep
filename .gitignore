@@ -2,9 +2,7 @@
 node_modules
 package-lock.json
 dist
-build
 .test-cache
-examples/client-side/bundle.js
-examples/client-side/index.js
+.idea
 storybook/
 .git

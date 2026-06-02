@@ -1,33 +1,45 @@
 {
   "name": "react-multistep",
-  "version": "7.0.0",
-  "description": "Responsive ReactJS multistep form component",
-  "main": "dist/index.js",
-  "files": [
-    "build/*.d.ts",
-    "dist/**"
-  ],
-  "types": "build/index.d.ts",
-  "license": "MIT",
+  "version": "8.0.0",
+  "description": "Responsive, headless ReactJS multistep form component",
+  "type": "module",
+  "sideEffects": ["**/*.css"],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./build/index.d.ts",
-      "require": "./dist/index.js",
-      "import": "./dist/index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
-    "./styles": "./dist/multistep.css"
+    "./styles": "./dist/multistep.css",
+    "./package.json": "./package.json"
   },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
   "author": {
     "name": "@djidja8",
     "email": "srdjan@timok.com",
     "url": "https://github.com/srdjan"
   },
   "keywords": [
-    "react, reactjs, responsive, component"
+    "react",
+    "reactjs",
+    "headless",
+    "responsive",
+    "multistep",
+    "form",
+    "wizard",
+    "component"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/srdjan/react-multistep"
+    "url": "git+https://github.com/srdjan/react-multistep.git"
   },
   "homepage": "https://github.com/srdjan/react-multistep",
   "bugs": {
@@ -35,7 +47,8 @@
   },
   "devDependencies": {
     "@types/node": "^24.5.2",
-    "@types/react": "18.2.20",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^8.44.1",
     "@typescript-eslint/parser": "^8.44.1",
     "esbuild": "^0.25.10",
@@ -50,18 +63,16 @@
     "typescript": "^5.9.2"
   },
   "peerDependencies": {
-    "react": "18.3.1"
+    "react": "^18.2.0 || ^19.0.0"
   },
   "scripts": {
-    "build": "tsc",
-    "bundle": "esbuild ./build/index.js \"--define:process.env.NODE_ENV='production'\" --external:react --bundle --minify --format=cjs --loader:.js=jsx --outdir=dist",
-    "example:server": "npm run build && esbuild examples/server-side/example.ts --platform=node --format=cjs --outfile=examples/server-side/example.js && node examples/server-side/example.js",
+    "build": "esbuild src/index.ts --bundle --format=esm --jsx=automatic --external:react --external:react/jsx-runtime --outfile=dist/index.js && tsc --emitDeclarationOnly --outDir dist && node --input-type=commonjs -e \"require('node:fs').copyFileSync('src/base.css','dist/multistep.css')\"",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
     "test": "node test/run.mjs",
-    "lint": "eslint src test --ext .ts,.tsx",
-    "lint:fix": "eslint src test --ext .ts,.tsx --fix",
+    "lint": "eslint src test",
+    "lint:fix": "eslint src test --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx}\" \"test/**/*.{ts,tsx}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\" \"test/**/*.{ts,tsx}\"",
-    "prepublishOnly": "npm run build && npm run bundle && cp src/base.css dist/multistep.css",
-    "publish": "npm publish ./"
+    "prepack": "npm run lint && npm run typecheck && npm run test && npm run build"
   }
 }

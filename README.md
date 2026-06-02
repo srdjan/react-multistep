@@ -25,196 +25,55 @@
 </br>
 </br>
 
-## Current Version: v7.0.0
+## Current Version: v8.0.0
 
-v7 removes the server-side module from this package (see [breaking changes](#breaking-changes-in-v700) below). The client API is unchanged from v6.
+`react-multistep` is a **headless** React component for multi-step forms: it owns
+step state, validation gating, and navigation, while you render the UI. v8 is a
+major release that ships **ESM only**, supports **React 18 and 19**, and tightens
+the public API. The step contract (`signalParent`) is unchanged from v6/v7.
+
+See [Migrating from v7](#migrating-from-v7) for the full list of breaking changes,
+or `CHANGELOG.md`.
 
 ### Previous major versions
 
-Version 5.x.x is in maintenance mode. For bug fixes or forks, check out branch `v5.x.x`. Version 6.x.x is also available if you need the `react-multistep/server` export - pin to `6.1.0`.
+- **v6.x** - the headless rewrite (still installable; pin `6.1.0` if you need the
+  old `react-multistep/server` export).
+- **v5.x** - maintenance mode on branch `v5.x.x`.
 
-## What's New in v6
-
-Version 6 is a **complete rewrite** with modern React patterns and
-architecture. This is a **breaking change** from v5.x.x.
-
-### 🎨 Headless Component Architecture
-
-v6 is now **headless** - the `MultiStep` component manages state and logic, but
-**you control the UI**. This gives you complete flexibility over how steps,
-navigation, and progress indicators look and behave.
-
-**Before (v5):** Built-in navigation UI with limited customization
-
-```jsx
-<MultiStep showNavigation activeStep={0} prevButton={...} nextButton={...}>
-  {/* steps */}
-</MultiStep>
-```
-
-**Now (v6):** Bring your own UI, powered by the `useMultiStep` hook
-
-```jsx
-<MultiStep>
-  <StepOne title="Personal Info" />
-  <StepTwo title="Address" />
-</MultiStep>;
-```
-
-### 🪝 useMultiStep Hook
-
-The **`useMultiStep` hook** is the core of v6. Any component inside
-`<MultiStep>` can access wizard state and navigation:
-
-```tsx
-import { useMultiStep } from "react-multistep";
-
-function CustomNavigation() {
-  const {
-    activeStep, // Current step index (0-based)
-    stepCount, // Total number of steps
-    steps, // Array of step metadata
-    next, // Go to next step
-    previous, // Go to previous step
-    goToStep, // Jump to specific step
-    currentStepValid, // Is current step valid?
-  } = useMultiStep();
-
-  return (
-    <nav>
-      <button onClick={previous} disabled={activeStep === 0}>
-        Back
-      </button>
-      <span>Step {activeStep + 1} of {stepCount}</span>
-      <button onClick={next} disabled={!currentStepValid}>
-        Next
-      </button>
-    </nav>
-  );
-}
-```
-
-**Key capabilities:**
-
-- Access wizard state from any nested component
-- Build custom navigation (tabs, progress bars, breadcrumbs)
-- Implement complex flows (skip steps, conditional navigation)
-- Full TypeScript support
-
-### 🔄 Context-Based State Management
-
-v6 uses React Context internally, eliminating prop drilling:
-
-- **Automatic state injection:** Every child receives `signalParent` callback
-- **Decoupled architecture:** Navigation UI doesn't need to be at the top level
-- **Flexible composition:** Mix and match custom chrome components
-
-### ✅ Validation Pattern
-
-Steps control their own validity via the `signalParent` callback:
-
-```tsx
-function AddressStep({ signalParent }) {
-  const [zip, setZip] = useState("");
-
-  useEffect(() => {
-    // Signal validity whenever state changes
-    signalParent({ isValid: zip.length === 5 });
-  }, [zip, signalParent]);
-
-  return <input value={zip} onChange={(e) => setZip(e.target.value)} />;
-}
-```
-
-**Automatic enforcement:**
-
-- Next button disabled when `isValid: false`
-- Can't jump forward to invalid steps
-- Optional `onValidationError` callback
-
-### 🎨 Optional Modern CSS
-
-v6 includes an **optional** modern CSS stylesheet with:
-
-- Mobile-first responsive design (container queries)
-- Automatic dark mode (`color-scheme: light dark`)
-- Fluid typography with `clamp()`
-- Touch-optimized tap targets (44px)
-- CSS custom properties for easy theming
-
-```jsx
-import "react-multistep/styles"; // Optional!
-```
-
-### 📦 Smaller & More Flexible
-
-- **Core:** 6.1kb minified (logic only)
-- **CSS:** 4.4kb (optional)
-- **Total:** ~10.5kb vs ~45kb in v5
-
-### 🔧 Migration from v5
-
-**Removed:**
-
-- `showNavigation` prop
-- `prevButton` / `nextButton` props
-- Built-in navigation UI
-- Style props (`prevStyle`, `nextStyle`, etc.)
-
-**Added:**
-
-- `useMultiStep` hook
-- `signalParent` callback for validation
-- Context-based architecture
-- Optional modern CSS import
-- TypeScript-first design
-
-**See the example app** for a complete working implementation.
-
-## Breaking Changes in v7.0.0
-
-The `react-multistep/server` export has been removed. The server module (HTMX-powered
-multi-step wizards) shared zero code with the client component and was adding 34 kB to
-every install. It will be published as a separate package.
-
-If you were importing from `react-multistep/server`, pin to `6.1.0` until the
-standalone server package is available.
-
-#
-
-### Instructions
-
-To use this module in your app run:
+## Install
 
 ```sh
 npm install react-multistep
 ```
 
-next, import it inside of your app:
+Peer dependency: `react` `^18.2.0 || ^19.0.0`. The package is ESM only - import it
+from an ESM context (modern bundlers, Node with `"type": "module"`). CommonJS
+consumers must use a dynamic `import()`.
 
 ```jsx
 import MultiStep from "react-multistep";
 ```
 
-and then, in your application, you add your custom components/forms this way:
+## Usage
 
-```jsx
-<MultiStep>
-  <StepOne title="Step 1" />
-  <StepTwo title="Step 2" />
-</MultiStep>;
-```
-
-Because v6 is headless, you provide the surrounding chrome yourself. A minimal
-layout might be:
+Because the component is headless, you provide the surrounding chrome (step
+indicators, prev/next buttons). Each step reports its own validity through the
+injected `signalParent` callback; MultiStep uses that to enable forward
+navigation.
 
 ```tsx
-import { MultiStep, useMultiStep } from "react-multistep";
-import type { StepComponentProps } from "react-multistep";
+import { useState, useEffect } from "react";
+import MultiStep from "react-multistep";
+import {
+  useMultiStepState,
+  useMultiStepNavigation,
+  type StepComponentProps,
+} from "react-multistep";
 
 function WizardChrome({ children }: { children: React.ReactNode }) {
-  const { steps, activeStep, goToStep, next, previous, currentStepValid } =
-    useMultiStep();
+  const { steps, activeStep, stepCount, currentStepValid } = useMultiStepState();
+  const { goToStep, next, previous } = useMultiStepNavigation();
 
   return (
     <div>
@@ -234,7 +93,7 @@ function WizardChrome({ children }: { children: React.ReactNode }) {
       <div role="tabpanel">{children}</div>
       <div>
         <button onClick={previous} disabled={activeStep === 0}>Prev</button>
-        {activeStep < steps.length - 1 && (
+        {activeStep < stepCount - 1 && (
           <button onClick={next} disabled={!currentStepValid}>Next</button>
         )}
       </div>
@@ -242,148 +101,101 @@ function WizardChrome({ children }: { children: React.ReactNode }) {
   );
 }
 
-function StepOne({ signalParent }: StepComponentProps) {
+function NameStep({ signalParent }: StepComponentProps<{ title: string }>) {
   const [value, setValue] = useState("");
 
+  // signalParent is injected by MultiStep; call it with optional chaining.
   useEffect(() => {
-    signalParent({ isValid: value.trim().length > 0 });
+    signalParent?.({ isValid: value.trim().length > 0 });
   }, [value, signalParent]);
 
   return (
     <WizardChrome>
-      <input value={value} onChange={(event) => setValue(event.target.value)} />
+      <input value={value} onChange={(e) => setValue(e.target.value)} />
     </WizardChrome>
   );
 }
-```
 
-### MultiStep API
-
-| Prop                | Type                           | Default      | Description                                                               |
-| ------------------- | ------------------------------ | ------------ | ------------------------------------------------------------------------- |
-| `children`          | `React.ReactNode`              | –            | Steps to render. Each child is cloned and receives a `signalParent` prop. |
-| `activeStep`        | `number`                       | uncontrolled | Controls the active step index. Leave undefined for internal state.       |
-| `initialStep`       | `number`                       | `0`          | Starting step when using internal state.                                  |
-| `onStepChange`      | `(step: number) => void`       | `undefined`  | Fires whenever the active step changes (manual or programmatic).          |
-| `onValidationError` | `(activeStep: number) => void` | `undefined`  | Called when the user tries to advance while the current step is invalid.  |
-
-Each child receives a `signalParent` callback used to report validation state:
-
-```ts
-props.signalParent({ isValid: boolean, goto?: number });
-```
-
-If `isValid` is `false`, the Next button is disabled and step jumping forward is
-blocked. The optional `goto` field lets you hint which step the wizard should
-focus when navigation fails. When the user tries to advance past an invalid
-step, MultiStep will attempt to redirect to `goto` (clamped to the available
-steps) if that target is already valid—handy for summary/review screens that
-need to bounce the user back to the first incomplete section.
-
-> **TypeScript tip:** extend the provided `StepComponentProps` type to get full
-> autocomplete for `signalParent` and the optional `title` prop:
->
-> ```ts
-> import type { StepComponentProps } from "react-multistep";
->
-> type AccountStepProps = StepComponentProps<{ plan: Plan }>
-> ```
-
-### Reading wizard state with hooks
-
-Any descendant of `MultiStep` can tap into a hook family to inspect navigation
-state or drive custom controls:
-
-```tsx
-import { useMultiStepState, useStepNavigation } from "react-multistep";
-
-function WizardChrome({ children }: React.PropsWithChildren) {
-  const { steps, activeStep, currentStepValid, stepCount } = useMultiStepState();
-  const { previous, next, goToStep } = useStepNavigation();
-
+function App() {
   return (
-    <div>
-      <p>{`Step ${activeStep + 1} of ${stepCount}`}</p>
-      <ol role="tablist">
-        {steps.map((step) => (
-          <li key={step.index}>
-            <button onClick={() => goToStep(step.index)}>{step.title}</button>
-          </li>
-        ))}
-      </ol>
-      <div role="tabpanel">{children}</div>
-      <button onClick={previous} disabled={activeStep === 0}>Prev</button>
-      <button onClick={next} disabled={!currentStepValid}>Next</button>
-    </div>
+    <MultiStep>
+      <NameStep title="Name" />
+      {/* ...more steps */}
+    </MultiStep>
   );
 }
 ```
 
-#### `useMultiStep()`
+## MultiStep props
 
-Returns the full context object for cases where you need everything at once.
-The shape matches the bullet list below.
+| Prop                | Type                           | Default      | Description                                                          |
+| ------------------- | ------------------------------ | ------------ | ------------------------------------------------------------------- |
+| `children`          | `React.ReactNode`              | -            | Steps to render, one child per step.                                |
+| `activeStep`        | `number`                       | uncontrolled | Controlled active step index (0-based). Pair with `onStepChange`.   |
+| `defaultStep`       | `number`                       | `0`          | Starting step for uncontrolled mode.                                |
+| `onStepChange`      | `(step: number) => void`       | `undefined`  | Fires whenever the active step changes (manual or programmatic).    |
+| `onValidationError` | `(step: number) => void`       | `undefined`  | Called when the user tries to advance while the current step is invalid. |
 
-#### `useMultiStepState()` & `useStepNavigation()`
+## The step contract
 
-Prefer these slice hooks for most real-world UIs—they only trigger re-renders
-when the specific slice changes, which keeps custom chrome components snappy.
+Each step receives an injected `signalParent` callback and reports its validity:
 
-#### `useStepList()`
-
-Convenience helper that just gives you `steps` (useful for read-only indicators
-or analytics).
-
-All hooks share the same data model:
-
-- `activeStep`: current index (0-based)
-- `stepCount`: total number of registered steps
-- `steps`: array describing each step `{ index, isActive, isValid, title }`
-- `goToStep(step)`: programmatically navigate to any step (respects validation
-  rules)
-- `next()` / `previous()`: shortcuts for relative navigation
-- `setStepValidity(index, isValid)`: manually toggle a step’s validity (exposed
-  via `useMultiStep()` and `useStepNavigation()` for async workflows)
-- `isStepValid(index)`: read cached validity for any step
-- `currentStepValid`: convenience boolean for the active step
-
-### Validation workflow
-
-When the child form component needs to control the Next button, call
-`signalParent` inside your component whenever validity changes:
-
-```tsx
-useEffect(() => {
-  props.signalParent({ isValid: formIsValid });
-}, [formIsValid, props.signalParent]);
+```ts
+signalParent?.({ isValid: boolean });
 ```
 
-The example app demonstrates a reusable chrome component that consumes the hook
-and renders the navigation UI for each step.
+When `isValid` is `false`, forward navigation (Next, jumping ahead, programmatic
+`next()`/`goToStep` past the current step) is blocked and `onValidationError` fires
+with the current step index. Backward navigation is always allowed.
 
-### Styling with Modern CSS
+Extend `StepComponentProps` to type your own step props. `signalParent` is optional
+in the type because MultiStep injects it - you do not pass it in JSX:
 
-Version 6.0.0 includes an optional modern CSS stylesheet with mobile-first,
-responsive design:
+```ts
+import type { StepComponentProps } from "react-multistep";
+
+type AccountStepProps = StepComponentProps<{ plan: Plan }>;
+```
+
+## Hooks
+
+Any descendant of `MultiStep` can read wizard state and drive navigation through
+three hooks:
+
+- **`useMultiStep(): MultiStepApi`** - the full API (state + navigation) in one
+  object. Convenient for chrome that needs everything.
+- **`useMultiStepState()`** - read-only state slice: `activeStep`, `stepCount`,
+  `steps`, `currentStepValid`, `isStepValid`. Re-renders only when state changes.
+- **`useMultiStepNavigation()`** - navigation actions: `goToStep`, `next`,
+  `previous`.
+
+`MultiStepApi` (the return type of `useMultiStep`):
+
+```ts
+interface MultiStepApi {
+  activeStep: number;
+  stepCount: number;
+  steps: Step[]; // { index, isActive, isValid, title }
+  currentStepValid: boolean;
+  isStepValid: (index: number) => boolean;
+  goToStep: (step: number) => void;
+  next: () => void;
+  previous: () => void;
+}
+```
+
+All three hooks throw if used outside a `MultiStep` component.
+
+## Styling with optional CSS
+
+A modern, mobile-first stylesheet ships as an optional import (container queries,
+automatic dark mode via `color-scheme`, fluid typography, 44px tap targets):
 
 ```jsx
-// Import the optional stylesheet
 import "react-multistep/styles";
 ```
 
-**Features:**
-
-- **Mobile-first responsive design** with container queries
-- **Automatic dark mode** support via `color-scheme: light dark`
-- **Fluid typography** using `clamp()` for adaptive sizing
-- **Touch-optimized** tap targets (44px minimum)
-- **CSS custom properties** for easy theming
-- **Modern CSS features**: `@layer`, `light-dark()`, logical properties
-- **Backward compatible**: Works without the CSS, enhanced with it
-
-**Customization:**
-
-All styles use CSS custom properties with sensible defaults:
+Customize via CSS custom properties:
 
 ```css
 :root {
@@ -392,51 +204,64 @@ All styles use CSS custom properties with sensible defaults:
   --multistep-bg: #f1f1f141;
   --multistep-spacing-md: clamp(2rem, 3vw, 4rem);
   --multistep-button-size: clamp(2.5rem, 5vw, 4rem);
-  /* ...and more */
 }
 ```
 
-Override any variable in your own CSS to customize colors, spacing, or
-typography. The component adapts automatically to small screens (mobile) and
-large screens (desktop) without media queries using container queries.
+The component works without the CSS; the stylesheet is purely additive.
 
-## Instructions for local development
+## Migrating from v7
 
-#### If you would like to explore further, contribute a PR or just try the included code example:
+v8 is a breaking release. The step contract (`signalParent`) is unchanged in
+spirit, but the surrounding API was tightened:
 
-Start by cloning the repo locally:
+- **Hooks renamed/removed.** `useStepNavigation` -> **`useMultiStepNavigation`**.
+  `useStepList` and the raw `MultiStepContext` export are **removed** - use
+  `useMultiStep()` / `useMultiStepState().steps`.
+- **Types renamed.** `MultiStepContextValue` -> **`MultiStepApi`**;
+  `MultiStepContextStep` -> **`Step`**.
+- **Prop renamed.** `initialStep` -> **`defaultStep`** (React-convention parity
+  with `defaultValue`).
+- **`setStepValidity` removed** from the public surface. Validity flows only
+  through `signalParent`.
+- **`goto` removed.** `ChildState` is now `{ isValid }`. For redirect-on-invalid,
+  use `onValidationError(step)` plus `goToStep`.
+- **`signalParent` is optional in `StepComponentProps`.** Call it with optional
+  chaining: `signalParent?.({ isValid })`.
+- **ESM only.** The package no longer ships a CommonJS build; `exports` resolves
+  `import` to `./dist/index.js` (ESM) with types at `./dist/index.d.ts`.
+- **React 18 and 19** are both supported via the widened peer range.
+- **Server module moved.** The `react-multistep/server` export (removed from the
+  package in v7) now lives in a separate package,
+  [react-multistep-server](https://github.com/srdjan/react-multistep-server).
+
+## Local development
+
+Clone, install, and build:
 
 ```sh
 git clone https://github.com/srdjan/react-multistep.git
+cd react-multistep
+npm install
+npm run build      # esbuild ESM bundle + tsc declarations + CSS -> ./dist
 ```
 
-then:
+Other scripts:
 
 ```sh
-cd react-multistep            // (1) navigate to the project folder
-npm install                   // (2) install dependencies
-npm run build                 // (3) build the component
+npm test           # homegrown runner (test/run.mjs): jsdom + react-dom, no vitest
+npm run typecheck  # tsc over src (NodeNext) and test (Bundler)
+npm run lint       # eslint over src and test
 ```
 
-Run the test suite:
+Run the example app (a single canonical TypeScript client example that builds
+straight from `src`):
 
 ```sh
-npm test                      // bundles the tests with esbuild and runs them against jsdom
+cd examples/client-side
+npm install
+npm run dev        # esbuild dev server at http://localhost:8000
 ```
 
-Tests use a small in-repo runner instead of an external framework: `test/run.mjs`
-sets up a jsdom DOM, and `test/harness.ts` supplies the `describe`/`it`/`expect` and
-render helpers. There is no watch mode or coverage report.
+## License
 
-On a successful build, try the example app:
-
-```sh
-cd ./examples/client-side     // (1) navigate to the example folder
-npm install                   // (2) install dependencies
-npm run dev                   // (3) build the library + run esbuild dev server (http://localhost:8000)
-
-# optional
-npm run build                 // production bundle to ./dist
-```
-
-Now, you can open the example in your favorite browser...
+MIT

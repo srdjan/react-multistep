@@ -1,66 +1,60 @@
 import React from "react";
 
-export interface MultiStepContextStep {
+/** Metadata describing a single step, as seen by chrome/consumer components. */
+export interface Step {
   index: number;
   isActive: boolean;
   isValid: boolean;
   title?: React.ReactNode;
 }
 
-export interface MultiStepContextValue {
+/** The full wizard API returned by useMultiStep(). */
+export interface MultiStepApi {
   activeStep: number;
   stepCount: number;
-  steps: MultiStepContextStep[];
+  steps: Step[];
+  currentStepValid: boolean;
+  isStepValid: (index: number) => boolean;
   goToStep: (step: number) => void;
   next: () => void;
   previous: () => void;
-  setStepValidity: (index: number, isValid: boolean) => void;
-  isStepValid: (index: number) => boolean;
-  currentStepValid: boolean;
 }
 
-const MultiStepContext = React.createContext<MultiStepContextValue | null>(null);
-
-type MultiStepStateContextValue = Pick<
-  MultiStepContextValue,
-  "activeStep" | "stepCount" | "steps" | "currentStepValid"
+type MultiStepStateValue = Pick<
+  MultiStepApi,
+  "activeStep" | "stepCount" | "steps" | "currentStepValid" | "isStepValid"
 >;
 
-type MultiStepNavigationContextValue = Pick<
-  MultiStepContextValue,
-  "goToStep" | "next" | "previous" | "setStepValidity" | "isStepValid"
->;
+type MultiStepNavigationValue = Pick<MultiStepApi, "goToStep" | "next" | "previous">;
 
-const MultiStepStateContext = React.createContext<MultiStepStateContextValue | null>(null);
-const MultiStepNavigationContext = React.createContext<MultiStepNavigationContextValue | null>(
-  null
-);
+const MultiStepContext = React.createContext<MultiStepApi | null>(null);
+const MultiStepStateContext = React.createContext<MultiStepStateValue | null>(null);
+const MultiStepNavigationContext = React.createContext<MultiStepNavigationValue | null>(null);
 
 interface MultiStepProviderProps {
-  value: MultiStepContextValue;
+  value: MultiStepApi;
   children: React.ReactNode;
 }
 
 export function MultiStepProvider({ value, children }: MultiStepProviderProps) {
-  const stateValue = React.useMemo<MultiStepStateContextValue>(
+  const stateValue = React.useMemo<MultiStepStateValue>(
     () => ({
       activeStep: value.activeStep,
       stepCount: value.stepCount,
       steps: value.steps,
       currentStepValid: value.currentStepValid,
+      isStepValid: value.isStepValid,
     }),
-    [value.activeStep, value.stepCount, value.steps, value.currentStepValid]
+    [value.activeStep, value.stepCount, value.steps, value.currentStepValid, value.isStepValid]
   );
 
-  const navigationValue = React.useMemo<MultiStepNavigationContextValue>(
+  const navigationValue = React.useMemo<MultiStepNavigationValue>(
     () => ({
       goToStep: value.goToStep,
       next: value.next,
       previous: value.previous,
-      setStepValidity: value.setStepValidity,
-      isStepValid: value.isStepValid,
     }),
-    [value.goToStep, value.next, value.previous, value.setStepValidity, value.isStepValid]
+    [value.goToStep, value.next, value.previous]
   );
 
   return (
@@ -74,7 +68,8 @@ export function MultiStepProvider({ value, children }: MultiStepProviderProps) {
   );
 }
 
-export function useMultiStep(): MultiStepContextValue {
+/** Full wizard API. Prefer the slice hooks below for render-perf-sensitive chrome. */
+export function useMultiStep(): MultiStepApi {
   const context = React.useContext(MultiStepContext);
   if (!context) {
     throw new Error("useMultiStep must be used within a MultiStep component");
@@ -82,7 +77,8 @@ export function useMultiStep(): MultiStepContextValue {
   return context;
 }
 
-export function useMultiStepState(): MultiStepStateContextValue {
+/** Read-only wizard state (steps, active index, validity). */
+export function useMultiStepState(): MultiStepStateValue {
   const context = React.useContext(MultiStepStateContext);
   if (!context) {
     throw new Error("useMultiStepState must be used within a MultiStep component");
@@ -90,25 +86,11 @@ export function useMultiStepState(): MultiStepStateContextValue {
   return context;
 }
 
-const useNavigationContext = (): MultiStepNavigationContextValue => {
+/** Navigation actions (goToStep, next, previous). */
+export function useMultiStepNavigation(): MultiStepNavigationValue {
   const context = React.useContext(MultiStepNavigationContext);
   if (!context) {
-    throw new Error("useStepNavigation must be used within a MultiStep component");
+    throw new Error("useMultiStepNavigation must be used within a MultiStep component");
   }
   return context;
-};
-
-export function useStepNavigation(): Pick<
-  MultiStepNavigationContextValue,
-  "goToStep" | "next" | "previous"
-> {
-  const { goToStep, next, previous } = useNavigationContext();
-  return { goToStep, next, previous };
 }
-
-export function useStepList(): MultiStepContextStep[] {
-  const { steps } = useMultiStepState();
-  return steps;
-}
-
-export { MultiStepContext };

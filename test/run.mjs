@@ -92,6 +92,11 @@ await build({
   outfile,
   external: ["react", "react-dom", "react-dom/client", "react/jsx-runtime"],
   define: { "process.env.NODE_ENV": '"test"' },
+  // The package's sideEffects field lists only CSS, so esbuild treats the .tsx
+  // test files as side-effect-free and would drop the bare `import "./x.test.tsx"`
+  // entries as dead code. Their top-level describe()/it() calls ARE the side
+  // effect that registers the tests, so ignore sideEffects annotations here.
+  ignoreAnnotations: true,
   logLevel: "warning",
 });
 

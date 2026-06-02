@@ -2,12 +2,12 @@ import { describe, it, expect, vi, render, screen, fireEvent, within } from "./h
 import userEvent from "./harness";
 import React, { useEffect } from "react";
 import MultiStep from "../src/MultiStep";
-import { useMultiStepState, useStepNavigation } from "../src/MultiStepContext";
+import { useMultiStepState, useMultiStepNavigation } from "../src/MultiStepContext";
 import type { StepComponentProps } from "../src/interfaces";
 
 const WizardChrome = ({ children }: { children: React.ReactNode }) => {
   const { steps, activeStep, stepCount, currentStepValid } = useMultiStepState();
-  const { goToStep, next, previous } = useStepNavigation();
+  const { goToStep, next, previous } = useMultiStepNavigation();
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "ArrowLeft") {
@@ -69,7 +69,7 @@ type TestStepProps = StepComponentProps<{ title: string; isValid?: boolean }>;
 
 const TestStep = ({ title, signalParent, isValid = true }: TestStepProps) => {
   useEffect(() => {
-    signalParent({ isValid });
+    signalParent?.({ isValid });
   }, [isValid, signalParent]);
 
   return (
@@ -255,41 +255,6 @@ describe("MultiStep", () => {
       const activeTab = screen.getByRole("tab", { selected: true });
       expect(activeTab).toHaveTextContent("Step 1");
     });
-
-    it("redirects to hinted step when validation blocks navigation", async () => {
-      const user = userEvent.setup();
-      const onValidationError = vi.fn();
-
-      const HintingStep = ({ title, signalParent }: StepComponentProps<{ title: string }>) => {
-        useEffect(() => {
-          signalParent({ isValid: false, goto: 0 });
-        }, [signalParent]);
-
-        return (
-          <WizardChrome>
-            <div>{title}</div>
-          </WizardChrome>
-        );
-      };
-
-      renderWizard(
-        <MultiStep onValidationError={onValidationError}>
-          <TestStep title="Step 1" isValid={true} />
-          <HintingStep title="Step 2" />
-          <TestStep title="Step 3" isValid={true} />
-        </MultiStep>
-      );
-
-      const nextButton = screen.getByLabelText("Next step");
-      await user.click(nextButton);
-
-      const step3Indicator = screen.getByRole("tab", { name: "Step 3" });
-      await user.click(step3Indicator);
-
-      expect(onValidationError).toHaveBeenCalledWith(1);
-      const activeTab = screen.getByRole("tab", { selected: true });
-      expect(activeTab).toHaveTextContent("Step 1");
-    });
   });
 
   describe("Controlled Mode", () => {
@@ -411,10 +376,10 @@ describe("MultiStep", () => {
 
       const CustomStep = ({ title, signalParent, isValid = true }: CustomStepProps) => {
         useEffect(() => {
-          signalParent({ isValid });
+          signalParent?.({ isValid });
         }, [isValid, signalParent]);
 
-        const { next, previous } = useStepNavigation();
+        const { next, previous } = useMultiStepNavigation();
 
         return (
           <WizardChrome>
@@ -445,7 +410,7 @@ describe("MultiStep", () => {
     it("can hide navigation if consumer omits chrome", () => {
       const BareStep = ({ title, signalParent }: StepComponentProps<{ title: string }>) => {
         useEffect(() => {
-          signalParent({ isValid: true });
+          signalParent?.({ isValid: true });
         }, [signalParent]);
         return <div>{title}</div>;
       };
@@ -462,7 +427,7 @@ describe("MultiStep", () => {
 
     it("applies custom styles via consumer provided chrome", () => {
       const StyledChrome = ({ children }: { children: React.ReactNode }) => {
-        const { next } = useStepNavigation();
+        const { next } = useMultiStepNavigation();
         const { currentStepValid } = useMultiStepState();
         return (
           <div style={{ backgroundColor: "red" }}>
@@ -476,7 +441,7 @@ describe("MultiStep", () => {
 
       const StyledStep = ({ title, signalParent }: StepComponentProps<{ title: string }>) => {
         useEffect(() => {
-          signalParent({ isValid: true });
+          signalParent?.({ isValid: true });
         }, [signalParent]);
         return (
           <StyledChrome>

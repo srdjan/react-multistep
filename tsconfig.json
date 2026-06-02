@@ -1,29 +1,24 @@
 {
-    "compilerOptions": {
-      "jsx": "react-jsx",
-      "target": "ES2015",
-      "module": "Node16",
-      "lib": ["dom","dom.iterable","esnext"],
-      "moduleResolution": "Node16",
-      "resolveJsonModule": true,
-      "isolatedModules": true,
-      "removeComments": true,
-      "allowJs": true,
-      "skipLibCheck": true,
-      "esModuleInterop": true,
-      "allowSyntheticDefaultImports": true,
-      "preserveConstEnums": true,
-      "declaration": true,
-      "declarationMap": true,
-      "outDir": "./build",
-      "sourceMap": false,
-      "strict": true,
-      "noUncheckedIndexedAccess": true,
-      "noImplicitAny": true,
-      "strictNullChecks": true,
-      "noImplicitReturns": true,
-      "noFallthroughCasesInSwitch": true
-    },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"]
-  }
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "target": "ES2020",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "declarationMap": false,
+    "outDir": "./dist",
+    "sourceMap": false,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

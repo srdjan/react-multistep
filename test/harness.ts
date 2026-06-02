@@ -188,7 +188,7 @@ const describeOpts = (opts?: RoleOptions): string => {
 const single = (els: Element[], describeQuery: string): Element => {
   if (els.length === 0) throw new Error(`Unable to find ${describeQuery}`);
   if (els.length > 1) throw new Error(`Found ${els.length} elements matching ${describeQuery}`);
-  return els[0];
+  return els[0]!;
 };
 
 const optional = (els: Element[], describeQuery: string): Element | null => {
@@ -218,7 +218,7 @@ export const within = (el: ParentNode) => makeQueries(() => el);
 
 // --- DOM shim: events ------------------------------------------------------
 
-const viewOf = (el: Element): Window => {
+const viewOf = (el: Element): Window & typeof globalThis => {
   const view = el.ownerDocument.defaultView;
   if (!view) throw new Error("element is not attached to a document with a window");
   return view;
@@ -347,6 +347,18 @@ export const expect = (actual: unknown) => {
 
 // --- runner ----------------------------------------------------------------
 
+const TEST_TIMEOUT_MS = 5000;
+
+// Race each test against a timer so a test awaiting a promise that never settles
+// fails loudly with its name instead of hanging the whole run.
+const withTimeout = (fn: () => void | Promise<void>, ms: number): Promise<void> => {
+  let timer: ReturnType<typeof setTimeout>;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`timed out after ${ms}ms`)), ms);
+  });
+  return Promise.race([Promise.resolve().then(fn), timeout]).finally(() => clearTimeout(timer));
+};
+
 export const runAll = async (): Promise<number> => {
   let passed = 0;
   const failures: Array<{ name: string; detail: string }> = [];
@@ -354,7 +366,7 @@ export const runAll = async (): Promise<number> => {
   for (const t of tests) {
     const name = t.path.join(" > ");
     try {
-      await t.fn();
+      await withTimeout(t.fn, TEST_TIMEOUT_MS);
       passed += 1;
       console.log(`  ✓ ${name}`);
     } catch (error) {
