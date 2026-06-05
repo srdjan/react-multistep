@@ -161,34 +161,32 @@ export default function MultiStep(props: MultiStepProps) {
     ({ totalSteps: steps, initialActive }) => createInitialState(steps, initialActive)
   );
 
-  // Reconcile derived-from-props state during render via stored previous values,
-  // the React "adjust state while rendering" pattern - no effect, no double-fire
-  // under StrictMode. We compute the next state, dispatch it (so it sticks for
-  // later renders), and use the computed value immediately this render.
-  //
+  // Reconcile a prop into reducer state during render (the React "adjust state
+  // while rendering" pattern): compute the next state, use it immediately this
+  // render via reassignment, and dispatch it so it sticks for later renders - no
+  // effect, no StrictMode double-fire. The `synced !== state` check skips a
+  // wasted dispatch when the reducer returns the same reference.
+  const reconcile = (action: MultiStepReducerAction) => {
+    const synced = multiStepReducer(state, action);
+    if (synced !== state) {
+      state = synced;
+      dispatch(action);
+    }
+  };
+
   // 1. SYNC_STEPS: resize validity/visited when the child count changes.
   const prevTotalRef = useRef(totalSteps);
   if (prevTotalRef.current !== totalSteps) {
     prevTotalRef.current = totalSteps;
-    const synced = multiStepReducer(state, { type: "SYNC_STEPS", totalSteps });
-    if (synced !== state) {
-      state = synced;
-      dispatch({ type: "SYNC_STEPS", totalSteps });
-    }
+    reconcile({ type: "SYNC_STEPS", totalSteps });
   }
 
   // 2. Controlled sync: mirror controlledActiveStep into internal state so the
   // position is retained if the consumer later drops the activeStep prop. Only
-  // reconcile on an actual change of the controlled value (or on the
-  // controlled->? transition), never every render.
+  // reconcile on an actual change of the controlled value, never every render.
   const prevControlledRef = useRef<number | undefined>(controlledActiveStep);
   if (isControlled && prevControlledRef.current !== controlledActiveStep) {
-    const step = clamp(controlledActiveStep, 0, lastStepIndex);
-    const synced = multiStepReducer(state, { type: "SET_ACTIVE", step });
-    if (synced !== state) {
-      state = synced;
-      dispatch({ type: "SET_ACTIVE", step });
-    }
+    reconcile({ type: "SET_ACTIVE", step: clamp(controlledActiveStep, 0, lastStepIndex) });
   }
   prevControlledRef.current = controlledActiveStep;
 

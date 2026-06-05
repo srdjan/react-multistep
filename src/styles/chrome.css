@@ -177,7 +177,9 @@
 
 /* Honour the user's reduced-motion preference: neutralise every transition and
    animation inside the component. Scoped to .multistep-container so it never
-   touches the host page; !important overrides the hover transition above. */
+   touches the host page. Deliberately OUTSIDE @layer (unlayered rules win the
+   cascade over any layer) plus !important, so it reliably overrides the hover
+   transition in the reset layer above - do not move it into @layer. */
 @media (prefers-reduced-motion: reduce) {
   .multistep-container *,
   .multistep-container *::before,
