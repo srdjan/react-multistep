@@ -1,0 +1,26 @@
+@layer base;
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+
+    --multistep-primary: light-dark(#1EAEDB, #4FC3F7);
+    --multistep-inactive: light-dark(silver, #666);
+    --multistep-inactive-light: light-dark(gray, #999);
+    --multistep-bg: light-dark(#f1f1f141, #2a2a2a41);
+    --multistep-border: light-dark(silver, #555);
+    --multistep-button-bg: light-dark(#f7f7f7, #1a1a1a);
+    --multistep-text: light-dark(#333, #e0e0e0);
+
+    --multistep-spacing-xs: clamp(0.5rem, 1vw, 1rem);
+    --multistep-spacing-sm: clamp(1rem, 2vw, 2rem);
+    --multistep-spacing-md: clamp(2rem, 3vw, 4rem);
+    --multistep-spacing-lg: clamp(3rem, 4vw, 5rem);
+
+    --multistep-button-size: clamp(2.5rem, 5vw, 4rem);
+    --multistep-font-size-base: clamp(0.875rem, 1.5vw, 1rem);
+    --multistep-font-size-step: clamp(0.75rem, 2vw, 0.9rem);
+
+    --multistep-tap-target: 44px;
+  }
+}

@@ -1,14 +1,25 @@
 import { useState, useEffect } from "react";
+import { useReportValidity } from "react-multistep";
 import type { StepComponentProps } from "react-multistep";
 import { WizardChrome } from "./WizardChrome";
 
-export const StepTwo = ({ signalParent }: StepComponentProps<{ title: string }>) => {
+export const StepTwo = (_props: StepComponentProps<{ title: string }>) => {
+  const report = useReportValidity();
   const [email, setEmail] = useState("");
   const [emailConfirm, setEmailConfirm] = useState("");
 
   useEffect(() => {
-    signalParent?.({ isValid: email.trim().length > 0 && email === emailConfirm });
-  }, [email, emailConfirm, signalParent]);
+    const hasEmail = email.trim().length > 0;
+    if (!hasEmail) {
+      report({ status: "invalid", message: "Enter your email address." });
+      return;
+    }
+    if (email !== emailConfirm) {
+      report({ status: "invalid", message: "Email addresses must match." });
+      return;
+    }
+    report({ status: "valid" });
+  }, [email, emailConfirm, report]);
 
   return (
     <WizardChrome>

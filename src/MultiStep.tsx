@@ -1,25 +1,65 @@
-import React, { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
-import { ChildState, MultiStepProps, SignalParent } from "./interfaces.js";
-import { MultiStepApi, MultiStepProvider, Step } from "./MultiStepContext.js";
+import React, { useCallback, useEffect, useId, useMemo, useReducer, useRef } from "react";
+import type { MultiStepProps, StepStatus, StepValidity } from "./interfaces.js";
+import {
+  MultiStepApi,
+  MultiStepProvider,
+  Step,
+  StepIndexProvider,
+} from "./MultiStepContext.js";
 
 interface MultiStepReducerState {
   internalActiveStep: number;
-  stepValidity: boolean[];
+  validity: StepValidity[];
+  visited: boolean[];
   totalSteps: number;
 }
 
 type MultiStepReducerAction =
   | { type: "SYNC_STEPS"; totalSteps: number }
   | { type: "SET_ACTIVE"; step: number }
-  | { type: "SET_STEP_VALID"; index: number; isValid: boolean };
+  | { type: "SET_STEP_VALIDITY"; index: number; validity: StepValidity };
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
-const createInitialState = (totalSteps: number, initialActive: number): MultiStepReducerState => ({
-  internalActiveStep: initialActive,
-  stepValidity: Array(totalSteps).fill(false),
-  totalSteps,
-});
+// Stable reference so inactive keepMounted wrappers don't churn the style attr.
+const HIDDEN_STYLE: React.CSSProperties = { display: "none" };
+
+const pendingValidity = (): StepValidity => ({ status: "pending" });
+
+// Two validity results are equivalent for dispatch purposes when their status
+// and (for invalid) message match; the errors map is reported wholesale so a
+// status+message compare is enough to skip no-op churn.
+const sameValidity = (a: StepValidity, b: StepValidity): boolean => {
+  if (a.status !== b.status) return false;
+  if (a.status === "invalid" && b.status === "invalid") return a.message === b.message;
+  return true;
+};
+
+const deriveStatus = (validity: StepValidity, visited: boolean): StepStatus => {
+  if (validity.status === "valid") return "valid";
+  if (validity.status === "invalid") return "invalid";
+  return visited ? "visited" : "pristine";
+};
+
+// React 19 types element.props as unknown; pull an optional title without `any`.
+const readTitle = (element: React.ReactElement): React.ReactNode => {
+  const props: unknown = element.props;
+  if (props !== null && typeof props === "object" && "title" in props) {
+    return (props as { title?: React.ReactNode }).title;
+  }
+  return undefined;
+};
+
+const createInitialState = (totalSteps: number, initialActive: number): MultiStepReducerState => {
+  const visited = Array(totalSteps).fill(false);
+  if (totalSteps > 0) visited[initialActive] = true;
+  return {
+    internalActiveStep: initialActive,
+    validity: Array.from({ length: totalSteps }, pendingValidity),
+    visited,
+    totalSteps,
+  };
+};
 
 const multiStepReducer = (
   state: MultiStepReducerState,
@@ -30,29 +70,37 @@ const multiStepReducer = (
       const nextTotal = action.totalSteps;
       // No-op on mount / unchanged count: the initializer already seeded this.
       if (nextTotal === state.totalSteps) return state;
-      const nextValidity: boolean[] = Array(nextTotal).fill(false);
-      for (let i = 0; i < Math.min(state.stepValidity.length, nextTotal); i += 1) {
-        nextValidity[i] = state.stepValidity[i] ?? false;
+      const overlap = Math.min(state.validity.length, nextTotal);
+      const nextValidity: StepValidity[] = Array.from({ length: nextTotal }, pendingValidity);
+      const nextVisited: boolean[] = Array(nextTotal).fill(false);
+      for (let i = 0; i < overlap; i += 1) {
+        nextValidity[i] = state.validity[i] ?? pendingValidity();
+        nextVisited[i] = state.visited[i] ?? false;
       }
       const lastIndex = Math.max(nextTotal - 1, 0);
       return {
         internalActiveStep: clamp(state.internalActiveStep, 0, lastIndex),
-        stepValidity: nextValidity,
+        validity: nextValidity,
+        visited: nextVisited,
         totalSteps: nextTotal,
       };
     }
     case "SET_ACTIVE": {
       const lastIndex = Math.max(state.totalSteps - 1, 0);
-      return { ...state, internalActiveStep: clamp(action.step, 0, lastIndex) };
+      const step = clamp(action.step, 0, lastIndex);
+      if (step === state.internalActiveStep && state.visited[step]) return state;
+      const nextVisited = [...state.visited];
+      nextVisited[step] = true;
+      return { ...state, internalActiveStep: step, visited: nextVisited };
     }
-    case "SET_STEP_VALID": {
-      const { index, isValid } = action;
-      if (index >= state.stepValidity.length || state.stepValidity[index] === isValid) {
-        return state;
-      }
-      const nextValidity = [...state.stepValidity];
-      nextValidity[index] = isValid;
-      return { ...state, stepValidity: nextValidity };
+    case "SET_STEP_VALIDITY": {
+      const { index, validity } = action;
+      const current = state.validity[index];
+      if (index >= state.validity.length || current === undefined) return state;
+      if (sameValidity(current, validity)) return state;
+      const nextValidity = [...state.validity];
+      nextValidity[index] = validity;
+      return { ...state, validity: nextValidity };
     }
     default:
       return state;
@@ -65,6 +113,7 @@ export default function MultiStep(props: MultiStepProps) {
     activeStep: controlledActiveStep,
     onStepChange,
     defaultStep = 0,
+    mode = "keepMounted",
     onValidationError,
   } = props;
 
@@ -106,23 +155,16 @@ export default function MultiStep(props: MultiStepProps) {
     ? clamp(controlledActiveStep, 0, lastStepIndex)
     : state.internalActiveStep;
 
-  const setChildValidity = useCallback((index: number, isValid: boolean) => {
-    dispatch({ type: "SET_STEP_VALID", index, isValid });
+  // Stable validity channel: steps call useReportValidity() which routes here.
+  const report = useCallback((index: number, validity: StepValidity) => {
+    dispatch({ type: "SET_STEP_VALIDITY", index, validity });
   }, []);
 
-  const childrenWithProps = useMemo(
-    () =>
-      childrenArray.map((child, index) => {
-        const signalParent: SignalParent = (childState: ChildState) =>
-          setChildValidity(index, childState.isValid);
-        return React.cloneElement(child, { signalParent });
-      }),
-    [childrenArray, setChildValidity]
-  );
+  const { validity, visited } = state;
+  const currentStepValid = validity[activeChild]?.status === "valid";
 
-  const { stepValidity } = state;
-  const currentStepValid = stepValidity[activeChild] ?? false;
-  const currentChild = childrenWithProps[activeChild] ?? null;
+  // Stable ids for tab/panel aria wiring, derived from a single useId base.
+  const idBase = useId();
 
   // Snapshot the latest nav-relevant values into a ref so the navigation callbacks
   // below stay referentially stable - that lets useMultiStepNavigation consumers
@@ -132,8 +174,7 @@ export default function MultiStep(props: MultiStepProps) {
   // never from a closure variable, or they will read stale state.
   const nav = {
     activeChild,
-    currentStepValid,
-    stepValidity,
+    validity,
     totalSteps,
     isControlled,
     onStepChange,
@@ -143,23 +184,23 @@ export default function MultiStep(props: MultiStepProps) {
   navRef.current = nav;
 
   const isStepValid = useCallback(
-    (index: number) => navRef.current.stepValidity[index] ?? false,
+    (index: number) => navRef.current.validity[index]?.status === "valid",
     []
   );
 
   const goToStep = useCallback((step: number) => {
-    const {
-      activeChild,
-      currentStepValid,
-      totalSteps,
-      isControlled,
-      onStepChange,
-      onValidationError,
-    } = navRef.current;
+    const { activeChild, validity, totalSteps, isControlled, onStepChange, onValidationError } =
+      navRef.current;
     if (step < 0 || step >= totalSteps) return;
-    if (step > activeChild && !currentStepValid) {
-      onValidationError?.(activeChild);
-      return;
+    // Forward gate: every step between the current one and the target (exclusive)
+    // must be valid. Backward navigation is always allowed.
+    if (step > activeChild) {
+      for (let i = activeChild; i < step; i += 1) {
+        if (validity[i]?.status !== "valid") {
+          onValidationError?.(i);
+          return;
+        }
+      }
     }
     if (!isControlled) dispatch({ type: "SET_ACTIVE", step });
     onStepChange?.(step);
@@ -170,13 +211,20 @@ export default function MultiStep(props: MultiStepProps) {
 
   const steps = useMemo<Step[]>(
     () =>
-      childrenArray.map((child, index) => ({
-        index,
-        isActive: index === activeChild,
-        isValid: stepValidity[index] ?? false,
-        title: child.props?.title,
-      })),
-    [childrenArray, activeChild, stepValidity]
+      childrenArray.map((child, index) => {
+        const stepValidity = validity[index] ?? pendingValidity();
+        const status = deriveStatus(stepValidity, visited[index] ?? false);
+        return {
+          index,
+          isActive: index === activeChild,
+          status,
+          isValid: status === "valid",
+          title: readTitle(child),
+          tabId: `${idBase}-tab-${index}`,
+          panelId: `${idBase}-panel-${index}`,
+        };
+      }),
+    [childrenArray, activeChild, validity, visited, idBase]
   );
 
   const contextValue = useMemo<MultiStepApi>(
@@ -193,5 +241,27 @@ export default function MultiStep(props: MultiStepProps) {
     [activeChild, totalSteps, steps, currentStepValid, isStepValid, goToStep, next, previous]
   );
 
-  return <MultiStepProvider value={contextValue}>{currentChild}</MultiStepProvider>;
+  // keepMounted (default): render every step, hiding inactive ones so their
+  // subtree stays mounted (preserving in-step state and running each step's
+  // validity effect) while being removed from the visual + a11y tree.
+  // unmount: render only the active step.
+  const rendered =
+    mode === "keepMounted"
+      ? childrenArray.map((child, index) => {
+          const inactive = index !== activeChild;
+          return (
+            <div key={index} hidden={inactive} style={inactive ? HIDDEN_STYLE : undefined}>
+              <StepIndexProvider index={index}>{child}</StepIndexProvider>
+            </div>
+          );
+        })
+      : childrenArray[activeChild]
+        ? <StepIndexProvider index={activeChild}>{childrenArray[activeChild]}</StepIndexProvider>
+        : null;
+
+  return (
+    <MultiStepProvider value={contextValue} report={report}>
+      {rendered}
+    </MultiStepProvider>
+  );
 }

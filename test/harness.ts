@@ -16,16 +16,16 @@ import { createRoot } from "react-dom/client";
 import type { ReactElement } from "react";
 import { isDeepStrictEqual } from "node:util";
 
-// react 18.3 exposes act on the React namespace, but @types/react 18.2 predates
-// the type. Reach it through a narrow cast rather than pulling in extra types.
-type ActCallback = () => void | Promise<void>;
-const act = (React as unknown as { act: (cb: ActCallback) => Promise<unknown> }).act;
+// React 19 exposes act() directly on the React namespace and @types/react 19
+// types it, so no cast is needed. The void-callback overload returns void; the
+// promise-callback overload returns a Promise we await.
+const { act } = React;
 
 const actSync = (cb: () => void): void => {
   // For a synchronous callback, act() flushes passive effects synchronously and
-  // rethrows any render-phase error before returning, so we can ignore the
-  // returned thenable. A throw here propagates to the caller (used by toThrow).
-  void act(cb);
+  // rethrows any render-phase error before returning. A throw here propagates to
+  // the caller (used by toThrow).
+  act(cb);
 };
 
 const actAsync = async (cb: () => Promise<void>): Promise<void> => {

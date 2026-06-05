@@ -1,13 +1,19 @@
 import { useState, useEffect } from "react";
+import { useReportValidity } from "react-multistep";
 import type { StepComponentProps } from "react-multistep";
 import { WizardChrome } from "./WizardChrome";
 
-export const StepFour = ({ signalParent }: StepComponentProps<{ title: string }>) => {
+export const StepFour = (_props: StepComponentProps<{ title: string }>) => {
+  const report = useReportValidity();
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    signalParent?.({ isValid: checked });
-  }, [checked, signalParent]);
+    report(
+      checked
+        ? { status: "valid" }
+        : { status: "invalid", message: "You must accept the terms to continue." }
+    );
+  }, [checked, report]);
 
   return (
     <WizardChrome>

@@ -1,14 +1,20 @@
 import { useState, useEffect } from "react";
+import { useReportValidity } from "react-multistep";
 import type { StepComponentProps } from "react-multistep";
 import { WizardChrome } from "./WizardChrome";
 
-export const StepOne = ({ signalParent }: StepComponentProps<{ title: string }>) => {
+export const StepOne = (_props: StepComponentProps<{ title: string }>) => {
+  const report = useReportValidity();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
   useEffect(() => {
-    signalParent?.({ isValid: firstName.length > 0 });
-  }, [firstName, signalParent]);
+    report(
+      firstName.trim().length > 0
+        ? { status: "valid" }
+        : { status: "invalid", message: "First name is required." }
+    );
+  }, [firstName, report]);
 
   return (
     <WizardChrome>

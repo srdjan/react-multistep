@@ -4,16 +4,18 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "esbuild app.tsx --bundle --format=esm --outdir=./dist --alias:react-multistep=../../src/index.ts --jsx=automatic --loader:.css=css --minify --define:process.env.NODE_ENV='\"production\"'",
-    "dev": "esbuild app.tsx --bundle --format=esm --outdir=./dist --alias:react-multistep=../../src/index.ts --jsx=automatic --loader:.css=css --sourcemap --watch --servedir=.",
+    "build": "esbuild app.tsx --bundle --format=esm --outdir=./dist --alias:react-multistep=../../src/index.ts --alias:react-multistep/styles=../../src/styles/multistep.css --jsx=automatic --loader:.css=css --minify --define:process.env.NODE_ENV='\"production\"'",
+    "dev": "esbuild app.tsx --bundle --format=esm --outdir=./dist --alias:react-multistep=../../src/index.ts --alias:react-multistep/styles=../../src/styles/multistep.css --jsx=automatic --loader:.css=css --sourcemap --watch --servedir=.",
     "start": "npm run dev",
     "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true });\""
   },
   "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^19.2",
+    "react-dom": "^19.2"
   },
   "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "esbuild": "^0.25.10"
   }
 }

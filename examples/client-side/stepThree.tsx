@@ -1,17 +1,30 @@
 import { useState, useEffect } from "react";
+import { useReportValidity } from "react-multistep";
 import type { StepComponentProps } from "react-multistep";
 import { WizardChrome } from "./WizardChrome";
 
-export const StepThree = ({ signalParent }: StepComponentProps<{ title: string }>) => {
+export const StepThree = (_props: StepComponentProps<{ title: string }>) => {
+  const report = useReportValidity();
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [requirePassword, setRequirePassword] = useState(true);
 
   useEffect(() => {
+    if (!requirePassword) {
+      report({ status: "valid" });
+      return;
+    }
     const trimmed = password.trim();
-    const isValid = !requirePassword || (trimmed.length > 0 && trimmed === passwordConfirm.trim());
-    signalParent?.({ isValid });
-  }, [password, passwordConfirm, requirePassword, signalParent]);
+    if (trimmed.length === 0) {
+      report({ status: "invalid", message: "Password is required." });
+      return;
+    }
+    if (trimmed !== passwordConfirm.trim()) {
+      report({ status: "invalid", message: "Passwords must match." });
+      return;
+    }
+    report({ status: "valid" });
+  }, [password, passwordConfirm, requirePassword, report]);
 
   return (
     <WizardChrome>

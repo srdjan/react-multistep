@@ -1,0 +1,5 @@
+/* Combined back-compat bundle: tokens + chrome, with the canonical layer order. */
+@layer reset, base, components;
+
+@import "./tokens.css";
+@import "./chrome.css";

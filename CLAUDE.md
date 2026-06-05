@@ -4,108 +4,207 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is **react-multistep**, a published npm package (v6.1.x) providing a responsive React component for multi-step forms with validation control. The package is built with TypeScript and uses esbuild for bundling.
+This is **react-multistep**, a published npm package (v8.x) providing a headless
+React component for multi-step forms. The component owns step state, validation
+gating, and navigation; the consumer renders all UI (step indicators, prev/next
+buttons, panels). It is written in TypeScript and ships as an ESM-only build
+targeting React 19.2+.
 
 ## Common Development Commands
 
-### Building the Library
 ```bash
-npm install              # Install dependencies
-npm run build            # TypeScript compilation (tsc) → ./build
-npm run bundle           # esbuild bundling → ./dist
-npm run prepublishOnly   # Full build pipeline (build + bundle)
+npm install        # Install dependencies
+npm run build      # esbuild ESM bundle + tsc declarations + copy CSS -> ./dist
+npm run typecheck  # tsc over src (NodeNext) and src+test (Bundler)
+npm run lint       # eslint over src and test
+npm test           # homegrown runner (test/run.mjs): jsdom + react-dom
+npm run format     # prettier write over src and test
+npm run prepack    # lint + typecheck + test + build (runs before publish)
 ```
 
-The build pipeline:
-1. `npm run build` - Compiles TypeScript (src → build) with type declarations
-2. `npm run bundle` - Bundles with esbuild (build → dist) as CommonJS, excluding React peer dependency
+There is a single `dist/` output. There is no separate `build/` tree and no
+CommonJS bundle.
+
+### Build pipeline (`npm run build`)
+
+One script does three things:
+
+1. **esbuild** bundles `src/index.ts` to `dist/index.js` as ESM
+   (`--format=esm`), with a linked sourcemap, automatic JSX
+   (`--jsx=automatic`), and `react` / `react/jsx-runtime` kept external (the peer
+   dependency is never bundled).
+2. **tsc** emits declarations only (`--emitDeclarationOnly --outDir dist`):
+   `dist/index.d.ts` plus a declaration map.
+3. A small Node one-liner copies `multistep.css`, `tokens.css`, and `chrome.css`
+   from `src/styles/` into `dist/`.
 
 ### Working with the Example App
+
 ```bash
 cd examples/client-side
 npm install
-npm run dev              # Builds library, bundles example, serves with esbuild
+npm run dev        # esbuild dev server at http://localhost:8000
 ```
 
-Example build workflow:
-- `build:lib` - Runs the root `npm run build` to compile the library
-- `build:app` - Bundles the example with esbuild (`dist/app.js`)
-- `dev` - Builds the library once, then runs esbuild in watch + serve mode
+The single canonical example (`examples/client-side`) is TypeScript and builds
+directly from `src`.
 
 ## Architecture
 
-### Core Component Structure
+### Headless component
 
-**Single Component Pattern**: The library exports a single `MultiStep` component that:
-- Accepts child components as steps (each with optional `title` prop)
-- Injects a `signalParent` callback into each child for validation control
-- Manages top navigation (step indicators) and bottom navigation (prev/next buttons)
-- Uses inline styles (customizable via `styles` prop)
+The package's default export is `MultiStep` (`src/MultiStep.tsx`). It renders no
+chrome. Its job is to:
 
-**State Management**:
-- `activeChild` - Current step index (0-based)
-- `childIsValid` - Boolean controlled by child components via `signalParent`
-- `topNavState` - Array of "doing"/"todo" states for step indicators
-- `bottomNavState` - Prev/Next button disabled states + visibility
+- Parse `children` into an array of step elements (`React.Children.toArray` +
+  `isValidElement`), throwing if there are zero valid children.
+- Hold all wizard state in a `useReducer` (`src/MultiStep.tsx`): the active step,
+  a per-step `StepValidity[]`, a per-step `visited` boolean array, and the total
+  step count. Actions: `SYNC_STEPS`, `SET_ACTIVE`, `SET_STEP_VALIDITY`.
+- Support both controlled (`activeStep` + `onStepChange`) and uncontrolled
+  (`defaultStep`) operation, with clamping to the valid range.
+- Derive a `steps: Step[]` metadata array and expose the full `MultiStepApi`
+  through context.
+- Render steps according to `mode` (see Render mode below), wrapping each rendered
+  step in `StepIndexProvider` so `useReportValidity` can resolve its index.
 
-### Key Files
+### The validity contract: `useReportValidity`
 
-- `src/MultiStep.tsx` - Main component with all logic
-- `src/interfaces.ts` - TypeScript type definitions (`MultiStepProps`, `MultiStepStyles`, `ChildState`)
-- `src/baseStyles.js` - Default inline styles (plain JS object)
-- `src/index.js` - Package entry point (exports MultiStep + interfaces + BaseStyles)
+There is **no injected prop**. A step reports its validity by calling the
+`useReportValidity()` hook (`src/MultiStepContext.tsx`) from inside its own
+subtree:
 
-### Child Component Validation Pattern
-
-**Critical Feature**: Child components receive `signalParent(childState: ChildState)` prop:
-```typescript
-interface ChildState {
-  isValid: boolean;  // Controls Next button enabled/disabled
-  goto: number;      // (Note: currently unused in implementation)
-}
+```tsx
+const report = useReportValidity();
+useEffect(() => {
+  report({ status: "valid" }); // or { status: "invalid", message?, errors? } / { status: "pending" }
+}, [report /* , ...deps */]);
 ```
 
-When `isValid: false`, the Next button is disabled and clicking other steps is blocked. This enables form validation per step.
+The returned callback is stable (memoized on the report channel + step index) and
+dispatches `SET_STEP_VALIDITY` into the reducer. `useReportValidity` reads
+`StepIndexContext` and `ReportValidityContext`; if either is null it throws the
+exact string `useReportValidity must be used within a MultiStep step`.
 
-## Build Output Structure
+`StepValidity` (`src/interfaces.ts`) is a discriminated union:
+`{ status: "valid" }` | `{ status: "invalid"; message?; errors? }` |
+`{ status: "pending" }`. Every step's initial validity is `{ status: "pending" }`,
+which is not valid, so the forward gate is blocked until a step reports `valid`.
 
-```
-build/          # TypeScript compilation output (.js + .d.ts + .d.ts.map)
-dist/           # esbuild bundle output (CommonJS for npm distribution)
-dist/index.js   # Main entry point (specified in package.json)
-```
+### Forward gate
 
-**package.json exports**:
-- `main`: `dist/index.js` (CommonJS bundle)
-- `types`: `build/index.d.ts` (TypeScript declarations)
+`goToStep(target)` (`src/MultiStep.tsx`) allows backward navigation freely and
+ignores out-of-range targets. For `target > active`, it requires every step in
+`[active, target)` to have status `valid`; if any is not, it calls
+`onValidationError(firstInvalidIndex)` and aborts. `next()` and `previous()` go
+through `goToStep`. Navigation callbacks read all dynamic values from a ref
+(`navRef`) so they stay referentially stable across renders.
 
-## Version Notes
+### Render mode (`keepMounted` / `unmount`)
 
-This is **v6.0.0-alpha**, a major rewrite. Key differences from v5:
-- Simplified API (removed `prevButton`/`nextButton` props, now handled internally)
-- `signalParent` callback pattern for validation control
-- `styles` prop for customization (previously had individual style props)
-- Children now require `signalParent` to be called for proper Next button control
+`mode?: "unmount" | "keepMounted"` defaults to `"keepMounted"`.
 
-## TypeScript Configuration
+- **`keepMounted`**: every step is rendered and stays mounted; inactive steps are
+  wrapped in `<div hidden style={{ display: "none" }}>` (keyed by index, no
+  class), removing them from the visual + a11y tree but keeping them in the DOM.
+  Consequence: every step's validity effect runs from mount (even inactive ones),
+  in-step state is preserved across navigation, and the DOM contains all step
+  subtrees at once.
+- **`unmount`**: only the active step is rendered (no wrapper div), still wrapped
+  in `StepIndexProvider`. Inactive state is discarded.
 
-**tsconfig.json settings**:
-- Target: ES2015, CommonJS modules
-- JSX: react-jsx (new transform)
-- Output: `./build` with declarations and declaration maps
-- Strict type checking enabled
+### The three context hooks
 
-## Development Workflow
+The API is split across three contexts (`src/MultiStepContext.tsx`) so navigation
+consumers can avoid re-rendering on state changes:
 
-1. Make changes in `src/`
-2. Run `npm run build` to compile TypeScript
-3. Run `npm run bundle` to create distribution bundle
-4. Test in example app: `cd example && npm run build && npm start`
-5. Before publishing: `npm run prepublishOnly` (runs automatically on `npm publish`)
+- **`useMultiStep(): MultiStepApi`** - the full API.
+- **`useMultiStepState()`** - read-only slice: `activeStep`, `stepCount`, `steps`,
+  `currentStepValid`, `isStepValid`.
+- **`useMultiStepNavigation()`** - actions: `goToStep`, `next`, `previous`
+  (referentially stable).
 
-## Important Implementation Details
+All three throw `use<Name> must be used within a MultiStep component` if used
+outside `MultiStep`.
 
-- **React.cloneElement** pattern: Children are cloned to inject `signalParent` prop dynamically
-- **Inline styles**: Component uses React.CSSProperties objects (no CSS files)
-- **No external dependencies**: Pure React implementation (peer dependency only)
-- **esbuild configuration**: Uses `--external:react` to exclude from bundle, `--loader:.js=jsx` for JSX, `--define:process.env.NODE_ENV` for production builds
+`MultiStepProvider` takes both a `value: MultiStepApi` and a `report` channel.
+`StepIndexProvider`, `StepIndexContext`, and `ReportValidityContext` exist
+internally; only the four hooks and `MultiStep` are exported from the package
+index.
+
+### Step metadata
+
+Each `Step` (`src/MultiStepContext.tsx`): `{ index, isActive, status, isValid,
+title?, tabId, panelId }`. `status` is `StepStatus` (`"pristine" | "visited" |
+"valid" | "invalid"`); it derives from the reported validity plus visited state
+(`valid`/`invalid` mirror the report; `pending` -> `visited` if landed on else
+`pristine`). `isValid` is derived (`status === "valid"`). `tabId` and `panelId`
+are `${base}-tab-${index}` / `${base}-panel-${index}` from a single `useId()`
+base, so they are stable across renders and SSR-safe. Note: React 19 types
+`element.props` as `unknown`; `readTitle()` narrows the optional `title` with an
+`in` check and a typed cast (never `any`).
+
+## Public API surface
+
+Runtime exports (`src/index.ts`): `MultiStep` (default), `useMultiStep`,
+`useMultiStepState`, `useMultiStepNavigation`, `useReportValidity`.
+
+Type exports: `MultiStepProps`, `StepComponentProps`, `StepValidity`,
+`StepStatus` (from `src/interfaces.ts`); `MultiStepApi`, `Step` (from
+`src/MultiStepContext.tsx`).
+
+`MultiStepProps`: `children`, `activeStep?`, `defaultStep?` (0),
+`mode?` (`"keepMounted"`), `onStepChange?`, `onValidationError?`.
+
+## CSS
+
+Source CSS lives in `src/styles/` and is copied verbatim into `dist/`:
+
+- `tokens.css` - global `:root { --multistep-* }` custom properties, in the `base`
+  cascade layer.
+- `chrome.css` - the reset (`reset` layer) and component styles (`components`
+  layer), both **scoped under `.multistep-container`** so the reset never leaks to
+  the host page. Consumers must put the `multistep-container` class on their outer
+  chrome element for these to apply.
+- `multistep.css` - combined back-compat bundle that `@import`s tokens + chrome
+  with the canonical `reset, base, components` layer order.
+- `src/base.css` - a one-line `@import` shim to `styles/multistep.css`.
+
+`package.json` exports map: `./styles` -> `dist/multistep.css`,
+`./styles/tokens.css` -> `dist/tokens.css`, `./styles/chrome.css` ->
+`dist/chrome.css`. `sideEffects` is `["**/*.css"]`.
+
+## Build / packaging facts
+
+- `"type": "module"`; the package is ESM only. `exports["."]` resolves `import`
+  to `./dist/index.js` with `types` at `./dist/index.d.ts`. CommonJS consumers
+  must use dynamic `import()`.
+- `peerDependencies.react` is `^19.2`. `engines.node` is `>=18`. `files` is
+  `["dist"]`.
+- `tsconfig.json`: target ES2020, module/resolution NodeNext, `jsx: react-jsx`,
+  strict + `noUncheckedIndexedAccess`, declaration + declaration maps, `outDir`
+  `./dist`. `tsconfig.test.json` extends it with `module: ESNext` /
+  `moduleResolution: Bundler` and includes `test`.
+
+## Tests: homegrown runner
+
+There is no vitest or testing-library. `npm test` runs `test/run.mjs`, which:
+
+1. Registers a jsdom DOM on `globalThis` before importing react-dom (order
+   matters: react-dom reads `navigator`/`document` at import time), and sets
+   `IS_REACT_ACT_ENVIRONMENT = true`.
+2. Discovers `*.test.tsx?` files and bundles them + the harness with esbuild,
+   keeping `react`/`react-dom` external so Node resolves the single installed copy
+   (a shared React instance is required for context/hooks to work).
+3. Imports the bundle (which registers the tests) and runs them.
+
+Test files: `test/MultiStep.test.tsx`, `test/api.test.tsx`, with `test/harness.ts`
+as the assertion/render harness.
+
+## Conventions
+
+- No injected props into steps; validity flows only through `useReportValidity`.
+- Never use `any` or cast to `any`; narrow `unknown` (see `readTitle`).
+- All public hooks throw a precise, tested error string when misused; preserve
+  those exact strings.
+- Inline styles are not used; styling is the optional, layered, scoped CSS above.

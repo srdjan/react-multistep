@@ -5,6 +5,7 @@ import {
   useMultiStep,
   useMultiStepState,
   useMultiStepNavigation,
+  useReportValidity,
   type MultiStepApi,
 } from "../src/MultiStepContext";
 import type { StepComponentProps } from "../src/interfaces";
@@ -16,10 +17,11 @@ type StepProps = StepComponentProps<{ title: string }>;
 // getApi() throws if the probe never rendered, so callers don't deal with undefined.
 const makeProbe = () => {
   let captured: MultiStepApi | undefined;
-  const Probe = ({ signalParent }: StepProps) => {
+  const Probe = (_props: StepProps) => {
+    const report = useReportValidity();
     useEffect(() => {
-      signalParent?.({ isValid: true });
-    }, [signalParent]);
+      report({ status: "valid" });
+    }, [report]);
     captured = useMultiStep();
     return <div>probe</div>;
   };
@@ -33,7 +35,14 @@ const makeProbe = () => {
 describe("public API surface", () => {
   it("exposes exactly the expected runtime exports", () => {
     const keys = Object.keys(publicApi).sort().join(",");
-    expect(keys).toBe("default,useMultiStep,useMultiStepNavigation,useMultiStepState");
+    expect(keys).toBe(
+      "default,useMultiStep,useMultiStepNavigation,useMultiStepState,useReportValidity"
+    );
+  });
+
+  it("exposes MultiStep as the default export", () => {
+    expect(typeof publicApi.default).toBe("function");
+    expect(publicApi.default).toBe(MultiStep);
   });
 });
 
@@ -59,6 +68,56 @@ describe("useMultiStep() shape", () => {
     expect(typeof api.isStepValid).toBe("function");
     expect(api.currentStepValid).toBe(true);
     expect(api.isStepValid(0)).toBe(true);
+  });
+
+  it("exposes the new Step metadata fields", () => {
+    const { Probe, getApi } = makeProbe();
+
+    render(
+      <MultiStep>
+        <Probe title="One" />
+        <Probe title="Two" />
+      </MultiStep>
+    );
+
+    const [first, second] = getApi().steps;
+    // index / isActive / status / isValid / title / tabId / panelId
+    expect(first!.index).toBe(0);
+    expect(first!.isActive).toBe(true);
+    expect(second!.isActive).toBe(false);
+    // Reported valid -> status "valid" and the derived isValid flag agrees.
+    expect(first!.status).toBe("valid");
+    expect(first!.isValid).toBe(first!.status === "valid");
+    // ids come from useId: assert presence + tab/panel relationship, not literals.
+    expect(typeof first!.tabId).toBe("string");
+    expect(first!.tabId.length > 0).toBe(true);
+    expect(first!.panelId.length > 0).toBe(true);
+    expect(first!.tabId).not.toBe(second!.tabId);
+    expect(first!.panelId).not.toBe(second!.panelId);
+  });
+
+  it("derives pristine/visited status from the visited flag", () => {
+    // A step that never reports stays pending; status is pristine until visited.
+    let captured: MultiStepApi | undefined;
+    const SilentStep = (_props: StepProps) => {
+      useReportValidity(); // resolves index but never reports
+      captured = useMultiStep();
+      return <div>silent</div>;
+    };
+
+    render(
+      <MultiStep>
+        <SilentStep title="One" />
+        <SilentStep title="Two" />
+      </MultiStep>
+    );
+
+    const steps = captured!.steps;
+    // Step 0 is the initial active step -> visited -> "visited".
+    expect(steps[0]!.status).toBe("visited");
+    // Step 1 never visited, never reported -> "pristine".
+    expect(steps[1]!.status).toBe("pristine");
+    expect(steps[0]!.isValid).toBe(false);
   });
 });
 
@@ -90,6 +149,16 @@ describe("provider guards", () => {
     };
     expect(() => render(<Bare />)).toThrow(
       "useMultiStepNavigation must be used within a MultiStep component"
+    );
+  });
+
+  it("useReportValidity throws outside a MultiStep step", () => {
+    const Bare = () => {
+      useReportValidity();
+      return null;
+    };
+    expect(() => render(<Bare />)).toThrow(
+      "useReportValidity must be used within a MultiStep step"
     );
   });
 });
@@ -134,6 +203,23 @@ describe("reducer / step-count edges", () => {
     );
 
     expect(getApi().activeStep).toBe(1);
+  });
+
+  it("ignores out-of-range goToStep targets", () => {
+    const { Probe, getApi } = makeProbe();
+
+    render(
+      <MultiStep>
+        <Probe title="One" />
+        <Probe title="Two" />
+      </MultiStep>
+    );
+
+    const before = getApi().activeStep;
+    getApi().goToStep(-1);
+    expect(getApi().activeStep).toBe(before);
+    getApi().goToStep(99);
+    expect(getApi().activeStep).toBe(before);
   });
 
   it("clamps the active step when the child count shrinks", () => {
