@@ -1,4 +1,12 @@
-import React, { useCallback, useEffect, useId, useMemo, useReducer, useRef } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from "react";
 import type { MultiStepProps, StepStatus, StepValidity } from "./interfaces.js";
 import {
   MultiStepApi,
@@ -39,6 +47,16 @@ const deriveStatus = (validity: StepValidity, visited: boolean): StepStatus => {
   if (validity.status === "valid") return "valid";
   if (validity.status === "invalid") return "invalid";
   return visited ? "visited" : "pristine";
+};
+
+const focusHeadingOrWrapper = (heading: HTMLElement | null, wrapper: HTMLElement): void => {
+  if (!heading) {
+    wrapper.focus();
+    return;
+  }
+  if (!heading.hasAttribute("tabindex")) heading.tabIndex = -1;
+  heading.focus();
+  if (heading.ownerDocument.activeElement !== heading) wrapper.focus();
 };
 
 // React 19 types element.props as unknown; pull an optional title without `any`.
@@ -115,6 +133,8 @@ export default function MultiStep(props: MultiStepProps) {
     defaultStep = 0,
     mode = "keepMounted",
     onValidationError,
+    onComplete,
+    focusOnStepChange = "panel",
   } = props;
 
   if (!children) {
@@ -179,6 +199,7 @@ export default function MultiStep(props: MultiStepProps) {
     isControlled,
     onStepChange,
     onValidationError,
+    onComplete,
   };
   const navRef = useRef(nav);
   navRef.current = nav;
@@ -209,6 +230,18 @@ export default function MultiStep(props: MultiStepProps) {
   const next = useCallback(() => goToStep(navRef.current.activeChild + 1), [goToStep]);
   const previous = useCallback(() => goToStep(navRef.current.activeChild - 1), [goToStep]);
 
+  // Referentially stable like next/previous: reads everything from navRef.
+  const complete = useCallback(() => {
+    const { activeChild, validity, totalSteps, onComplete, onValidationError } = navRef.current;
+    const onLast = activeChild === totalSteps - 1;
+    const valid = validity[activeChild]?.status === "valid";
+    if (onLast && valid) {
+      onComplete?.();
+    } else {
+      onValidationError?.(activeChild);
+    }
+  }, []);
+
   const steps = useMemo<Step[]>(
     () =>
       childrenArray.map((child, index) => {
@@ -227,6 +260,23 @@ export default function MultiStep(props: MultiStepProps) {
     [childrenArray, activeChild, validity, visited, idBase]
   );
 
+  // Derived, read-only values surfaced on the state slice.
+  const isFirst = activeChild === 0;
+  const isLast = activeChild === totalSteps - 1;
+  const progress = totalSteps <= 1 ? 1 : activeChild / (totalSteps - 1);
+  const canComplete = isLast && currentStepValid;
+  const visitedSteps = useMemo(
+    () => steps.filter((step) => step.status !== "pristine").map((step) => step.index),
+    [steps]
+  );
+  const completedSteps = useMemo(
+    () => steps.filter((step) => step.status === "valid").map((step) => step.index),
+    [steps]
+  );
+  const activeValidity = validity[activeChild];
+  const currentStepError =
+    activeValidity?.status === "invalid" ? activeValidity.message : undefined;
+
   const contextValue = useMemo<MultiStepApi>(
     () => ({
       activeStep: activeChild,
@@ -234,29 +284,93 @@ export default function MultiStep(props: MultiStepProps) {
       steps,
       currentStepValid,
       isStepValid,
+      isFirst,
+      isLast,
+      progress,
+      canComplete,
+      visitedSteps,
+      completedSteps,
+      currentStepError,
       goToStep,
       next,
       previous,
+      complete,
     }),
-    [activeChild, totalSteps, steps, currentStepValid, isStepValid, goToStep, next, previous]
+    [
+      activeChild,
+      totalSteps,
+      steps,
+      currentStepValid,
+      isStepValid,
+      isFirst,
+      isLast,
+      progress,
+      canComplete,
+      visitedSteps,
+      completedSteps,
+      currentStepError,
+      goToStep,
+      next,
+      previous,
+      complete,
+    ]
   );
+
+  // Focus management is self-contained: MultiStep owns the ref to the active step
+  // wrapper rather than routing through getPanelProps, so keepMounted's multiple
+  // mounted panels don't collide on a single consumer ref.
+  const activeWrapperRef = useRef<HTMLDivElement | null>(null);
+  const prevActiveRef = useRef(activeChild);
+
+  useLayoutEffect(() => {
+    const previousActive = prevActiveRef.current;
+    prevActiveRef.current = activeChild;
+    // Skip the initial mount so focus is not stolen on first render.
+    if (previousActive === activeChild) return;
+    if (focusOnStepChange === false) return;
+    const wrapper = activeWrapperRef.current;
+    if (!wrapper) return;
+    if (focusOnStepChange === "heading") {
+      const heading = wrapper.querySelector<HTMLElement>("h1, h2, h3, h4, h5, h6");
+      focusHeadingOrWrapper(heading, wrapper);
+    } else {
+      wrapper.focus();
+    }
+  }, [activeChild, focusOnStepChange]);
+
+  const manageFocus = focusOnStepChange !== false;
 
   // keepMounted (default): render every step, hiding inactive ones so their
   // subtree stays mounted (preserving in-step state and running each step's
-  // validity effect) while being removed from the visual + a11y tree.
+  // validity effect) while being removed from the visual + a11y tree. The active
+  // wrapper takes tabIndex={-1} and the focus ref; inactive wrappers stay as-is.
   // unmount: render only the active step.
   const rendered =
     mode === "keepMounted"
       ? childrenArray.map((child, index) => {
           const inactive = index !== activeChild;
           return (
-            <div key={index} hidden={inactive} style={inactive ? HIDDEN_STYLE : undefined}>
+            <div
+              key={index}
+              hidden={inactive}
+              style={inactive ? HIDDEN_STYLE : undefined}
+              ref={inactive ? undefined : activeWrapperRef}
+              tabIndex={inactive ? undefined : -1}
+            >
               <StepIndexProvider index={index}>{child}</StepIndexProvider>
             </div>
           );
         })
       : childrenArray[activeChild]
-        ? <StepIndexProvider index={activeChild}>{childrenArray[activeChild]}</StepIndexProvider>
+        ? manageFocus
+          ? (
+              <div ref={activeWrapperRef} tabIndex={-1}>
+                <StepIndexProvider index={activeChild}>
+                  {childrenArray[activeChild]}
+                </StepIndexProvider>
+              </div>
+            )
+          : <StepIndexProvider index={activeChild}>{childrenArray[activeChild]}</StepIndexProvider>
         : null;
 
   return (

@@ -44,6 +44,45 @@ foundation changes:
   so they are stable per mount and SSR-safe; wire them into `role="tab"` /
   `role="tabpanel"` markup with `aria-current="step"` for the active step.
 
+### Accessibility & completion layer
+
+- New hook **`useMultiStepA11y()`** returns prop-getters that build accessible
+  wizard chrome: `getStepListProps`, `getStepProps`, `getPanelProps`,
+  `getPreviousButtonProps`, `getNextButtonProps`, `getCompleteButtonProps`, and
+  `getErrorRegionProps`. Each returns a typed props object and accepts an optional
+  overrides argument that composes on top (your `onClick` runs after the built-in
+  one, `className` is concatenated, `style` is shallow-merged, all other override
+  values win). The getters implement the wizard / `aria-current` pattern (NOT
+  `role="tab"`): the list is `role="list"` labelled `Progress`, the active step
+  carries `aria-current="step"`, the panel is `role="region"`, and the error
+  region is `role="status"` `aria-live="polite"` `aria-atomic`. `getStepProps`
+  emits a `data-status` attribute (the step's `StepStatus`) and disables a step
+  using the same forward-gate semantics as navigation. The return type
+  **`MultiStepA11y`** is exported as a type. The hook throws
+  `useMultiStep must be used within a MultiStep component` when called outside a
+  provider.
+- **Completion.** New **`complete()`** action on the navigation slice (and the
+  full `MultiStepApi`) finishes the wizard: when the active step is the last step
+  and valid (`canComplete`), it fires the new **`onComplete?: () => void`** prop;
+  otherwise it calls `onValidationError(activeStep)`. `complete` is referentially
+  stable like `next` / `previous`.
+- **Derived state fields** added to the state slice and `MultiStepApi`:
+  `isFirst` (`activeStep === 0`), `isLast` (`activeStep === stepCount - 1`),
+  `progress` (`activeStep / (stepCount - 1)`, `1` for a single- or zero-step
+  wizard), `canComplete` (`isLast && currentStepValid`), `visitedSteps`
+  (indices with `status !== "pristine"`), `completedSteps` (indices with
+  `status === "valid"`), and `currentStepError` (the active step's `invalid`
+  message, else `undefined`).
+- **Focus management.** New **`focusOnStepChange?: "panel" | "heading" | false`**
+  prop (default `"panel"`) moves focus when the active step changes: `"panel"`
+  focuses the active step's panel wrapper, `"heading"` focuses the first heading
+  (`h1`-`h6`) inside it (falling back to the wrapper), and `false` disables it.
+  Focus moves before paint and is never stolen on the initial mount. Focus is
+  owned inside MultiStep (not routed through `getPanelProps`), so `keepMounted`'s
+  several mounted panels do not collide on one ref. In `unmount` mode the default
+  `"panel"` wraps the active step in an extra `<div tabIndex={-1}>`; pass
+  `focusOnStepChange={false}` to render the step without that wrapper.
+
 ### CSS split + scoped reset
 
 - The stylesheet is split: `react-multistep/styles/tokens.css` (the global

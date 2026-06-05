@@ -22,17 +22,47 @@ export interface MultiStepApi {
   steps: Step[];
   currentStepValid: boolean;
   isStepValid: (index: number) => boolean;
+  /** True iff the active step is the first step. */
+  isFirst: boolean;
+  /** True iff the active step is the last step. */
+  isLast: boolean;
+  /** Fractional progress through the wizard, 0..1 (1 when there is one step or fewer). */
+  progress: number;
+  /** True iff on the last step and that step is valid. */
+  canComplete: boolean;
+  /** Indices the user has landed on (status !== "pristine"). */
+  visitedSteps: number[];
+  /** Indices with status === "valid". */
+  completedSteps: number[];
+  /** Active step's validity message when its status is "invalid", else undefined. */
+  currentStepError?: string;
   goToStep: (step: number) => void;
   next: () => void;
   previous: () => void;
+  /** Finish the wizard: if canComplete, fire onComplete(); else report a validation error. */
+  complete: () => void;
 }
 
 type MultiStepStateValue = Pick<
   MultiStepApi,
-  "activeStep" | "stepCount" | "steps" | "currentStepValid" | "isStepValid"
+  | "activeStep"
+  | "stepCount"
+  | "steps"
+  | "currentStepValid"
+  | "isStepValid"
+  | "isFirst"
+  | "isLast"
+  | "progress"
+  | "canComplete"
+  | "visitedSteps"
+  | "completedSteps"
+  | "currentStepError"
 >;
 
-type MultiStepNavigationValue = Pick<MultiStepApi, "goToStep" | "next" | "previous">;
+type MultiStepNavigationValue = Pick<
+  MultiStepApi,
+  "goToStep" | "next" | "previous" | "complete"
+>;
 
 const MultiStepContext = React.createContext<MultiStepApi | null>(null);
 const MultiStepStateContext = React.createContext<MultiStepStateValue | null>(null);
@@ -60,8 +90,28 @@ export function MultiStepProvider({ value, report, children }: MultiStepProvider
       steps: value.steps,
       currentStepValid: value.currentStepValid,
       isStepValid: value.isStepValid,
+      isFirst: value.isFirst,
+      isLast: value.isLast,
+      progress: value.progress,
+      canComplete: value.canComplete,
+      visitedSteps: value.visitedSteps,
+      completedSteps: value.completedSteps,
+      currentStepError: value.currentStepError,
     }),
-    [value.activeStep, value.stepCount, value.steps, value.currentStepValid, value.isStepValid]
+    [
+      value.activeStep,
+      value.stepCount,
+      value.steps,
+      value.currentStepValid,
+      value.isStepValid,
+      value.isFirst,
+      value.isLast,
+      value.progress,
+      value.canComplete,
+      value.visitedSteps,
+      value.completedSteps,
+      value.currentStepError,
+    ]
   );
 
   const navigationValue = React.useMemo<MultiStepNavigationValue>(
@@ -69,8 +119,9 @@ export function MultiStepProvider({ value, report, children }: MultiStepProvider
       goToStep: value.goToStep,
       next: value.next,
       previous: value.previous,
+      complete: value.complete,
     }),
-    [value.goToStep, value.next, value.previous]
+    [value.goToStep, value.next, value.previous, value.complete]
   );
 
   return (
@@ -135,4 +186,166 @@ export function useReportValidity(): (validity: StepValidity) => void {
     throw new Error("useReportValidity must be used within a MultiStep step");
   }
   return React.useCallback((validity: StepValidity) => report(index, validity), [report, index]);
+}
+
+/**
+ * Merge a base set of element props with caller overrides. onClick handlers are
+ * composed so BOTH run (base first, then override); className is concatenated;
+ * style is shallow-merged; every other override wins for plain values. Generic
+ * over the element's attribute type so callers keep full prop typing.
+ */
+function mergeProps<P extends React.HTMLAttributes<HTMLElement>>(
+  base: P,
+  overrides?: Partial<P>
+): P {
+  if (!overrides) return base;
+  const merged: P = { ...base, ...overrides };
+  if (base.onClick && overrides.onClick) {
+    const baseClick = base.onClick;
+    const overrideClick = overrides.onClick;
+    merged.onClick = (event: React.MouseEvent<HTMLElement>) => {
+      baseClick(event);
+      overrideClick(event);
+    };
+  }
+  if (base.className && overrides.className) {
+    merged.className = `${base.className} ${overrides.className}`;
+  }
+  if (base.style && overrides.style) {
+    merged.style = { ...base.style, ...overrides.style };
+  }
+  return merged;
+}
+
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
+type ListProps = React.HTMLAttributes<HTMLElement>;
+type RegionProps = React.HTMLAttributes<HTMLElement>;
+/** Step button props carry the step's status as a data-* attribute for styling. */
+type StepButtonProps = ButtonProps & { "data-status"?: StepStatus };
+
+/** Prop-getter functions for building accessible wizard chrome. */
+export interface MultiStepA11y {
+  getStepListProps: (overrides?: Partial<ListProps>) => ListProps;
+  getStepProps: (index: number, overrides?: Partial<StepButtonProps>) => StepButtonProps;
+  getPanelProps: (overrides?: Partial<RegionProps>) => RegionProps;
+  getPreviousButtonProps: (overrides?: Partial<ButtonProps>) => ButtonProps;
+  getNextButtonProps: (overrides?: Partial<ButtonProps>) => ButtonProps;
+  getCompleteButtonProps: (overrides?: Partial<ButtonProps>) => ButtonProps;
+  getErrorRegionProps: (overrides?: Partial<RegionProps>) => RegionProps;
+}
+
+/**
+ * Returns prop-getter functions that spread onto wizard chrome elements to wire
+ * up the wizard / aria-current accessibility pattern (NOT role=tab). Each getter
+ * accepts an optional overrides object merged via mergeProps. Must be used within
+ * a MultiStep component.
+ */
+export function useMultiStepA11y(): MultiStepA11y {
+  const api = useMultiStep();
+  const {
+    steps,
+    activeStep,
+    currentStepValid,
+    isFirst,
+    isLast,
+    canComplete,
+    goToStep,
+    next,
+    previous,
+    complete,
+  } = api;
+
+  // Forward jump blocked if any step in [activeStep, index) is not valid; back or
+  // staying at/<= active is always allowed.
+  const canNavigateTo = React.useCallback(
+    (index: number): boolean => {
+      if (index <= activeStep) return true;
+      for (let i = activeStep; i < index; i += 1) {
+        if (steps[i]?.status !== "valid") return false;
+      }
+      return true;
+    },
+    [steps, activeStep]
+  );
+
+  return React.useMemo<MultiStepA11y>(
+    () => ({
+      getStepListProps: (overrides) =>
+        mergeProps<ListProps>({ role: "list", "aria-label": "Progress" }, overrides),
+      getStepProps: (index, overrides) => {
+        const step = steps[index];
+        return mergeProps<StepButtonProps>(
+          {
+            id: step?.tabId,
+            type: "button",
+            "aria-current": index === activeStep ? "step" : undefined,
+            "aria-controls": step?.panelId,
+            "data-status": step?.status,
+            disabled: !canNavigateTo(index),
+            onClick: () => goToStep(index),
+          },
+          overrides
+        );
+      },
+      getPanelProps: (overrides) => {
+        const step = steps[activeStep];
+        return mergeProps<RegionProps>(
+          {
+            id: step?.panelId,
+            role: "region",
+            "aria-labelledby": step?.tabId,
+            tabIndex: -1,
+          },
+          overrides
+        );
+      },
+      getPreviousButtonProps: (overrides) =>
+        mergeProps<ButtonProps>(
+          {
+            type: "button",
+            "aria-label": "Previous step",
+            disabled: isFirst,
+            onClick: () => previous(),
+          },
+          overrides
+        ),
+      getNextButtonProps: (overrides) =>
+        mergeProps<ButtonProps>(
+          {
+            type: "button",
+            "aria-label": "Next step",
+            disabled: isLast || !currentStepValid,
+            onClick: () => next(),
+          },
+          overrides
+        ),
+      getCompleteButtonProps: (overrides) =>
+        mergeProps<ButtonProps>(
+          {
+            type: "button",
+            disabled: !canComplete,
+            onClick: () => complete(),
+          },
+          overrides
+        ),
+      getErrorRegionProps: (overrides) =>
+        mergeProps<RegionProps>(
+          { role: "status", "aria-live": "polite", "aria-atomic": true },
+          overrides
+        ),
+    }),
+    [
+      steps,
+      activeStep,
+      currentStepValid,
+      isFirst,
+      isLast,
+      canComplete,
+      canNavigateTo,
+      goToStep,
+      next,
+      previous,
+      complete,
+    ]
+  );
 }

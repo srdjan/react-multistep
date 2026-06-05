@@ -3,6 +3,7 @@ export {
   useMultiStep,
   useMultiStepState,
   useMultiStepNavigation,
+  useMultiStepA11y,
   useReportValidity,
 } from "./MultiStepContext.js";
 export type {
@@ -11,6 +12,6 @@ export type {
   StepValidity,
   StepStatus,
 } from "./interfaces.js";
-export type { MultiStepApi, Step } from "./MultiStepContext.js";
+export type { MultiStepApi, Step, MultiStepA11y } from "./MultiStepContext.js";
 
 export default MultiStep;

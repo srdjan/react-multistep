@@ -1,77 +1,92 @@
 import type { ReactNode } from "react";
-import { useMultiStepState, useMultiStepNavigation } from "react-multistep";
+import { useMultiStepState, useMultiStepA11y } from "react-multistep";
 
 /**
- * Faithful headless chrome for MultiStep.
+ * Headless chrome for MultiStep, driven entirely by the useMultiStepA11y()
+ * prop-getters.
+ *
+ * Why prop-getters: every accessible attribute (ids, roles, aria-current,
+ * aria-controls/labelledby, aria-live, disabled gating, onClick wiring) comes
+ * from the getters instead of being hand-assembled here. We only supply the
+ * className for each element and the visible label; the getters own the a11y
+ * contract, so this chrome cannot drift out of sync with the wizard's
+ * navigation/validation rules.
  *
  * Styling: consumes the package's shipped stylesheet (react-multistep/styles,
- * imported once in app.tsx) and only references its class names - no inline
- * style object. The reset/focus rules in that sheet are scoped under
- * `.multistep-container`, so the outer element carries that class.
+ * imported once in app.tsx) and only references its class names. The
+ * reset/focus rules in that sheet are scoped under `.multistep-container`, so
+ * the outer element keeps that class.
  *
- * A11y: this is a linear, validation-gated wizard, not a freely reachable
- * tablist - so it uses the wizard / progress pattern (a labelled <nav> + <ol>
- * with `aria-current="step"`) instead of role="tab"/aria-selected. The step
- * indicator and the panel are linked through the library-generated, useId-
- * derived `step.tabId` / `step.panelId`.
+ * A11y pattern: this is a linear, validation-gated wizard, so getStepListProps
+ * emits the wizard / progress pattern (role="list" + aria-label="Progress"
+ * with aria-current="step"), NOT role="tab"/role="tablist".
+ *
+ * Why mode="unmount" is required (set in app.tsx): the chrome is rendered
+ * INSIDE each step so it can read the MultiStep context. Each chrome calls the
+ * getters, which emit the step's useId-derived tabId/panelId. Keeping every
+ * step mounted would render four chromes at once, duplicating those ARIA ids
+ * (and four step lists/panels). Unmounting inactive steps guarantees a single
+ * chrome - and a single, unique set of ids - in the DOM at any time.
  */
 export const WizardChrome = ({ children }: { children: ReactNode }) => {
-  const { steps, activeStep, stepCount, currentStepValid } = useMultiStepState();
-  const { goToStep, next, previous } = useMultiStepNavigation();
-
-  const isLast = activeStep === stepCount - 1;
-  const active = steps[activeStep];
+  const { steps, isLast, currentStepError } = useMultiStepState();
+  const {
+    getStepListProps,
+    getStepProps,
+    getPanelProps,
+    getPreviousButtonProps,
+    getNextButtonProps,
+    getCompleteButtonProps,
+    getErrorRegionProps,
+  } = useMultiStepA11y();
 
   return (
     <div className="multistep-container">
       <div className="multistep-component">
         <nav aria-label="Progress">
-          <ol className="multistep-top-nav">
-            {steps.map((step) => {
-              const isActive = step.index === activeStep;
-              return (
-                <li key={step.index} className="multistep-top-nav-step">
-                  <button
-                    id={step.tabId}
-                    type="button"
-                    className="multistep-step-button"
-                    aria-current={isActive ? "step" : undefined}
-                    onClick={() => goToStep(step.index)}
-                  >
-                    {step.title ?? step.index + 1}
-                  </button>
-                </li>
-              );
-            })}
+          <ol {...getStepListProps({ className: "multistep-top-nav" })}>
+            {steps.map((step) => (
+              <li key={step.index} className="multistep-top-nav-step">
+                <button
+                  {...getStepProps(step.index, {
+                    className: "multistep-step-button",
+                  })}
+                >
+                  {step.title ?? step.index + 1}
+                </button>
+              </li>
+            ))}
           </ol>
         </nav>
 
-        <div
-          id={active?.panelId}
-          role="region"
-          aria-labelledby={active?.tabId}
-          className="multistep-section"
-        >
-          {children}
+        <div {...getPanelProps({ className: "multistep-section" })}>{children}</div>
+
+        <div {...getErrorRegionProps({ className: "multistep-error" })}>
+          {currentStepError}
         </div>
 
         <div className="multistep-nav-buttons">
           <button
-            type="button"
-            onClick={previous}
-            disabled={activeStep === 0}
-            aria-label="Previous step"
-            className="multistep-button multistep-button-prev"
+            {...getPreviousButtonProps({
+              className: "multistep-button multistep-button-prev",
+            })}
           >
             &lsaquo;
           </button>
-          {!isLast && (
+          {isLast ? (
             <button
-              type="button"
-              onClick={next}
-              disabled={!currentStepValid}
-              aria-label="Next step"
-              className="multistep-button multistep-button-next"
+              {...getCompleteButtonProps({
+                className: "multistep-button multistep-button-complete",
+                "aria-label": "Finish",
+              })}
+            >
+              Finish
+            </button>
+          ) : (
+            <button
+              {...getNextButtonProps({
+                className: "multistep-button multistep-button-next",
+              })}
             >
               &rsaquo;
             </button>

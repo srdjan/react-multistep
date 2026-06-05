@@ -97,8 +97,11 @@ which is not valid, so the forward gate is blocked until a step reports `valid`.
 ignores out-of-range targets. For `target > active`, it requires every step in
 `[active, target)` to have status `valid`; if any is not, it calls
 `onValidationError(firstInvalidIndex)` and aborts. `next()` and `previous()` go
-through `goToStep`. Navigation callbacks read all dynamic values from a ref
-(`navRef`) so they stay referentially stable across renders.
+through `goToStep`. `complete()` finishes the wizard: when the active step is the
+last step and `valid` (`canComplete`), it fires `onComplete?()`; otherwise it
+calls `onValidationError(activeStep)`. All navigation callbacks (including
+`complete`) read every dynamic value from a ref (`navRef`) so they stay
+referentially stable across renders.
 
 ### Render mode (`keepMounted` / `unmount`)
 
@@ -110,8 +113,27 @@ through `goToStep`. Navigation callbacks read all dynamic values from a ref
   Consequence: every step's validity effect runs from mount (even inactive ones),
   in-step state is preserved across navigation, and the DOM contains all step
   subtrees at once.
-- **`unmount`**: only the active step is rendered (no wrapper div), still wrapped
-  in `StepIndexProvider`. Inactive state is discarded.
+- **`unmount`**: only the active step is rendered, still wrapped in
+  `StepIndexProvider`. When focus management is on (the default), the active step
+  is additionally wrapped in a `<div tabIndex={-1}>` for the focus target; with
+  `focusOnStepChange={false}` it renders bare with no wrapper div. Inactive state
+  is discarded.
+
+### Focus management
+
+`focusOnStepChange?: "panel" | "heading" | false` (default `"panel"`) moves focus
+when the active step changes (`src/MultiStep.tsx`). Focus is self-contained:
+MultiStep owns `activeWrapperRef` (the active step's wrapper `<div>`, which always
+carries `tabIndex={-1}`) and `prevActiveRef`, rather than routing through
+`getPanelProps`, so `keepMounted`'s several mounted panels never collide on one
+consumer ref. A `useLayoutEffect` keyed on `[activeChild, focusOnStepChange]`
+reads then immediately writes `prevActiveRef.current`, returning early when the
+active step did not change (guards initial mount and no-op re-renders so focus is
+never stolen). When `focusOnStepChange === "heading"` it focuses the first
+`h1`-`h6` inside the wrapper, falling back to the wrapper; `"panel"` (and any
+non-`false` value) focuses the wrapper itself; `false` skips focusing. In
+`keepMounted`, the active wrapper gets the ref + `tabIndex={-1}` while inactive
+wrappers keep their hidden treatment.
 
 ### The three context hooks
 
@@ -120,12 +142,47 @@ consumers can avoid re-rendering on state changes:
 
 - **`useMultiStep(): MultiStepApi`** - the full API.
 - **`useMultiStepState()`** - read-only slice: `activeStep`, `stepCount`, `steps`,
-  `currentStepValid`, `isStepValid`.
-- **`useMultiStepNavigation()`** - actions: `goToStep`, `next`, `previous`
-  (referentially stable).
+  `currentStepValid`, `isStepValid`, plus the derived fields `isFirst`, `isLast`,
+  `progress`, `canComplete`, `visitedSteps`, `completedSteps`, `currentStepError`.
+- **`useMultiStepNavigation()`** - actions: `goToStep`, `next`, `previous`,
+  `complete` (referentially stable).
 
 All three throw `use<Name> must be used within a MultiStep component` if used
 outside `MultiStep`.
+
+### Derived state fields
+
+Computed in `MultiStep.tsx` and surfaced on the state slice + full API:
+`isFirst` (`activeStep === 0`), `isLast` (`activeStep === stepCount - 1`),
+`progress` (`stepCount <= 1 ? 1 : activeStep / (stepCount - 1)`), `canComplete`
+(`isLast && currentStepValid`), `visitedSteps` (memoized `number[]` of indices
+with `status !== "pristine"`), `completedSteps` (memoized `number[]` of indices
+with `status === "valid"`), and `currentStepError` (the active step's
+`validity.message` when its status is `invalid`, else `undefined` - and `undefined`
+even when invalid if no message was reported). `complete` lives on the navigation
+slice, the rest on the state slice.
+
+### A11y prop-getters: `useMultiStepA11y`
+
+`useMultiStepA11y(): MultiStepA11y` (`src/MultiStepContext.tsx`) calls
+`useMultiStep()` internally (so it throws the same
+`useMultiStep must be used within a MultiStep component` outside a provider) and
+returns memoized prop-getters: `getStepListProps`, `getStepProps(index, ...)`,
+`getPanelProps`, `getPreviousButtonProps`, `getNextButtonProps`,
+`getCompleteButtonProps`, `getErrorRegionProps`. Each takes an optional `overrides`
+arg merged via the internal `mergeProps` helper: base `onClick` runs first then
+the override's, `className` is concatenated with a single space, `style` is shallow
+`{...base, ...override}`, every other override value wins, and when `overrides` is
+omitted the base object is returned by reference. The getters implement the wizard
+/ `aria-current` pattern, not `role="tab"`: the list is `role="list"` +
+`aria-label="Progress"`, the active step carries `aria-current="step"`, the panel
+is `role="region"` + `aria-labelledby` + `tabIndex={-1}`, the error region is
+`role="status"` `aria-live="polite"` `aria-atomic={true}`. `getStepProps` emits a
+`data-status` attribute (the step's `StepStatus`, typed via
+`StepButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & { "data-status"?: StepStatus }`)
+and disables a step via a local `canNavigateTo(index)` that mirrors the forward
+gate over `steps[].status`. `getCompleteButtonProps` sets no `aria-label`. The
+return type `MultiStepA11y` is exported as a type from the package index.
 
 `MultiStepProvider` takes both a `value: MultiStepApi` and a `report` channel.
 `StepIndexProvider`, `StepIndexContext`, and `ReportValidityContext` exist
@@ -147,14 +204,16 @@ base, so they are stable across renders and SSR-safe. Note: React 19 types
 ## Public API surface
 
 Runtime exports (`src/index.ts`): `MultiStep` (default), `useMultiStep`,
-`useMultiStepState`, `useMultiStepNavigation`, `useReportValidity`.
+`useMultiStepState`, `useMultiStepNavigation`, `useMultiStepA11y`,
+`useReportValidity`.
 
 Type exports: `MultiStepProps`, `StepComponentProps`, `StepValidity`,
-`StepStatus` (from `src/interfaces.ts`); `MultiStepApi`, `Step` (from
-`src/MultiStepContext.tsx`).
+`StepStatus` (from `src/interfaces.ts`); `MultiStepApi`, `Step`, `MultiStepA11y`
+(from `src/MultiStepContext.tsx`).
 
 `MultiStepProps`: `children`, `activeStep?`, `defaultStep?` (0),
-`mode?` (`"keepMounted"`), `onStepChange?`, `onValidationError?`.
+`mode?` (`"keepMounted"`), `onStepChange?`, `onValidationError?`,
+`onComplete?`, `focusOnStepChange?` (`"panel"`).
 
 ## CSS
 

@@ -664,4 +664,127 @@ describe("MultiStep", () => {
       expect(screen.getByText("Step 1")).toBeInTheDocument();
     });
   });
+
+  describe("Focus management (focusOnStepChange)", () => {
+    // A step with an always-valid report, a plain heading, and a context-driven
+    // Next button so a test can navigate by clicking inside the step content.
+    // The component is responsible for making the heading programmatically
+    // focusable when focusOnStepChange="heading".
+    const FocusStep = ({ title }: StepComponentProps<{ title: string }>) => {
+      const report = useReportValidity();
+      const { next } = useMultiStepNavigation();
+      useEffect(() => {
+        report({ status: "valid" });
+      }, [report]);
+      return (
+        <section>
+          <h2>{title}</h2>
+          <button type="button" aria-label={`advance-${title}`} onClick={next}>
+            go
+          </button>
+        </section>
+      );
+    };
+
+    // True iff `inner` is `el` or a descendant of it.
+    const within_ = (el: Element | null, inner: Element | null): boolean =>
+      el !== null && inner !== null && el.contains(inner);
+
+    it("moves focus to the active panel wrapper after navigating (default 'panel')", async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MultiStep mode="unmount">
+          <FocusStep title="One" />
+          <FocusStep title="Two" />
+        </MultiStep>
+      );
+
+      await user.click(screen.getByLabelText("advance-One"));
+
+      // Step 2 is active; the wrapper around its content received focus. The
+      // focused element is the tabIndex=-1 wrapper (a div), and it contains the
+      // active step's heading.
+      const focused = document.activeElement as HTMLElement;
+      expect(focused.getAttribute("tabindex")).toBe("-1");
+      expect(within_(focused, screen.getByText("Two"))).toBe(true);
+    });
+
+    it("focuses the heading inside the active step when focusOnStepChange='heading'", async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MultiStep mode="unmount" focusOnStepChange="heading">
+          <FocusStep title="One" />
+          <FocusStep title="Two" />
+        </MultiStep>
+      );
+
+      await user.click(screen.getByLabelText("advance-One"));
+
+      // The heading element of the now-active step receives focus directly.
+      const focused = document.activeElement as HTMLElement;
+      expect(focused.tagName).toBe("H2");
+      expect(focused.textContent).toBe("Two");
+      expect(focused.getAttribute("tabindex")).toBe("-1");
+    });
+
+    it("does not move focus when focusOnStepChange={false}", async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MultiStep mode="unmount" focusOnStepChange={false}>
+          <FocusStep title="One" />
+          <FocusStep title="Two" />
+        </MultiStep>
+      );
+
+      // Move focus to a known element first, then navigate. The trigger button
+      // unmounts with step 1, so afterward focus must NOT be on the new step's
+      // wrapper/heading: it falls back to the document body (no wrapper is even
+      // rendered in this mode).
+      const trigger = screen.getByLabelText("advance-One") as HTMLElement;
+      trigger.focus();
+      expect(document.activeElement).toBe(trigger);
+
+      await user.click(trigger);
+
+      // Step 2 is active but focus was not stolen onto its content.
+      const focused = document.activeElement;
+      expect(within_(screen.getByText("Two"), focused)).toBe(false);
+      // No focus-wrapper div (a div[tabindex="-1"]) is rendered around the step
+      // when focus management is off: the active child renders bare.
+      const hasFocusWrapper = (el: HTMLElement | null): boolean => {
+        let node = el;
+        while (node) {
+          if (node.tagName === "DIV" && node.getAttribute("tabindex") === "-1") return true;
+          node = node.parentElement;
+        }
+        return false;
+      };
+      expect(hasFocusWrapper(screen.getByText("Two") as HTMLElement)).toBe(false);
+    });
+
+    it("does not steal focus on initial mount", () => {
+      // Put focus on an external element, then mount the wizard. The mount-time
+      // layout effect must early-return (previousActive === activeChild), so
+      // focus stays where it was.
+      const outside = document.createElement("button");
+      outside.setAttribute("aria-label", "outside");
+      document.body.appendChild(outside);
+      outside.focus();
+      expect(document.activeElement).toBe(outside);
+
+      render(
+        <MultiStep mode="unmount">
+          <FocusStep title="One" />
+          <FocusStep title="Two" />
+        </MultiStep>
+      );
+
+      // Focus was not moved into the wizard on first render.
+      expect(document.activeElement).toBe(outside);
+      outside.remove();
+    });
+  });
 });

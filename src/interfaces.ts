@@ -47,4 +47,12 @@ export interface MultiStepProps {
   onStepChange?: (step: number) => void;
   /** Fired when the user tries to advance past an invalid step. */
   onValidationError?: (step: number) => void;
+  /** Fired when complete() succeeds on the last step. */
+  onComplete?: () => void;
+  /**
+   * Which element receives focus when the active step changes. "panel" (default)
+   * focuses the step's panel wrapper; "heading" focuses the first heading inside
+   * it (falling back to the wrapper); false disables focus management.
+   */
+  focusOnStepChange?: "panel" | "heading" | false;
 }

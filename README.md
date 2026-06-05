@@ -104,14 +104,16 @@ fully wired, accessible chrome and the `mode="unmount"` composition.
 
 ## MultiStep props
 
-| Prop                | Type                            | Default         | Description                                                          |
-| ------------------- | ------------------------------- | --------------- | ------------------------------------------------------------------- |
-| `children`          | `React.ReactNode`               | -               | Steps to render, one child per step. At least one is required.      |
-| `activeStep`        | `number`                        | uncontrolled    | Controlled active step index (0-based). Pair with `onStepChange`.   |
-| `defaultStep`       | `number`                        | `0`             | Starting step for uncontrolled mode.                                |
-| `mode`              | `"unmount" \| "keepMounted"`    | `"keepMounted"` | How inactive steps are rendered. See [Render mode](#render-mode).   |
-| `onStepChange`      | `(step: number) => void`        | `undefined`     | Fires whenever the active step changes (manual or programmatic).    |
-| `onValidationError` | `(step: number) => void`        | `undefined`     | Called with the first invalid step index when a forward jump is gated. |
+| Prop                | Type                                | Default         | Description                                                          |
+| ------------------- | ----------------------------------- | --------------- | ------------------------------------------------------------------- |
+| `children`          | `React.ReactNode`                   | -               | Steps to render, one child per step. At least one is required.      |
+| `activeStep`        | `number`                            | uncontrolled    | Controlled active step index (0-based). Pair with `onStepChange`.   |
+| `defaultStep`       | `number`                            | `0`             | Starting step for uncontrolled mode.                                |
+| `mode`              | `"unmount" \| "keepMounted"`        | `"keepMounted"` | How inactive steps are rendered. See [Render mode](#render-mode).   |
+| `onStepChange`      | `(step: number) => void`            | `undefined`     | Fires whenever the active step changes (manual or programmatic).    |
+| `onValidationError` | `(step: number) => void`            | `undefined`     | Called with the first invalid step index when a forward jump is gated. |
+| `onComplete`        | `() => void`                        | `undefined`     | Fires when `complete()` succeeds on the last step. See [Completion](#completion). |
+| `focusOnStepChange` | `"panel" \| "heading" \| false`     | `"panel"`       | Where focus moves on step change. See [Focus management](#focus-management). |
 
 ### Render mode
 
@@ -187,13 +189,17 @@ Any descendant of `MultiStep` can read wizard state and drive navigation:
 - **`useMultiStep(): MultiStepApi`** - the full API (state + navigation) in one
   object. Convenient for chrome that needs everything.
 - **`useMultiStepState()`** - read-only state slice: `activeStep`, `stepCount`,
-  `steps`, `currentStepValid`, `isStepValid`. Re-renders only when state changes.
+  `steps`, `currentStepValid`, `isStepValid`, plus the derived fields `isFirst`,
+  `isLast`, `progress`, `canComplete`, `visitedSteps`, `completedSteps`, and
+  `currentStepError`. Re-renders only when state changes.
 - **`useMultiStepNavigation()`** - navigation actions: `goToStep`, `next`,
-  `previous`. Referentially stable, so chrome that only navigates can skip
-  re-rendering on state changes.
+  `previous`, `complete`. Referentially stable, so chrome that only navigates can
+  skip re-rendering on state changes.
 
-A fourth hook, **`useReportValidity()`**, is for step components rather than
-chrome; see [The step contract](#the-step-contract).
+Two more hooks round out the surface: **`useReportValidity()`** is for step
+components rather than chrome (see [The step contract](#the-step-contract)), and
+**`useMultiStepA11y()`** returns prop-getters that wire the accessible chrome for
+you (see [Accessible chrome with prop-getters](#accessible-chrome-with-prop-getters)).
 
 `MultiStepApi` (the return type of `useMultiStep`):
 
@@ -204,11 +210,29 @@ interface MultiStepApi {
   steps: Step[];
   currentStepValid: boolean;
   isStepValid: (index: number) => boolean;
+  isFirst: boolean; // activeStep === 0
+  isLast: boolean; // activeStep === stepCount - 1
+  progress: number; // 0..1, 1 when there is one step or fewer
+  canComplete: boolean; // isLast && currentStepValid
+  visitedSteps: number[]; // indices with status !== "pristine"
+  completedSteps: number[]; // indices with status === "valid"
+  currentStepError?: string; // active step's invalid message, else undefined
   goToStep: (step: number) => void;
   next: () => void;
   previous: () => void;
+  complete: () => void;
 }
 ```
+
+The derived read-only fields (`isFirst`, `isLast`, `progress`, `canComplete`,
+`visitedSteps`, `completedSteps`, `currentStepError`) live on the state slice
+returned by `useMultiStepState()`; `complete` lives on the navigation slice
+returned by `useMultiStepNavigation()`. `progress` is `activeStep / (stepCount - 1)`,
+and `1` for a single-step (or zero-step) wizard. `currentStepError` is a string
+only when the active step's status is `invalid` (its `validity.message`, which
+may itself be `undefined`); every other status yields `undefined`. `visitedSteps`
+and `completedSteps` are derived from `steps[].status`: visited is
+`status !== "pristine"`, completed is `status === "valid"`.
 
 Each entry in `steps` is a `Step`:
 
@@ -230,8 +254,8 @@ visited: `valid`/`invalid` mirror the reported status; a `pending` step is
 from a single `useId()` base, so they are stable across renders and SSR-safe -
 read them, do not hardcode them.
 
-The three chrome hooks throw if used outside a `MultiStep` component;
-`useReportValidity` throws if used outside a step subtree.
+The three chrome hooks (and `useMultiStepA11y`) throw if used outside a
+`MultiStep` component; `useReportValidity` throws if used outside a step subtree.
 
 ## The wizard pattern (tabs and panels)
 
@@ -329,6 +353,118 @@ function App() {
 The scoped reset and focus styles in the optional stylesheet only apply inside
 an element with the `multistep-container` class, so keep that class on your
 outer wrapper.
+
+## Accessible chrome with prop-getters
+
+The hand-rolled aria above is correct but verbose, and easy to get subtly wrong.
+**`useMultiStepA11y()`** returns a set of prop-getters that build the accessible
+chrome for you. Each getter returns a typed props object you spread onto an
+element; the getters compose your own handlers and classes on top (your `onClick`
+runs after the built-in one, `className` is concatenated, `style` is shallow
+merged, every other override wins). The getters implement the wizard /
+`aria-current` pattern, not `role="tab"`/`role="tablist"`: the step list is a
+`role="list"` labelled `Progress`, the active step carries `aria-current="step"`,
+and the panel is a `role="region"` labelled by its step button.
+
+```tsx
+import MultiStep, { useMultiStepA11y, useMultiStepState } from "react-multistep";
+
+function WizardChrome({ children }: { children: React.ReactNode }) {
+  const a11y = useMultiStepA11y();
+  const { steps, activeStep } = useMultiStepState();
+
+  return (
+    <div className="multistep-container">
+      <ol {...a11y.getStepListProps()} className="multistep-top-nav">
+        {steps.map((step) => (
+          <li key={step.index} className="multistep-top-nav-step">
+            <button
+              {...a11y.getStepProps(step.index)}
+              className="multistep-step-button"
+            >
+              {step.title ?? `Step ${step.index + 1}`}
+            </button>
+          </li>
+        ))}
+      </ol>
+
+      <div {...a11y.getPanelProps()} className="multistep-section">
+        {children}
+      </div>
+
+      <p {...a11y.getErrorRegionProps()}>{steps[activeStep]?.status === "invalid" ? "Fix the highlighted fields" : ""}</p>
+
+      <div className="multistep-nav-buttons">
+        <button {...a11y.getPreviousButtonProps()}>Prev</button>
+        <button {...a11y.getNextButtonProps()}>Next</button>
+        <button {...a11y.getCompleteButtonProps()}>Done</button>
+      </div>
+    </div>
+  );
+}
+```
+
+The getters and what they set:
+
+| Getter                       | Element        | What it wires                                                                                                                   |
+| ---------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `getStepListProps(overrides?)`     | the step list  | `role="list"`, `aria-label="Progress"`.                                                                                   |
+| `getStepProps(index, overrides?)`  | a step button  | `id={tabId}`, `type="button"`, `aria-current` (`"step"` on the active step, else absent), `aria-controls={panelId}`, `data-status` (the step's `StepStatus`), `disabled` when the forward gate blocks that step, and an `onClick` that calls `goToStep(index)`. |
+| `getPanelProps(overrides?)`        | the active panel | `id={panelId}`, `role="region"`, `aria-labelledby={tabId}`, `tabIndex={-1}`.                                            |
+| `getPreviousButtonProps(overrides?)` | the Prev button | `type="button"`, `aria-label="Previous step"`, `disabled` when on the first step, `onClick` calls `previous()`.        |
+| `getNextButtonProps(overrides?)`   | the Next button | `type="button"`, `aria-label="Next step"`, `disabled` when the current step is not valid or already the last step, `onClick` calls `next()`. |
+| `getCompleteButtonProps(overrides?)` | the Done button | `type="button"`, `disabled` unless `canComplete`, `onClick` calls `complete()`. No `aria-label` is set - supply your own label or text. |
+| `getErrorRegionProps(overrides?)`  | a live region   | `role="status"`, `aria-live="polite"`, `aria-atomic={true}` - pair it with `currentStepError` for an announced message. |
+
+`getStepProps` disables a step button using the same forward-gate semantics as
+navigation: stepping back or to the active step is always allowed; jumping ahead
+to index `i` requires every step in `[activeStep, i)` to be `valid`. The
+`data-status` attribute carries the step's `StepStatus` so you can style
+`pristine`/`visited`/`valid`/`invalid` states in CSS. `useMultiStepA11y` must be
+called inside a `MultiStep` subtree; outside one it throws
+`useMultiStep must be used within a MultiStep component`.
+
+## Completion
+
+`complete()` (on the navigation slice and wired by `getCompleteButtonProps`)
+finishes the wizard. It fires `onComplete()` only when the active step is the last
+step and that step is `valid` (`canComplete` is `true`); otherwise it calls
+`onValidationError(activeStep)` and does nothing else. Like `next` / `previous`
+it is referentially stable.
+
+```tsx
+function App() {
+  return (
+    <MultiStep mode="unmount" onComplete={() => submitForm()}>
+      <AccountStep title="Account" />
+      {/* ...more steps */}
+    </MultiStep>
+  );
+}
+```
+
+Read `canComplete` from `useMultiStepState()` to drive a submit button's enabled
+state, or let `getCompleteButtonProps` set `disabled` for you.
+
+## Focus management
+
+When the active step changes, MultiStep moves focus so keyboard and screen-reader
+users land on the new step instead of being stranded on the button they clicked.
+`focusOnStepChange` controls the target:
+
+- **`"panel"` (default)** focuses the active step's panel wrapper (a `tabIndex={-1}`
+  container MultiStep renders around the active step).
+- **`"heading"`** focuses the first heading (`h1`-`h6`) inside the active step,
+  falling back to the panel wrapper if the step has no heading.
+- **`false`** disables focus management entirely.
+
+Focus is self-contained inside MultiStep: it owns the wrapper ref rather than
+routing through `getPanelProps`, so `keepMounted`'s several mounted panels never
+collide on one ref. Focus moves before paint (a layout effect) and is never
+stolen on the initial mount - only on an actual step change. Note that in
+`unmount` mode the default `"panel"` setting wraps the active step in an extra
+`<div tabIndex={-1}>`; pass `focusOnStepChange={false}` if you need the active
+step rendered without that wrapper.
 
 ## Styling with optional CSS
 

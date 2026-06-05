@@ -9,3 +9,20 @@ html {
   padding-left: '2rem';
   font-size: 'small';
 }
+
+/* Error region rendered by getErrorRegionProps in WizardChrome. Empty when the
+   active step is valid; styled here because it is example-specific chrome, not
+   part of the shipped stylesheet. */
+.multistep-error {
+  min-height: 1.25rem;
+  margin: 0 var(--multistep-spacing-md, 1rem);
+  color: #c0392b;
+  font-size: 0.9rem;
+}
+
+.multistep-button-complete {
+  inline-size: auto;
+  padding-inline: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}

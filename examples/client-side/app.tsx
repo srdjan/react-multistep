@@ -14,9 +14,23 @@ function App() {
   // it can read the MultiStep context). With mode="unmount" only the active step
   // - and therefore a single chrome with a single set of useId-derived
   // tabId/panelId values - is in the DOM at a time, keeping the ARIA ids unique.
+  //
+  // onComplete fires when the user presses Finish on the last step and that step
+  // is valid (canComplete). The Finish button comes from getCompleteButtonProps,
+  // which gates itself on canComplete.
+  const handleComplete = () => {
+    console.log("Wizard completed");
+    window.alert("All steps complete. Thanks!");
+  };
+
   return (
     <div className="container">
-      <MultiStep activeStep={activeStep} onStepChange={setActiveStep} mode="unmount">
+      <MultiStep
+        activeStep={activeStep}
+        onStepChange={setActiveStep}
+        onComplete={handleComplete}
+        mode="unmount"
+      >
         <StepOne title="Step 1" />
         <StepTwo title="Step 2" />
         <StepThree title="Step 3" />

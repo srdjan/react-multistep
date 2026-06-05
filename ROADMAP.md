@@ -5,12 +5,26 @@ captures improvement opportunities for the v8 line before it ships, plus work to
 defer to later minors.
 
 > **Milestone 1 (the six "settle before ship" foundations + CI) is implemented and
-> green** (typecheck / lint / 40 tests / build / `npm pack` all pass): React-19-only
-> floor (`^19.2.0`), `useReportValidity` replacing the `cloneElement`/`signalParent`
-> injection, the structured `StepValidity` union, `keepMounted` (default) + persisted
-> per-step lifecycle, `useId`-derived `tabId`/`panelId` step metadata, the scoped
-> headless CSS split (`tokens.css` / `chrome.css`), and a `.github/workflows/ci.yml`
-> gate. The additive and deferred buckets below are not yet started.
+> green**: React-19-only floor (`^19.2.0`), `useReportValidity` replacing the
+> `cloneElement`/`signalParent` injection, the structured `StepValidity` union,
+> `keepMounted` (default) + persisted per-step lifecycle, `useId`-derived
+> `tabId`/`panelId` step metadata, the scoped headless CSS split (`tokens.css` /
+> `chrome.css`), and a `.github/workflows/ci.yml` gate.
+>
+> **Milestone 2 (the additive accessibility + completion layer) is implemented and
+> green** (typecheck / lint / 63 tests / build all pass): `useMultiStepA11y()`
+> prop-getters (`getStepListProps` / `getStepProps` / `getPanelProps` /
+> `getPreviousButtonProps` / `getNextButtonProps` / `getCompleteButtonProps` /
+> `getErrorRegionProps`) wiring the wizard/`aria-current` pattern; `onComplete` +
+> `complete()` + `canComplete` + `isFirst`/`isLast`/`progress`/`visitedSteps`/
+> `completedSteps`/`currentStepError`; a live-region error announcer; and
+> self-contained focus management (`focusOnStepChange`). The example chrome now runs
+> entirely on the prop-getters.
+>
+> **Remaining (Milestone 3, not yet started):** internal hardening (retire the
+> `navRef` snapshot via `useEffectEvent`, collapse the controlled-sync/`SYNC_STEPS`
+> effects), type-level tests, `prefers-reduced-motion`, the async `beforeStepChange`
+> guard, plus the deferred bucket below.
 
 Because v8 is unreleased, the cost of breaking changes is inverted: breaking and
 foundational changes are nearly free to make now and become a full major bump once
