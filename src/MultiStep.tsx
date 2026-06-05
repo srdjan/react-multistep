@@ -7,7 +7,13 @@ import React, {
   useRef,
   useState,
 } from "react";
-import type { MultiStepProps, StepStatus, StepValidity } from "./interfaces.js";
+import type {
+  MultiStepProps,
+  StepChangeEvent,
+  StepStatus,
+  StepValidity,
+} from "./interfaces.js";
+import { firstBlockingStep } from "./gate.js";
 import {
   MultiStepApi,
   MultiStepProvider,
@@ -113,8 +119,10 @@ const multiStepReducer = (
     }
     case "SET_STEP_VALIDITY": {
       const { index, validity } = action;
+      // noUncheckedIndexedAccess: an out-of-range (or negative) index reads as
+      // undefined, so this single check also covers the bounds.
       const current = state.validity[index];
-      if (index >= state.validity.length || current === undefined) return state;
+      if (current === undefined) return state;
       if (sameValidity(current, validity)) return state;
       const nextValidity = [...state.validity];
       nextValidity[index] = validity;
@@ -204,6 +212,17 @@ export default function MultiStep(props: MultiStepProps) {
   const { validity, visited } = state;
   const currentStepValid = validity[activeChild]?.status === "valid";
 
+  // Derived, read-only scalar values surfaced on the state slice. Computed before
+  // the nav snapshot so canComplete has a single definition shared by the
+  // complete() action and the getCompleteButtonProps disabled state.
+  const isFirst = activeChild === 0;
+  const isLast = activeChild === totalSteps - 1;
+  const progress = totalSteps <= 1 ? 1 : activeChild / (totalSteps - 1);
+  const canComplete = isLast && currentStepValid;
+  const activeValidity = validity[activeChild];
+  const currentStepError =
+    activeValidity?.status === "invalid" ? activeValidity.message : undefined;
+
   // Stable ids for tab/panel aria wiring, derived from a single useId base.
   const idBase = useId();
 
@@ -218,7 +237,7 @@ export default function MultiStep(props: MultiStepProps) {
     validity,
     totalSteps,
     isControlled,
-    isNavigating,
+    canComplete,
     onStepChange,
     onValidationError,
     onComplete,
@@ -227,10 +246,10 @@ export default function MultiStep(props: MultiStepProps) {
   const navRef = useRef(nav);
   navRef.current = nav;
 
-  // Synchronous overlap latch: navRef.current.isNavigating is the useState mirror
-  // that only refreshes after a render commit, so two goToStep calls in one React
-  // batch would both read it as false and both run the guard. This ref flips
-  // synchronously, dropping the second same-tick call before it can start.
+  // Synchronous overlap latch: the isNavigating useState mirror only refreshes
+  // after a render commit, so two goToStep calls in one React batch would both
+  // read it as false and both run the guard. This ref flips synchronously,
+  // dropping the second same-tick call before it can start.
   const navigatingRef = useRef(false);
 
   const isStepValid = useCallback(
@@ -250,11 +269,10 @@ export default function MultiStep(props: MultiStepProps) {
     // Forward gate: every step between the current one and the target (exclusive)
     // must be valid. Backward navigation is always allowed.
     if (step > from) {
-      for (let i = from; i < step; i += 1) {
-        if (validity[i]?.status !== "valid") {
-          onValidationError?.(i);
-          return;
-        }
+      const blocked = firstBlockingStep(from, step, (i) => validity[i]?.status === "valid");
+      if (blocked !== null) {
+        onValidationError?.(blocked);
+        return;
       }
     }
 
@@ -269,7 +287,7 @@ export default function MultiStep(props: MultiStepProps) {
       return;
     }
 
-    const direction: "next" | "previous" | "jump" =
+    const direction: StepChangeEvent["direction"] =
       step === from + 1 ? "next" : step === from - 1 ? "previous" : "jump";
 
     // Ref is the synchronous source of truth for overlap; the useState mirror
@@ -295,10 +313,8 @@ export default function MultiStep(props: MultiStepProps) {
 
   // Referentially stable like next/previous: reads everything from navRef.
   const complete = useCallback(() => {
-    const { activeChild, validity, totalSteps, onComplete, onValidationError } = navRef.current;
-    const onLast = activeChild === totalSteps - 1;
-    const valid = validity[activeChild]?.status === "valid";
-    if (onLast && valid) {
+    const { canComplete, activeChild, onComplete, onValidationError } = navRef.current;
+    if (canComplete) {
       onComplete?.();
     } else {
       onValidationError?.(activeChild);
@@ -323,11 +339,8 @@ export default function MultiStep(props: MultiStepProps) {
     [childrenArray, activeChild, validity, visited, idBase]
   );
 
-  // Derived, read-only values surfaced on the state slice.
-  const isFirst = activeChild === 0;
-  const isLast = activeChild === totalSteps - 1;
-  const progress = totalSteps <= 1 ? 1 : activeChild / (totalSteps - 1);
-  const canComplete = isLast && currentStepValid;
+  // Index lists derived from the memoized steps array (kept here so they recompute
+  // only when steps changes).
   const visitedSteps = useMemo(
     () => steps.filter((step) => step.status !== "pristine").map((step) => step.index),
     [steps]
@@ -336,9 +349,6 @@ export default function MultiStep(props: MultiStepProps) {
     () => steps.filter((step) => step.status === "valid").map((step) => step.index),
     [steps]
   );
-  const activeValidity = validity[activeChild];
-  const currentStepError =
-    activeValidity?.status === "invalid" ? activeValidity.message : undefined;
 
   const contextValue = useMemo<MultiStepApi>(
     () => ({
@@ -395,12 +405,14 @@ export default function MultiStep(props: MultiStepProps) {
     if (focusOnStepChange === false) return;
     const wrapper = activeWrapperRef.current;
     if (!wrapper) return;
-    if (focusOnStepChange === "heading") {
-      const heading = wrapper.querySelector<HTMLElement>("h1, h2, h3, h4, h5, h6");
-      focusHeadingOrWrapper(heading, wrapper);
-    } else {
-      wrapper.focus();
-    }
+    // "heading" looks for a heading to focus (falling back to the wrapper inside
+    // the helper); "panel" / any other truthy value focuses the wrapper, which is
+    // exactly the helper's no-heading path.
+    const heading =
+      focusOnStepChange === "heading"
+        ? wrapper.querySelector<HTMLElement>("h1, h2, h3, h4, h5, h6")
+        : null;
+    focusHeadingOrWrapper(heading, wrapper);
   }, [activeChild, focusOnStepChange]);
 
   const manageFocus = focusOnStepChange !== false;

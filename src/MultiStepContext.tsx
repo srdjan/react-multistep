@@ -1,5 +1,6 @@
 import React from "react";
 import type { StepStatus, StepValidity } from "./interfaces.js";
+import { firstBlockingStep } from "./gate.js";
 
 /** Metadata describing a single step, as seen by chrome/consumer components. */
 export interface Step {
@@ -260,17 +261,21 @@ export function useMultiStepA11y(): MultiStepA11y {
     complete,
   } = api;
 
-  // Forward jump blocked if any step in [activeStep, index) is not valid; back or
-  // staying at/<= active is always allowed.
-  const canNavigateTo = React.useCallback(
-    (index: number): boolean => {
-      if (index <= activeStep) return true;
-      for (let i = activeStep; i < index; i += 1) {
-        if (steps[i]?.status !== "valid") return false;
-      }
-      return true;
-    },
+  // Compute the gate boundary once: the first step at/after the active one that
+  // is not valid (null if all are). Rendering a full step list then costs O(n)
+  // total instead of re-scanning the range inside every getStepProps call.
+  const firstBlocked = React.useMemo(
+    () => firstBlockingStep(activeStep, steps.length, (i) => steps[i]?.status === "valid"),
     [steps, activeStep]
+  );
+
+  // Forward jump blocked if any step in [activeStep, index) is not valid; back or
+  // staying at/<= active is always allowed. Mirrors the goToStep forward gate via
+  // the same firstBlockingStep helper so the two can never disagree.
+  const canNavigateTo = React.useCallback(
+    (index: number): boolean =>
+      index <= activeStep || firstBlocked === null || index <= firstBlocked,
+    [activeStep, firstBlocked]
   );
 
   return React.useMemo<MultiStepA11y>(
