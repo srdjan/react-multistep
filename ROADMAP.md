@@ -8,7 +8,7 @@ defer to later minors.
 > green**: React-19-only floor (`^19.2.0`), `useReportValidity` replacing the
 > `cloneElement`/`signalParent` injection, the structured `StepValidity` union,
 > `keepMounted` (default) + persisted per-step lifecycle, `useId`-derived
-> `tabId`/`panelId` step metadata, the scoped headless CSS split (`tokens.css` /
+> `stepId`/`panelId` step metadata, the scoped headless CSS split (`tokens.css` /
 > `chrome.css`), and a `.github/workflows/ci.yml` gate.
 >
 > **Milestone 2 (the additive accessibility + completion layer) is implemented and
@@ -84,7 +84,7 @@ region, and should ship as one accessibility layer.
 | Recommendation | Breaking | Effort | Priority |
 | --- | --- | --- | --- |
 | **Ship accessible prop-getters** - `getStepListProps` / `getStepProps` / `getPanelProps` / `getNextButtonProps` / `getPreviousButtonProps` (Downshift / React-Aria / Radix style). Both current references (README + `WizardChrome.tsx`) hand-assemble ARIA and get it wrong identically (no id / `aria-controls` / `aria-labelledby` linkage, no roving tabindex, no keyboard handling). Additive; carries the `useId`, focus, and live-region wiring below. | minor | L | **P0** |
-| **Replace the broken tabs pattern with the wizard / `aria-current` pattern**, wired with `useId`. Only `currentChild` mounts, so `tablist`/`tab`/`tabpanel` can never conform (no panel for `aria-controls` to point at; nav is gated + linear, the opposite of freely-reachable tabs). Reframe the canonical chrome around a progress nav with `aria-current="step"`, drop `role="tab"` / `aria-selected`, and have the library generate stable `useId`-derived `tabId` / `panelId` on `Step` metadata so consumers can link tab -> panel correctly. | major | M | **P0** |
+| **Replace the broken tabs pattern with the wizard / `aria-current` pattern**, wired with `useId`. Only `currentChild` mounts, so `tablist`/`tab`/`tabpanel` can never conform (no panel for `aria-controls` to point at; nav is gated + linear, the opposite of freely-reachable tabs). Reframe the canonical chrome around a progress nav with `aria-current="step"`, drop `role="tab"` / `aria-selected`, and have the library generate stable `useId`-derived `stepId` / `panelId` on `Step` metadata so consumers can link step -> panel correctly. | major | M | **P0** |
 | **Manage focus on step change** - `focusOnStepChange?: 'panel' \| 'heading' \| false` (default `'panel'`) plus a returned `panelRef`. Today the focused element unmounts on every transition, dropping keyboard / screen-reader users to document start - a WCAG 2.4.3 Focus Order failure on every step. Rides on the `getPanelProps()` ref. | minor | M | **P0** |
 | **Live-region error announcer** - `getErrorRegionProps() -> { role: 'status', 'aria-live': 'polite', 'aria-atomic': true }`. A blocked advance only disables Next and fires `onValidationError(index)` with no text, so screen-reader users get no signal about why navigation was refused. Pairs with the structured validation result in Theme 2 (one supplies the text, this the channel). | minor | M | **P0** |
 | **Derived navigation helpers** on the state slice - `isFirst`, `isLast`, `progress`, `visitedSteps`, `completedSteps`. Every consumer recomputes `isLast` / first-step-disable today and has no way to build a progress bar or breadcrumb. Keep them on the state slice so nav-only consumers retain re-render isolation. | minor | S | **P1** |

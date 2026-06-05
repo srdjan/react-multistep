@@ -23,7 +23,7 @@ import { useMultiStepState, useMultiStepA11y, useReducedMotion } from "react-mul
  *
  * Why mode="unmount" is required (set in app.tsx): the chrome is rendered
  * INSIDE each step so it can read the MultiStep context. Each chrome calls the
- * getters, which emit the step's useId-derived tabId/panelId. Keeping every
+ * getters, which emit the step's useId-derived stepId/panelId. Keeping every
  * step mounted would render four chromes at once, duplicating those ARIA ids
  * (and four step lists/panels). Unmounting inactive steps guarantees a single
  * chrome - and a single, unique set of ids - in the DOM at any time.

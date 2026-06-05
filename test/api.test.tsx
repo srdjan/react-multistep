@@ -140,18 +140,18 @@ describe("useMultiStep() shape", () => {
     );
 
     const [first, second] = getApi().steps;
-    // index / isActive / status / isValid / title / tabId / panelId
+    // index / isActive / status / isValid / title / stepId / panelId
     expect(first!.index).toBe(0);
     expect(first!.isActive).toBe(true);
     expect(second!.isActive).toBe(false);
     // Reported valid -> status "valid" and the derived isValid flag agrees.
     expect(first!.status).toBe("valid");
     expect(first!.isValid).toBe(first!.status === "valid");
-    // ids come from useId: assert presence + tab/panel relationship, not literals.
-    expect(typeof first!.tabId).toBe("string");
-    expect(first!.tabId.length > 0).toBe(true);
+    // ids come from useId: assert presence + step/panel relationship, not literals.
+    expect(typeof first!.stepId).toBe("string");
+    expect(first!.stepId.length > 0).toBe(true);
     expect(first!.panelId.length > 0).toBe(true);
-    expect(first!.tabId).not.toBe(second!.tabId);
+    expect(first!.stepId).not.toBe(second!.stepId);
     expect(first!.panelId).not.toBe(second!.panelId);
   });
 
@@ -437,7 +437,7 @@ describe("useMultiStepA11y() getters", () => {
     expect(active["aria-current"]).toBe("step");
     expect(other["aria-current"]).toBe(undefined);
 
-    // id is the step's tabId; aria-controls is its panelId; data-status its status.
+    // id is the step's stepId; aria-controls is its panelId; data-status its status.
     expect(typeof active.id).toBe("string");
     expect((active.id as string).length > 0).toBe(true);
     expect(typeof active["aria-controls"]).toBe("string");

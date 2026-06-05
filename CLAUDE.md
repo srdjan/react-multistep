@@ -209,11 +209,11 @@ index.
 ### Step metadata
 
 Each `Step` (`src/MultiStepContext.tsx`): `{ index, isActive, status, isValid,
-title?, tabId, panelId }`. `status` is `StepStatus` (`"pristine" | "visited" |
+title?, stepId, panelId }`. `status` is `StepStatus` (`"pristine" | "visited" |
 "valid" | "invalid"`); it derives from the reported validity plus visited state
 (`valid`/`invalid` mirror the report; `pending` -> `visited` if landed on else
-`pristine`). `isValid` is derived (`status === "valid"`). `tabId` and `panelId`
-are `${base}-tab-${index}` / `${base}-panel-${index}` from a single `useId()`
+`pristine`). `isValid` is derived (`status === "valid"`). `stepId` and `panelId`
+are `${base}-step-${index}` / `${base}-panel-${index}` from a single `useId()`
 base, so they are stable across renders and SSR-safe. Note: React 19 types
 `element.props` as `unknown`; `readTitle()` narrows the optional `title` with an
 `in` check and a typed cast (never `any`).

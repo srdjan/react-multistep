@@ -227,6 +227,12 @@ export default function MultiStep(props: MultiStepProps) {
   const navRef = useRef(nav);
   navRef.current = nav;
 
+  // Synchronous overlap latch: navRef.current.isNavigating is the useState mirror
+  // that only refreshes after a render commit, so two goToStep calls in one React
+  // batch would both read it as false and both run the guard. This ref flips
+  // synchronously, dropping the second same-tick call before it can start.
+  const navigatingRef = useRef(false);
+
   const isStepValid = useCallback(
     (index: number) => navRef.current.validity[index]?.status === "valid",
     []
@@ -235,10 +241,11 @@ export default function MultiStep(props: MultiStepProps) {
   // Fire-and-forget: the optional async guard runs inside, the public signature
   // stays (step: number) => void. Returns false / throws -> the change aborts.
   const goToStep = useCallback((step: number) => {
-    const { activeChild: from, validity, totalSteps, isNavigating, onValidationError, beforeStepChange } =
+    // Synchronous overlap drop: the ref flips before the await below and clears in
+    // the finally, so a second same-tick call returns here immediately.
+    if (navigatingRef.current) return;
+    const { activeChild: from, validity, totalSteps, onValidationError, beforeStepChange } =
       navRef.current;
-    // Ignore overlapping calls while an async guard is in flight.
-    if (isNavigating) return;
     if (step < 0 || step >= totalSteps) return;
     // Forward gate: every step between the current one and the target (exclusive)
     // must be valid. Backward navigation is always allowed.
@@ -265,6 +272,9 @@ export default function MultiStep(props: MultiStepProps) {
     const direction: "next" | "previous" | "jump" =
       step === from + 1 ? "next" : step === from - 1 ? "previous" : "jump";
 
+    // Ref is the synchronous source of truth for overlap; the useState mirror
+    // surfaces isNavigating to the UI via context. Both flip on, both clear off.
+    navigatingRef.current = true;
     setIsNavigating(true);
     void (async () => {
       try {
@@ -274,6 +284,7 @@ export default function MultiStep(props: MultiStepProps) {
       } catch {
         // A thrown/rejected guard aborts the change.
       } finally {
+        navigatingRef.current = false;
         setIsNavigating(false);
       }
     })();
@@ -305,7 +316,7 @@ export default function MultiStep(props: MultiStepProps) {
           status,
           isValid: status === "valid",
           title: readTitle(child),
-          tabId: `${idBase}-tab-${index}`,
+          stepId: `${idBase}-step-${index}`,
           panelId: `${idBase}-panel-${index}`,
         };
       }),

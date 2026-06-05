@@ -9,9 +9,9 @@ export interface Step {
   /** Convenience flag: true iff status === "valid". */
   isValid: boolean;
   title?: React.ReactNode;
-  /** Stable id for the step's tab/indicator element (aria wiring). */
-  tabId: string;
-  /** Stable id for the step's panel element (aria wiring). */
+  /** Stable id for the step indicator/button element. */
+  stepId: string;
+  /** Stable id for the step panel element. */
   panelId: string;
 }
 
@@ -281,7 +281,7 @@ export function useMultiStepA11y(): MultiStepA11y {
         const step = steps[index];
         return mergeProps<StepButtonProps>(
           {
-            id: step?.tabId,
+            id: step?.stepId,
             type: "button",
             "aria-current": index === activeStep ? "step" : undefined,
             "aria-controls": step?.panelId,
@@ -298,7 +298,7 @@ export function useMultiStepA11y(): MultiStepA11y {
           {
             id: step?.panelId,
             role: "region",
-            "aria-labelledby": step?.tabId,
+            "aria-labelledby": step?.stepId,
             tabIndex: -1,
           },
           overrides

@@ -12,6 +12,7 @@ import {
 } from "./harness";
 import userEvent from "./harness";
 import React, { useEffect } from "react";
+import { renderToString } from "react-dom/server";
 import MultiStep from "../src/MultiStep";
 import {
   useMultiStep,
@@ -61,7 +62,7 @@ const WizardChrome = ({ children }: { children: React.ReactNode }) => {
               <button
                 role="tab"
                 type="button"
-                id={step.tabId}
+                id={step.stepId}
                 aria-controls={step.panelId}
                 aria-selected={isActive}
                 onClick={() => goToStep(step.index)}
@@ -72,7 +73,7 @@ const WizardChrome = ({ children }: { children: React.ReactNode }) => {
           );
         })}
       </ol>
-      <div role="tabpanel" id={active?.panelId} aria-labelledby={active?.tabId}>
+      <div role="tabpanel" id={active?.panelId} aria-labelledby={active?.stepId}>
         {children}
       </div>
       <div style={{ marginTop: "1rem" }}>
@@ -598,9 +599,9 @@ describe("MultiStep", () => {
       const tabs = screen.getAllByRole("tab");
       // ids come from useId (do not hardcode the literal): assert the
       // relationship/uniqueness, not the exact string.
-      const tabId = tabs[0]!.getAttribute("id");
+      const stepId = tabs[0]!.getAttribute("id");
       const controls = tabs[0]!.getAttribute("aria-controls");
-      expect(typeof tabId === "string" && tabId.length > 0).toBe(true);
+      expect(typeof stepId === "string" && stepId.length > 0).toBe(true);
       expect(typeof controls === "string" && controls!.length > 0).toBe(true);
       expect(tabs[0]!.getAttribute("aria-controls")).not.toBe(
         tabs[1]!.getAttribute("aria-controls")
@@ -804,6 +805,54 @@ describe("MultiStep", () => {
       // Focus was not moved into the wizard on first render.
       expect(document.activeElement).toBe(outside);
       outside.remove();
+    });
+
+    it("moves focus to the active step wrapper after navigating in default keepMounted mode", async () => {
+      const user = userEvent.setup();
+
+      // No `mode` prop -> default keepMounted: every step stays mounted, each in
+      // its own wrapper div, and the active wrapper carries tabIndex=-1 + the
+      // focus ref. This covers the default mode, which had no focus test (the
+      // existing focus tests all force mode="unmount").
+      render(
+        <MultiStep>
+          <FocusStep title="One" />
+          <FocusStep title="Two" />
+        </MultiStep>
+      );
+
+      // Advance from inside step One's content (its Next button drives next()).
+      await user.click(screen.getByLabelText("advance-One"));
+
+      // Step Two is active; focus landed on its tabIndex=-1 wrapper, which
+      // contains the now-active step's heading. (In keepMounted all headings are
+      // mounted, so assert containment of the ACTIVE step's heading specifically.)
+      const focused = document.activeElement as HTMLElement;
+      expect(focused.tagName).toBe("DIV");
+      expect(focused.getAttribute("tabindex")).toBe("-1");
+      expect(within_(focused, screen.getByText("Two"))).toBe(true);
+      // The focused wrapper is the active one: step One's heading is NOT inside it.
+      expect(within_(focused, screen.getByText("One"))).toBe(false);
+    });
+
+    it("focuses the heading in default keepMounted mode when focusOnStepChange='heading'", async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MultiStep focusOnStepChange="heading">
+          <FocusStep title="One" />
+          <FocusStep title="Two" />
+        </MultiStep>
+      );
+
+      await user.click(screen.getByLabelText("advance-One"));
+
+      // The active step's heading received focus directly (made focusable with
+      // tabIndex=-1), even though every step stays mounted in keepMounted.
+      const focused = document.activeElement as HTMLElement;
+      expect(focused.tagName).toBe("H2");
+      expect(focused.textContent).toBe("Two");
+      expect(focused.getAttribute("tabindex")).toBe("-1");
     });
   });
 
@@ -1077,6 +1126,61 @@ describe("MultiStep", () => {
       expect(getApi().isNavigating).toBe(false);
     });
 
+    it("drops a second same-batch navigation via the synchronous navigatingRef latch", async () => {
+      // Regression for the nav-race: two navigation calls fired in ONE act()
+      // batch (synchronously, before any commit/re-render) must not both run the
+      // async guard. The existing overlap test above settles the first guard
+      // across SEPARATE act() calls and relies on the post-commit isNavigating
+      // mirror; this one fires both calls in the same synchronous tick, so the
+      // mirror is still false for both - only the synchronous navigatingRef latch
+      // can drop the second. The guard must run ONCE and onStepChange ONCE.
+      const gate = defer<boolean>();
+      const guard = spyGuard(() => gate.promise);
+      const onStepChange = vi.fn();
+      const { Probe, getApi } = makeApiProbe();
+
+      render(
+        <MultiStep beforeStepChange={guard.fn} onStepChange={onStepChange}>
+          <Probe title="One" />
+          <Probe title="Two" />
+          <Probe title="Three" />
+        </MultiStep>
+      );
+
+      await flushAsync();
+
+      // Two synchronous calls in a single act() batch: the first latches
+      // navigatingRef.current = true before its await; the second sees the latch
+      // and returns immediately. No re-render happens between them.
+      await act(() => {
+        getApi().goToStep(1);
+        getApi().goToStep(2);
+      });
+      await flushAsync();
+
+      // The latch dropped the second call: the guard ran exactly once.
+      expect(guard.calls).toBe(1);
+      expect(guard.events).toEqual([{ from: 0, to: 1, direction: "next" }]);
+      // Still pending: the change has not committed and nothing fired yet.
+      expect(getApi().isNavigating).toBe(true);
+      expect(getApi().activeStep).toBe(0);
+      expect(onStepChange.mock.calls).toHaveLength(0);
+
+      // Resolve the single in-flight guard: only the first move (0 -> 1) commits,
+      // and onStepChange fires exactly once with the first target.
+      await act(async () => {
+        gate.resolve(true);
+        await gate.promise;
+      });
+      await flushAsync();
+
+      expect(guard.calls).toBe(1);
+      expect(onStepChange.mock.calls).toHaveLength(1);
+      expect(onStepChange).toHaveBeenCalledWith(1);
+      expect(getApi().activeStep).toBe(1);
+      expect(getApi().isNavigating).toBe(false);
+    });
+
     it("commits synchronously with no isNavigating flip when no guard is provided", async () => {
       // Without beforeStepChange the navigation is fully synchronous and
       // isNavigating is never set true.
@@ -1185,6 +1289,117 @@ describe("MultiStep", () => {
       } finally {
         if (original) window.matchMedia = original;
       }
+    });
+
+    // A controllable MediaQueryList stub: addEventListener captures the "change"
+    // listener so a test can flip `matches` and fire it, driving the hook's
+    // useSyncExternalStore subscription to re-read getSnapshot. matchMedia returns
+    // the SAME object every call, so getSnapshot sees the mutated `matches`.
+    const controllableMatchMedia = (initial: boolean) => {
+      let matches = initial;
+      const listeners = new Set<(event: { matches: boolean }) => void>();
+      const mql = {
+        get matches() {
+          return matches;
+        },
+        media: "(prefers-reduced-motion: reduce)",
+        onchange: null,
+        addEventListener: (type: string, listener: (event: { matches: boolean }) => void) => {
+          if (type === "change") listeners.add(listener);
+        },
+        removeEventListener: (type: string, listener: (event: { matches: boolean }) => void) => {
+          if (type === "change") listeners.delete(listener);
+        },
+        addListener: () => {},
+        removeListener: () => {},
+        dispatchEvent: () => false,
+      };
+      const original = window.matchMedia;
+      window.matchMedia = (() => mql) as unknown as typeof window.matchMedia;
+      // Flip `matches` and notify every captured listener, as the platform would
+      // when the media query result changes.
+      const fireChange = (next: boolean) => {
+        matches = next;
+        for (const listener of listeners) listener({ matches: next });
+      };
+      const restore = () => {
+        if (original) window.matchMedia = original;
+        else delete (window as { matchMedia?: typeof window.matchMedia }).matchMedia;
+      };
+      return { fireChange, restore };
+    };
+
+    it("re-renders when the media query fires a change event", async () => {
+      const media = controllableMatchMedia(false);
+      try {
+        render(<MotionProbe />);
+        // Initial snapshot: matches=false -> "full".
+        expect(screen.getByText("full")).toBeInTheDocument();
+
+        // Flip the query to reduced and fire the captured "change" listener inside
+        // act() so React processes the store update and re-renders.
+        await act(() => media.fireChange(true));
+        expect(screen.getByText("reduced")).toBeInTheDocument();
+
+        // Flip back: the hook tracks the change in both directions.
+        await act(() => media.fireChange(false));
+        expect(screen.getByText("full")).toBeInTheDocument();
+      } finally {
+        media.restore();
+      }
+    });
+  });
+
+  describe("SSR (server render)", () => {
+    // A step that reports validity from an effect via useReportValidity. On the
+    // server, effects do not run, so the report is never called - the render must
+    // still produce HTML and not throw.
+    const SsrStep = ({ title }: StepComponentProps<{ title: string }>) => {
+      const report = useReportValidity();
+      useEffect(() => {
+        report({ status: "valid" });
+      }, [report]);
+      return <p>{title}</p>;
+    };
+
+    it("renderToString produces HTML for a MultiStep without throwing", () => {
+      // The provider tree, the steps using useReportValidity, the useId-derived
+      // ids, and useReducedMotion's getServerSnapshot must all be no-DOM safe.
+      const html = renderToString(
+        <MultiStep>
+          <SsrStep title="One" />
+          <SsrStep title="Two" />
+        </MultiStep>
+      );
+
+      expect(typeof html).toBe("string");
+      expect(html.length > 0).toBe(true);
+      // keepMounted (default) renders every step subtree, so both step contents
+      // are present in the server markup.
+      expect(html).toContain("One");
+      expect(html).toContain("Two");
+    });
+
+    it("renders a step that reads useReducedMotion without DOM access", () => {
+      // useReducedMotion must take its getServerSnapshot (false) path under
+      // renderToString: there is no window.matchMedia subscription on the server.
+      const MotionStep = ({ title }: StepComponentProps<{ title: string }>) => {
+        const report = useReportValidity();
+        useEffect(() => {
+          report({ status: "valid" });
+        }, [report]);
+        const reduced = useReducedMotion();
+        return <p>{`${title}:${reduced ? "reduced" : "full"}`}</p>;
+      };
+
+      const html = renderToString(
+        <MultiStep>
+          <MotionStep title="Solo" />
+        </MultiStep>
+      );
+
+      // getServerSnapshot returns false -> "full" in the server markup, no throw.
+      expect(html).toContain("Solo:full");
     });
   });
 });

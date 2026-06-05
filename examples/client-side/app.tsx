@@ -22,7 +22,7 @@ function App() {
   // Each step renders its own WizardChrome (the chrome lives inside the step so
   // it can read the MultiStep context). With mode="unmount" only the active step
   // - and therefore a single chrome with a single set of useId-derived
-  // tabId/panelId values - is in the DOM at a time, keeping the ARIA ids unique.
+  // stepId/panelId values - is in the DOM at a time, keeping the ARIA ids unique.
   //
   // onComplete fires when the user presses Finish on the last step and that step
   // is valid (canComplete). The Finish button comes from getCompleteButtonProps,

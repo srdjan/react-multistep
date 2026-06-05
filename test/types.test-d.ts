@@ -16,6 +16,7 @@ import type {
   StepValidity,
   StepChangeEvent,
   MultiStepProps,
+  Step,
 } from "../src/index.js";
 
 // Local assertion helper: forces T onto its argument at compile time.
@@ -52,6 +53,19 @@ function useTypeChecks(): void {
   expectType<boolean>(useReducedMotion());
 }
 void useTypeChecks;
+
+// --- Step metadata shape: the indicator id field is `stepId` (was renamed) ---
+const stepShape = (step: Step): void => {
+  expectType<number>(step.index);
+  expectType<boolean>(step.isActive);
+  expectType<boolean>(step.isValid);
+  // The opaque step-indicator id is exposed as `stepId`.
+  expectType<string>(step.stepId);
+  expectType<string>(step.panelId);
+  // @ts-expect-error the old step-indicator id field was renamed and no longer exists on Step.
+  void step.renamedAwayIndicatorId;
+};
+void stepShape;
 
 // --- StepComponentProps requires the extra prop ---
 type EmailStep = StepComponentProps<{ email: string }>;

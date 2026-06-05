@@ -38,11 +38,16 @@ foundation changes:
 ### Richer step metadata + aria id wiring
 
 - Each `Step` now carries `status` (`StepStatus`: `"pristine" | "visited" |
-  "valid" | "invalid"`), `tabId`, and `panelId` in addition to `index`,
+  "valid" | "invalid"`), `stepId`, and `panelId` in addition to `index`,
   `isActive`, `isValid`, and `title`. `isValid` is now derived
-  (`=== status === "valid"`). `tabId`/`panelId` come from a single `useId()` base,
-  so they are stable per mount and SSR-safe; wire them into `role="tab"` /
-  `role="tabpanel"` markup with `aria-current="step"` for the active step.
+  (`=== status === "valid"`). `stepId`/`panelId` come from a single `useId()` base,
+  so they are stable per mount and SSR-safe. They wire the wizard / `aria-current`
+  pattern, not a tablist: put `stepId` on each step `<button>` with
+  `aria-controls={panelId}` and `aria-current="step"` on the active step, and put
+  `panelId` on a `role="region"` with `aria-labelledby={stepId}`. There is no
+  `role="tab"`, `role="tablist"`, or `aria-selected`. The opaque ids are
+  `${base}-step-${index}` and `${base}-panel-${index}`; read them off `Step`,
+  do not hardcode them.
 
 ### Accessibility & completion layer
 

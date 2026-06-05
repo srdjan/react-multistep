@@ -99,8 +99,8 @@ function App() {
 
 The chrome reads wizard state and drives navigation through the hooks below. It
 must render inside a `MultiStep` child because the hooks read context created by
-`MultiStep`. See [the wizard pattern](#the-wizard-pattern-tabs-and-panels) for a
-fully wired, accessible chrome and the `mode="unmount"` composition.
+`MultiStep`. See [the wizard pattern](#the-wizard-pattern-step-list-and-panel) for
+a fully wired, accessible chrome and the `mode="unmount"` composition.
 
 ## MultiStep props
 
@@ -252,29 +252,37 @@ interface Step {
   status: StepStatus; // "pristine" | "visited" | "valid" | "invalid"
   isValid: boolean; // derived: status === "valid"
   title?: React.ReactNode;
-  tabId: string; // for role="tab" id wiring
-  panelId: string; // for role="tabpanel" id wiring
+  stepId: string; // stable id for the step indicator/button element
+  panelId: string; // stable id for the step panel element
 }
 ```
 
 `status` derives from the reported validity plus whether the step has been
 visited: `valid`/`invalid` mirror the reported status; a `pending` step is
-`visited` once landed on, otherwise `pristine`. `tabId` and `panelId` are derived
+`visited` once landed on, otherwise `pristine`. `stepId` and `panelId` are derived
 from a single `useId()` base, so they are stable across renders and SSR-safe -
 read them, do not hardcode them.
 
 The three chrome hooks (and `useMultiStepA11y`) throw if used outside a
 `MultiStep` component; `useReportValidity` throws if used outside a step subtree.
 
-## The wizard pattern (tabs and panels)
+## The wizard pattern (step list and panel)
 
-The `tabId` and `panelId` on each `Step` exist so you can wire a standard,
-accessible tabs/panels relationship without minting your own ids. Each indicator
-is a `role="tab"` with `id={step.tabId}` and `aria-controls={step.panelId}`; the
-active panel carries `id` of the active step's `panelId`, `role="tabpanel"`, and
-`aria-labelledby={activeTabId}`. Mark the current step with `aria-current="step"`
-in addition to `aria-selected` so the active step is exposed to assistive tech
-even outside a strict tablist reading.
+The `stepId` and `panelId` on each `Step` exist so you can wire an accessible
+step-list / panel relationship without minting your own ids. This is a wizard,
+not a WAI-ARIA tablist: each indicator is a `<button>` with `id={step.stepId}`,
+`aria-controls={step.panelId}`, and `aria-current="step"` on the active step
+(absent otherwise). The step list itself is a `role="list"`, and the panel is a
+`role="region"` with `id={step.panelId}` and `aria-labelledby={activeStepId}`
+pointing back at the active step's button. There is no `role="tab"`,
+`role="tablist"`, or `aria-selected` - those belong to a true tablist with its own
+keyboard contract.
+
+This pattern is operated with Tab to reach a step button and Enter or Space to
+activate it - no arrow keys, by design. A real WAI-ARIA tablist would instead
+require you to add roving `tabindex` and arrow-key handling so the whole list is a
+single Tab stop; the step-list pattern keeps each button independently
+Tab-reachable and avoids that machinery.
 
 ```tsx
 import MultiStep, {
@@ -289,14 +297,12 @@ function WizardChrome({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="multistep-container">
-      <ol role="tablist" aria-label="Wizard steps" className="multistep-top-nav">
+      <ol role="list" aria-label="Progress" className="multistep-top-nav">
         {steps.map((step) => (
           <li key={step.index} className="multistep-top-nav-step">
             <button
-              role="tab"
-              id={step.tabId}
+              id={step.stepId}
               aria-controls={step.panelId}
-              aria-selected={step.isActive}
               aria-current={step.isActive ? "step" : undefined}
               className="multistep-step-button"
               onClick={() => goToStep(step.index)}
@@ -308,9 +314,9 @@ function WizardChrome({ children }: { children: React.ReactNode }) {
       </ol>
 
       <div
-        role="tabpanel"
+        role="region"
         id={active?.panelId}
-        aria-labelledby={active?.tabId}
+        aria-labelledby={active?.stepId}
         className="multistep-section"
       >
         {children}
@@ -342,7 +348,7 @@ function WizardChrome({ children }: { children: React.ReactNode }) {
 Because the chrome hooks read context created by `MultiStep`, render
 `WizardChrome` from inside each step (or from a component rendered by a step),
 not as an ancestor of `MultiStep`. When the chrome owns the active panel, use
-`mode="unmount"` so only the active step's chrome and tab/panel ids are mounted:
+`mode="unmount"` so only the active step's chrome and step/panel ids are mounted:
 
 ```tsx
 function AccountStep() {
@@ -411,15 +417,30 @@ function WizardChrome({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+
+function App() {
+  return (
+    <MultiStep mode="unmount">
+      <AccountStep title="Account" />
+      {/* ...more steps */}
+    </MultiStep>
+  );
+}
 ```
+
+Use `mode="unmount"` whenever getter-built chrome is rendered inside each step:
+under the default `keepMounted` every mounted step renders its own chrome, so the
+`useId`-derived ids are duplicated across the DOM and the non-active steps' chrome
+points `aria-controls` at panels that are hidden, leaving those references
+dangling. Unmounting inactive steps keeps exactly one set of ids live at a time.
 
 The getters and what they set:
 
 | Getter                       | Element        | What it wires                                                                                                                   |
 | ---------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | `getStepListProps(overrides?)`     | the step list  | `role="list"`, `aria-label="Progress"`.                                                                                   |
-| `getStepProps(index, overrides?)`  | a step button  | `id={tabId}`, `type="button"`, `aria-current` (`"step"` on the active step, else absent), `aria-controls={panelId}`, `data-status` (the step's `StepStatus`), `disabled` when the forward gate blocks that step, and an `onClick` that calls `goToStep(index)`. |
-| `getPanelProps(overrides?)`        | the active panel | `id={panelId}`, `role="region"`, `aria-labelledby={tabId}`, `tabIndex={-1}`.                                            |
+| `getStepProps(index, overrides?)`  | a step button  | `id={stepId}`, `type="button"`, `aria-current` (`"step"` on the active step, else absent), `aria-controls={panelId}`, `data-status` (the step's `StepStatus`), `disabled` when the forward gate blocks that step, and an `onClick` that calls `goToStep(index)`. |
+| `getPanelProps(overrides?)`        | the active panel | `id={panelId}`, `role="region"`, `aria-labelledby={stepId}`, `tabIndex={-1}`.                                            |
 | `getPreviousButtonProps(overrides?)` | the Prev button | `type="button"`, `aria-label="Previous step"`, `disabled` when on the first step, `onClick` calls `previous()`.        |
 | `getNextButtonProps(overrides?)`   | the Next button | `type="button"`, `aria-label="Next step"`, `disabled` when the current step is not valid or already the last step, `onClick` calls `next()`. |
 | `getCompleteButtonProps(overrides?)` | the Done button | `type="button"`, `disabled` unless `canComplete`, `onClick` calls `complete()`. No `aria-label` is set - supply your own label or text. |
@@ -515,7 +536,10 @@ users land on the new step instead of being stranded on the button they clicked.
 `focusOnStepChange` controls the target:
 
 - **`"panel"` (default)** focuses the active step's panel wrapper (a `tabIndex={-1}`
-  container MultiStep renders around the active step).
+  container MultiStep renders around the active step). That wrapper is unlabeled -
+  a bare `<div>` with no `role` and no `aria-labelledby` - so a screen reader may
+  move focus there without announcing the new step. For an announced transition,
+  prefer `"heading"` and give each step a heading (a visually-hidden one is fine).
 - **`"heading"`** focuses the first heading (`h1`-`h6`) inside the active step,
   falling back to the panel wrapper if the step has no heading.
 - **`false`** disables focus management entirely.
@@ -621,9 +645,10 @@ foundation:
   once (inactive ones hidden), so each step's validity effect runs from mount.
   Pass `mode="unmount"` for the old "only the active step is rendered" behavior.
 - **Richer step metadata.** Each `Step` now also carries `status` (`StepStatus`),
-  `tabId`, and `panelId`. `isValid` is now derived (`status === "valid"`), not a
-  raw channel. Wire `tabId`/`panelId` into your `role="tab"` / `role="tabpanel"`
-  markup instead of minting ids by hand.
+  `stepId`, and `panelId`. `isValid` is now derived (`status === "valid"`), not a
+  raw channel. Wire `stepId` onto each step button and `panelId` onto the panel
+  (with `aria-current` / `aria-controls` / `aria-labelledby`) instead of minting
+  ids by hand.
 - **Hooks renamed/removed.** `useStepNavigation` -> **`useMultiStepNavigation`**.
   `useStepList` and the raw `MultiStepContext` export are **removed** - use
   `useMultiStep()` / `useMultiStepState().steps`.
