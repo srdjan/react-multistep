@@ -169,3 +169,21 @@ stylesheet currently mutates the consumer's whole page.
 Compound `MultiStep.Step` API; conditional / branch flow; controlled validity +
 Standard Schema; React 19 form Actions; URL / history adapter; unstyled compound
 chrome; three-context collapse; homegrown-harness replacement.
+
+## Post-v8.0.0 backlog (deferred, detailed)
+
+These ship after v8.0.0 as additive minors. Each builds on the foundations now in
+place (the `useReportValidity` channel, the structured `StepValidity` union, the
+persisted step lifecycle, the prop-getters, and the controlled-`activeStep` path),
+so none requires a major bump. Ordered roughly by dependency.
+
+| Item | What it adds | Depends on | Effort | Priority |
+| --- | --- | --- | --- | --- |
+| **Compound `MultiStep.Step` API** | `MultiStep.Step` / `.StepList` / `.Panel` components with typed metadata and a stable string `id` per step; statically rejects non-`Step` children; replaces the `child.props.title` reflection in `readTitle()` with declared metadata. Unlocks reorder-safe controlled nav and an explicit skippable model. | The per-step index context (`StepIndexProvider`, already shipped) | L | P1 |
+| **Conditional / branch flow** | Per-step `isEnabled?: (ctx) => boolean`, id-or-index `goToStep(id \| index)`, and optional `resolveNext?: (from, state) => id \| index`. Restores the non-linear flow dropped with the v6 server split. | Compound API's stable ids + the persisted `pristine/visited/valid/invalid` lifecycle | L | P2 |
+| **Controlled validity + Standard Schema** | `stepValidity?: StepValidity[]` mirroring the controlled-`activeStep` path, plus an optional per-step `schema` consumed through the library-agnostic `~standard` interface (no bundled validator). | The controlled-state reconciliation path (shipped) | L | P2 |
+| **React 19 form Actions** | Optional `<MultiStep.Step action={...}>` that advances on a successful action result and surfaces `useFormStatus` pending state, giving error payloads and progressive enhancement for free. Must reconcile with per-step unmount. | Structured `StepValidity` + `keepMounted` (shipped) | L | P2 |
+| **URL / history adapter** | `useMultiStepHistory({ param, mode })` that reads the active index from a URL param, calls `goToStep` on `popstate`, and pushes/replaces on change. Core stays router-agnostic. | The controlled-mode hatch (shipped) | M | P2 |
+| **Unstyled compound chrome** | A `react-multistep/wizard` subpath exporting `Wizard.StepList` / `Step` / `Panel` / `Previous` / `Next` / `ErrorRegion` built on the prop-getters - an accessible-by-default path that hook-only consumers pay nothing for. | `useMultiStepA11y` getters + focus + live-region (shipped) | L | P2 |
+| **Three-context collapse** | Replace the three-context split (`useMultiStep` / `useMultiStepState` / `useMultiStepNavigation`) with one context + a `useSyncExternalStore` selector hook, which would also remove the `navRef` snapshot. **Gated on first benchmarking** that the split's re-render isolation does not earn its complexity at user-paced state changes. | A real benchmark of the split vs a single context | M | P2 |
+| **Homegrown-harness decision** | Adopt vitest + @testing-library + jsdom, or keep `test/run.mjs` + `harness.ts` and add the async matchers the validation work needs (`waitFor`, `findBy`, call-count assertions). Either way, record the choice in an ADR. | none | M | P2 |
