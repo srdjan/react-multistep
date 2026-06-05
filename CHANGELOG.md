@@ -98,6 +98,56 @@ foundation changes:
 - **`peerDependencies.react` is now `^19.2`.** The widened `^18.2.0 || ^19.0.0`
   range is superseded; v8 targets React 19.2+.
 
+### Async navigation guard: `beforeStepChange`
+
+- New **`beforeStepChange?: (event: StepChangeEvent) => boolean | void | Promise<boolean | void>`**
+  prop. The guard runs after the forward validity gate passes but before a step
+  change commits - the transition seam for save-draft, server-side validation, or
+  an unsaved-changes confirmation. Returning `false` (or a promise resolving to
+  `false`) vetoes the change: the active step does not move and `onStepChange`
+  does not fire. Returning anything else, including `undefined`, lets it proceed.
+  A guard that throws or rejects is caught and also aborts (the error is
+  swallowed). The guard is **not** run by `complete()` - completion is a terminal
+  action, not a step change.
+- New exported type **`StepChangeEvent`** (`{ from: number; to: number; direction:
+  "next" | "previous" | "jump" }`). `direction` is `"next"` when `to === from + 1`,
+  `"previous"` when `to === from - 1`, else `"jump"`.
+- New **`isNavigating: boolean`** field on `MultiStepApi` and on the
+  `useMultiStepState()` slice. It is `true` only while an asynchronous
+  `beforeStepChange` guard is in flight; a synchronous navigation (or one with no
+  guard) commits immediately and never flips it. Overlapping navigation calls are
+  dropped while a guard is pending. The public navigation signatures are unchanged
+  (`goToStep` / `next` / `previous` stay fire-and-forget `(step: number) => void`
+  / `() => void`); the async work happens internally.
+
+### Reduced motion
+
+- New value export **`useReducedMotion(): boolean`**, backed by
+  `useSyncExternalStore` over
+  `window.matchMedia("(prefers-reduced-motion: reduce)")`, so it re-renders when
+  the preference changes at runtime. SSR / no-DOM safe: with no `window` /
+  `matchMedia`, subscribe is a no-op and both snapshots return `false`. It does
+  not require a `MultiStep` ancestor.
+- `chrome.css` now honors `prefers-reduced-motion: reduce` via a top-level
+  `@media` block scoped under `.multistep-container *` (and `::before` /
+  `::after`) that forces transition/animation durations to `0.01ms !important` and
+  `animation-iteration-count` to `1`. Scoped to the container, so the host page is
+  untouched; `react-multistep/styles` inherits it through its `@import`.
+
+### Internal hardening
+
+- **Derive-from-props state now reconciles during render, not in effects.** The two
+  `useEffect` calls (controlled-active sync and `SYNC_STEPS` resize) are removed and
+  replaced with the React "adjust state during render via a stored previous value"
+  pattern, using `prevTotalRef` / `prevControlledRef`. This removes a double-fire
+  under StrictMode and a concurrent-tear hazard. Clamping, the drop-the-prop
+  controlled fallback, and the no-spurious-first-render behavior are all preserved.
+- The `navRef` latest-value snapshot is **retained** as a render-phase write. It is
+  the standard latest-ref pattern, correct for the only callers (consumer event
+  handlers and `next` / `previous` / `complete`, all post-commit), and moving it
+  into an effect would add ordering coupling with the focus layout effect for no
+  correctness gain. No public behavior changed.
+
 ---
 
 The sections below describe the earlier v8 packaging and API cleanup that the

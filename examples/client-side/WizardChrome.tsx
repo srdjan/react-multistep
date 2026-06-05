@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useMultiStepState, useMultiStepA11y } from "react-multistep";
+import { useMultiStepState, useMultiStepA11y, useReducedMotion } from "react-multistep";
 
 /**
  * Headless chrome for MultiStep, driven entirely by the useMultiStepA11y()
@@ -29,7 +29,10 @@ import { useMultiStepState, useMultiStepA11y } from "react-multistep";
  * chrome - and a single, unique set of ids - in the DOM at any time.
  */
 export const WizardChrome = ({ children }: { children: ReactNode }) => {
-  const { steps, isLast, currentStepError } = useMultiStepState();
+  // isNavigating is true while an async beforeStepChange guard is in flight
+  // (see app.tsx). We disable the nav buttons so a step change cannot be
+  // started twice, and surface a "Saving..." hint on the active control.
+  const { steps, isLast, currentStepError, isNavigating } = useMultiStepState();
   const {
     getStepListProps,
     getStepProps,
@@ -39,6 +42,12 @@ export const WizardChrome = ({ children }: { children: ReactNode }) => {
     getCompleteButtonProps,
     getErrorRegionProps,
   } = useMultiStepA11y();
+
+  // Reduced-motion gate: only attach the pulsing busy class when the user has
+  // not asked for reduced motion. The CSS sheet also neutralises animations,
+  // but gating here keeps the class off the DOM entirely.
+  const reducedMotion = useReducedMotion();
+  const busyClass = isNavigating && !reducedMotion ? " is-busy" : "";
 
   return (
     <div className="multistep-container">
@@ -50,6 +59,9 @@ export const WizardChrome = ({ children }: { children: ReactNode }) => {
                 <button
                   {...getStepProps(step.index, {
                     className: "multistep-step-button",
+                    // Only force disabled while navigating; otherwise leave the
+                    // getter's own disabled (validation gating) untouched.
+                    ...(isNavigating ? { disabled: true } : {}),
                   })}
                 >
                   {step.title ?? step.index + 1}
@@ -69,6 +81,7 @@ export const WizardChrome = ({ children }: { children: ReactNode }) => {
           <button
             {...getPreviousButtonProps({
               className: "multistep-button multistep-button-prev",
+              ...(isNavigating ? { disabled: true } : {}),
             })}
           >
             &lsaquo;
@@ -76,16 +89,18 @@ export const WizardChrome = ({ children }: { children: ReactNode }) => {
           {isLast ? (
             <button
               {...getCompleteButtonProps({
-                className: "multistep-button multistep-button-complete",
+                className: `multistep-button multistep-button-complete${busyClass}`,
                 "aria-label": "Finish",
+                ...(isNavigating ? { disabled: true } : {}),
               })}
             >
-              Finish
+              {isNavigating ? "Saving..." : "Finish"}
             </button>
           ) : (
             <button
               {...getNextButtonProps({
-                className: "multistep-button multistep-button-next",
+                className: `multistep-button multistep-button-next${busyClass}`,
+                ...(isNavigating ? { disabled: true } : {}),
               })}
             >
               &rsaquo;

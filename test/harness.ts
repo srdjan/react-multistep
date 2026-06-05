@@ -19,17 +19,27 @@ import { isDeepStrictEqual } from "node:util";
 // React 19 exposes act() directly on the React namespace and @types/react 19
 // types it, so no cast is needed. The void-callback overload returns void; the
 // promise-callback overload returns a Promise we await.
-const { act } = React;
+const { act: reactAct } = React;
 
 const actSync = (cb: () => void): void => {
   // For a synchronous callback, act() flushes passive effects synchronously and
   // rethrows any render-phase error before returning. A throw here propagates to
   // the caller (used by toThrow).
-  act(cb);
+  reactAct(cb);
 };
 
 const actAsync = async (cb: () => Promise<void>): Promise<void> => {
-  await act(cb);
+  await reactAct(cb);
+};
+
+// Public act wrapper for tests that drive the wizard imperatively (calling api
+// methods like next()/goToStep() outside an event) so React applies the
+// resulting state updates and effects before assertions run. Accepts either a
+// sync or async callback; always returns a promise to await.
+export const act = async (cb: () => void | Promise<void>): Promise<void> => {
+  await actAsync(async () => {
+    await cb();
+  });
 };
 
 // --- registry --------------------------------------------------------------
@@ -240,6 +250,19 @@ const click = async (el: Element): Promise<void> => {
   await actAsync(async () => {
     el.dispatchEvent(new view.MouseEvent("click", { bubbles: true, cancelable: true }));
   });
+};
+
+// Flush queued microtasks/macrotasks and any React state updates they schedule,
+// inside act() so the resulting re-render is applied before assertions run. Used
+// to settle async work an event handler kicks off after it returns - e.g. an
+// async beforeStepChange guard that commits and toggles isNavigating on a later
+// tick. Pass `ticks` to drain several chained awaits.
+export const flushAsync = async (ticks = 1): Promise<void> => {
+  for (let i = 0; i < ticks; i += 1) {
+    await actAsync(async () => {
+      await Promise.resolve();
+    });
+  }
 };
 
 const userEvent = {

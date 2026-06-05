@@ -111,6 +111,7 @@ fully wired, accessible chrome and the `mode="unmount"` composition.
 | `defaultStep`       | `number`                            | `0`             | Starting step for uncontrolled mode.                                |
 | `mode`              | `"unmount" \| "keepMounted"`        | `"keepMounted"` | How inactive steps are rendered. See [Render mode](#render-mode).   |
 | `onStepChange`      | `(step: number) => void`            | `undefined`     | Fires whenever the active step changes (manual or programmatic).    |
+| `beforeStepChange`  | `(event: StepChangeEvent) => boolean \| void \| Promise<boolean \| void>` | `undefined` | Guard awaited before a step change commits. Return `false` (or throw/reject) to veto. See [Guarding step changes](#guarding-step-changes-beforestepchange). |
 | `onValidationError` | `(step: number) => void`            | `undefined`     | Called with the first invalid step index when a forward jump is gated. |
 | `onComplete`        | `() => void`                        | `undefined`     | Fires when `complete()` succeeds on the last step. See [Completion](#completion). |
 | `focusOnStepChange` | `"panel" \| "heading" \| false`     | `"panel"`       | Where focus moves on step change. See [Focus management](#focus-management). |
@@ -189,17 +190,20 @@ Any descendant of `MultiStep` can read wizard state and drive navigation:
 - **`useMultiStep(): MultiStepApi`** - the full API (state + navigation) in one
   object. Convenient for chrome that needs everything.
 - **`useMultiStepState()`** - read-only state slice: `activeStep`, `stepCount`,
-  `steps`, `currentStepValid`, `isStepValid`, plus the derived fields `isFirst`,
-  `isLast`, `progress`, `canComplete`, `visitedSteps`, `completedSteps`, and
-  `currentStepError`. Re-renders only when state changes.
+  `steps`, `currentStepValid`, `isStepValid`, `isNavigating`, plus the derived
+  fields `isFirst`, `isLast`, `progress`, `canComplete`, `visitedSteps`,
+  `completedSteps`, and `currentStepError`. Re-renders only when state changes.
 - **`useMultiStepNavigation()`** - navigation actions: `goToStep`, `next`,
   `previous`, `complete`. Referentially stable, so chrome that only navigates can
   skip re-rendering on state changes.
 
-Two more hooks round out the surface: **`useReportValidity()`** is for step
-components rather than chrome (see [The step contract](#the-step-contract)), and
+Three more hooks round out the surface: **`useReportValidity()`** is for step
+components rather than chrome (see [The step contract](#the-step-contract)),
 **`useMultiStepA11y()`** returns prop-getters that wire the accessible chrome for
-you (see [Accessible chrome with prop-getters](#accessible-chrome-with-prop-getters)).
+you (see [Accessible chrome with prop-getters](#accessible-chrome-with-prop-getters)),
+and **`useReducedMotion()`** reports the user's motion preference (see
+[Reduced motion](#reduced-motion)). `useReducedMotion` works anywhere, not only
+inside a `MultiStep` subtree.
 
 `MultiStepApi` (the return type of `useMultiStep`):
 
@@ -217,6 +221,7 @@ interface MultiStepApi {
   visitedSteps: number[]; // indices with status !== "pristine"
   completedSteps: number[]; // indices with status === "valid"
   currentStepError?: string; // active step's invalid message, else undefined
+  isNavigating: boolean; // true only while an async beforeStepChange is in flight
   goToStep: (step: number) => void;
   next: () => void;
   previous: () => void;
@@ -232,7 +237,11 @@ and `1` for a single-step (or zero-step) wizard. `currentStepError` is a string
 only when the active step's status is `invalid` (its `validity.message`, which
 may itself be `undefined`); every other status yields `undefined`. `visitedSteps`
 and `completedSteps` are derived from `steps[].status`: visited is
-`status !== "pristine"`, completed is `status === "valid"`.
+`status !== "pristine"`, completed is `status === "valid"`. `isNavigating` is
+`true` only while an asynchronous `beforeStepChange` guard is in flight (see
+[Guarding step changes](#guarding-step-changes-beforestepchange)); a navigation
+with no guard, or one whose guard is synchronous, commits without ever flipping
+it. Read it to disable controls or show a spinner while a guard resolves.
 
 Each entry in `steps` is a `Step`:
 
@@ -446,6 +455,59 @@ function App() {
 Read `canComplete` from `useMultiStepState()` to drive a submit button's enabled
 state, or let `getCompleteButtonProps` set `disabled` for you.
 
+## Guarding step changes (`beforeStepChange`)
+
+`beforeStepChange` is an optional guard that runs after the forward validity gate
+passes but before a step change commits. Use it for the transition seam:
+save-draft, server-side validation, or an unsaved-changes confirmation.
+
+```tsx
+import type { StepChangeEvent } from "react-multistep";
+
+<MultiStep
+  beforeStepChange={async (event: StepChangeEvent) => {
+    if (event.direction === "previous") return; // never block going back
+    const saved = await saveDraft(event.from);
+    if (!saved) return false; // veto: stay on the current step
+  }}
+>
+  {/* steps */}
+</MultiStep>;
+```
+
+The guard receives a `StepChangeEvent`:
+
+```ts
+interface StepChangeEvent {
+  from: number; // the current active step
+  to: number; // the requested step
+  direction: "next" | "previous" | "jump"; // adjacent moves vs. anything else
+}
+```
+
+`direction` is `"next"` when `to === from + 1`, `"previous"` when
+`to === from - 1`, and `"jump"` otherwise.
+
+Veto semantics: returning `false` (or a promise that resolves to `false`) aborts
+the change - the active step does not move and `onStepChange` does not fire.
+Returning anything else, including `undefined`, lets the change proceed. A guard
+that throws, or returns a rejected promise, is caught and also aborts: the error
+is swallowed, so surface your own UI from inside the guard.
+
+Async behavior: the guard is awaited. While an asynchronous guard is in flight,
+`isNavigating` is `true` (read it from `useMultiStepState()` or the full API).
+Overlapping navigation calls are dropped while a guard is pending, so a second
+click cannot start a competing transition. A synchronous navigation (no guard
+supplied) commits immediately and never flips `isNavigating`. The public
+navigation signatures are unchanged - `goToStep`, `next`, and `previous` stay
+`(step: number) => void` / `() => void` and are fire-and-forget; the async work
+happens internally.
+
+`complete()` does **not** run `beforeStepChange` - completion is a terminal
+action, not a step change. The gate ordering is: range check, then the forward
+validity gate (`onValidationError` fires here and `beforeStepChange` is not
+reached), then `beforeStepChange`, then commit.
+
 ## Focus management
 
 When the active step changes, MultiStep moves focus so keyboard and screen-reader
@@ -507,6 +569,38 @@ Customize via CSS custom properties (defined globally in the `tokens` import):
 ```
 
 The component works without any CSS; the stylesheets are purely additive.
+
+## Reduced motion
+
+The optional `chrome.css` honors `prefers-reduced-motion: reduce`. A top-level
+`@media (prefers-reduced-motion: reduce)` block, scoped under
+`.multistep-container *` (and its `::before` / `::after`), forces every
+transition and animation duration to `0.01ms !important` and caps
+`animation-iteration-count` at `1`. Because it is scoped to the container it
+never touches the host page, and the `!important` overrides the hover transition
+in the reset layer. The combined `react-multistep/styles` bundle `@import`s
+`chrome.css`, so it inherits the block; importing `chrome.css` directly gets it
+too.
+
+For JS-driven motion (anything CSS cannot reach), read the preference reactively
+with **`useReducedMotion()`**:
+
+```tsx
+import { useReducedMotion } from "react-multistep";
+
+function StepTransition({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion();
+  return <div style={{ transition: reduced ? "none" : "opacity 200ms" }}>{children}</div>;
+}
+```
+
+`useReducedMotion(): boolean` is a value export from the package root. It is
+backed by `useSyncExternalStore` over
+`window.matchMedia("(prefers-reduced-motion: reduce)")`, so it re-renders when
+the preference changes at runtime. It is SSR / no-DOM safe: when `window` or
+`matchMedia` is unavailable the subscribe is a no-op and both the client and
+server snapshots return `false`. Unlike the chrome hooks it does not require a
+`MultiStep` ancestor.
 
 ## Migrating from v7
 

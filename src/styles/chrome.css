@@ -174,3 +174,16 @@
     justify-self: flex-end;
   }
 }
+
+/* Honour the user's reduced-motion preference: neutralise every transition and
+   animation inside the component. Scoped to .multistep-container so it never
+   touches the host page; !important overrides the hover transition above. */
+@media (prefers-reduced-motion: reduce) {
+  .multistep-container *,
+  .multistep-container *::before,
+  .multistep-container *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

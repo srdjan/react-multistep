@@ -21,10 +21,22 @@ defer to later minors.
 > self-contained focus management (`focusOnStepChange`). The example chrome now runs
 > entirely on the prop-getters.
 >
-> **Remaining (Milestone 3, not yet started):** internal hardening (retire the
-> `navRef` snapshot via `useEffectEvent`, collapse the controlled-sync/`SYNC_STEPS`
-> effects), type-level tests, `prefers-reduced-motion`, the async `beforeStepChange`
-> guard, plus the deferred bucket below.
+> **Milestone 3 (internal hardening + the remaining additive polish) is largely
+> implemented and green** (typecheck / lint / build all pass): the async
+> `beforeStepChange` guard (`StepChangeEvent`, veto-on-`false`/throw, awaited,
+> with an `isNavigating` flag on the API + state slice); `prefers-reduced-motion`
+> in `chrome.css` plus a `useReducedMotion()` value export; collapsing the
+> controlled-sync and `SYNC_STEPS` effects into render-time reconciliation (both
+> `useEffect` calls removed, the StrictMode double-fire and concurrent-tear hazard
+> gone); and type-level tests (`test/types.test-d.ts`). The `navRef` snapshot was
+> **kept** by design - it is the standard latest-ref pattern, correct for its
+> post-commit callers, and moving it onto `useEffectEvent` would add effect-ordering
+> coupling for no correctness gain.
+>
+> **Remaining:** the deferred bucket below (compound `MultiStep.Step` API,
+> conditional/branch flow, controlled validity + Standard Schema, React 19 form
+> Actions, URL/history adapter, unstyled compound chrome, three-context collapse,
+> homegrown-harness replacement).
 
 Because v8 is unreleased, the cost of breaking changes is inverted: breaking and
 foundational changes are nearly free to make now and become a full major bump once

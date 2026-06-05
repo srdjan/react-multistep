@@ -19,6 +19,17 @@ export type StepValidity =
 export type StepStatus = "pristine" | "visited" | "valid" | "invalid";
 
 /**
+ * Describes a pending step change handed to beforeStepChange(). `from` is the
+ * current active step, `to` the requested one; `direction` is "next"/"previous"
+ * for adjacent moves and "jump" for anything else.
+ */
+export interface StepChangeEvent {
+  from: number;
+  to: number;
+  direction: "next" | "previous" | "jump";
+}
+
+/**
  * Shared props for a step component rendered by MultiStep. Extend with your own
  * props to get full TypeScript coverage. Steps report validity by calling the
  * useReportValidity() hook - no prop is injected by MultiStep.
@@ -45,6 +56,13 @@ export interface MultiStepProps {
   mode?: "unmount" | "keepMounted";
   /** Fired whenever the active step changes (manual or programmatic). */
   onStepChange?: (step: number) => void;
+  /**
+   * Async-capable guard run before a step change commits. Return false to veto
+   * the change; returning anything else (or nothing) lets it proceed. A thrown
+   * or rejected guard also aborts. While it runs, isNavigating is true. Not run
+   * by complete() - that is completion, not a step change.
+   */
+  beforeStepChange?: (event: StepChangeEvent) => boolean | void | Promise<boolean | void>;
   /** Fired when the user tries to advance past an invalid step. */
   onValidationError?: (step: number) => void;
   /** Fired when complete() succeeds on the last step. */

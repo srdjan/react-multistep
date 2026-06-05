@@ -1,11 +1,11 @@
 import React, {
   useCallback,
-  useEffect,
   useId,
   useLayoutEffect,
   useMemo,
   useReducer,
   useRef,
+  useState,
 } from "react";
 import type { MultiStepProps, StepStatus, StepValidity } from "./interfaces.js";
 import {
@@ -134,6 +134,7 @@ export default function MultiStep(props: MultiStepProps) {
     mode = "keepMounted",
     onValidationError,
     onComplete,
+    beforeStepChange,
     focusOnStepChange = "panel",
   } = props;
 
@@ -154,26 +155,48 @@ export default function MultiStep(props: MultiStepProps) {
   const isControlled = controlledActiveStep !== undefined;
   const initialActiveIndex = clamp(controlledActiveStep ?? defaultStep, 0, lastStepIndex);
 
-  const [state, dispatch] = useReducer(
+  let [state, dispatch] = useReducer(
     multiStepReducer,
     { totalSteps, initialActive: initialActiveIndex },
     ({ totalSteps: steps, initialActive }) => createInitialState(steps, initialActive)
   );
 
-  useEffect(() => {
-    dispatch({ type: "SYNC_STEPS", totalSteps });
-  }, [totalSteps]);
+  // Reconcile derived-from-props state during render via stored previous values,
+  // the React "adjust state while rendering" pattern - no effect, no double-fire
+  // under StrictMode. We compute the next state, dispatch it (so it sticks for
+  // later renders), and use the computed value immediately this render.
+  //
+  // 1. SYNC_STEPS: resize validity/visited when the child count changes.
+  const prevTotalRef = useRef(totalSteps);
+  if (prevTotalRef.current !== totalSteps) {
+    prevTotalRef.current = totalSteps;
+    const synced = multiStepReducer(state, { type: "SYNC_STEPS", totalSteps });
+    if (synced !== state) {
+      state = synced;
+      dispatch({ type: "SYNC_STEPS", totalSteps });
+    }
+  }
 
-  // Keep internal state in sync while controlled, so position is retained if the
-  // consumer later drops the activeStep prop.
-  useEffect(() => {
-    if (!isControlled) return;
-    dispatch({ type: "SET_ACTIVE", step: clamp(controlledActiveStep, 0, lastStepIndex) });
-  }, [isControlled, controlledActiveStep, lastStepIndex]);
+  // 2. Controlled sync: mirror controlledActiveStep into internal state so the
+  // position is retained if the consumer later drops the activeStep prop. Only
+  // reconcile on an actual change of the controlled value (or on the
+  // controlled->? transition), never every render.
+  const prevControlledRef = useRef<number | undefined>(controlledActiveStep);
+  if (isControlled && prevControlledRef.current !== controlledActiveStep) {
+    const step = clamp(controlledActiveStep, 0, lastStepIndex);
+    const synced = multiStepReducer(state, { type: "SET_ACTIVE", step });
+    if (synced !== state) {
+      state = synced;
+      dispatch({ type: "SET_ACTIVE", step });
+    }
+  }
+  prevControlledRef.current = controlledActiveStep;
 
   const activeChild = isControlled
     ? clamp(controlledActiveStep, 0, lastStepIndex)
     : state.internalActiveStep;
+
+  const [isNavigating, setIsNavigating] = useState(false);
 
   // Stable validity channel: steps call useReportValidity() which routes here.
   const report = useCallback((index: number, validity: StepValidity) => {
@@ -197,9 +220,11 @@ export default function MultiStep(props: MultiStepProps) {
     validity,
     totalSteps,
     isControlled,
+    isNavigating,
     onStepChange,
     onValidationError,
     onComplete,
+    beforeStepChange,
   };
   const navRef = useRef(nav);
   navRef.current = nav;
@@ -209,22 +234,51 @@ export default function MultiStep(props: MultiStepProps) {
     []
   );
 
+  // Fire-and-forget: the optional async guard runs inside, the public signature
+  // stays (step: number) => void. Returns false / throws -> the change aborts.
   const goToStep = useCallback((step: number) => {
-    const { activeChild, validity, totalSteps, isControlled, onStepChange, onValidationError } =
+    const { activeChild: from, validity, totalSteps, isNavigating, onValidationError, beforeStepChange } =
       navRef.current;
+    // Ignore overlapping calls while an async guard is in flight.
+    if (isNavigating) return;
     if (step < 0 || step >= totalSteps) return;
     // Forward gate: every step between the current one and the target (exclusive)
     // must be valid. Backward navigation is always allowed.
-    if (step > activeChild) {
-      for (let i = activeChild; i < step; i += 1) {
+    if (step > from) {
+      for (let i = from; i < step; i += 1) {
         if (validity[i]?.status !== "valid") {
           onValidationError?.(i);
           return;
         }
       }
     }
-    if (!isControlled) dispatch({ type: "SET_ACTIVE", step });
-    onStepChange?.(step);
+
+    const commit = () => {
+      if (!navRef.current.isControlled) dispatch({ type: "SET_ACTIVE", step });
+      navRef.current.onStepChange?.(step);
+    };
+
+    // No guard: commit synchronously, no isNavigating flip.
+    if (!beforeStepChange) {
+      commit();
+      return;
+    }
+
+    const direction: "next" | "previous" | "jump" =
+      step === from + 1 ? "next" : step === from - 1 ? "previous" : "jump";
+
+    setIsNavigating(true);
+    void (async () => {
+      try {
+        const ok = await beforeStepChange({ from, to: step, direction });
+        if (ok === false) return; // vetoed
+        commit();
+      } catch {
+        // A thrown/rejected guard aborts the change.
+      } finally {
+        setIsNavigating(false);
+      }
+    })();
   }, []);
 
   const next = useCallback(() => goToStep(navRef.current.activeChild + 1), [goToStep]);
@@ -291,6 +345,7 @@ export default function MultiStep(props: MultiStepProps) {
       visitedSteps,
       completedSteps,
       currentStepError,
+      isNavigating,
       goToStep,
       next,
       previous,
@@ -309,6 +364,7 @@ export default function MultiStep(props: MultiStepProps) {
       visitedSteps,
       completedSteps,
       currentStepError,
+      isNavigating,
       goToStep,
       next,
       previous,

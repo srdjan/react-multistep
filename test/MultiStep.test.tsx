@@ -1,13 +1,32 @@
-import { describe, it, expect, vi, render, screen, fireEvent, within } from "./harness";
+import {
+  describe,
+  it,
+  expect,
+  vi,
+  render,
+  screen,
+  fireEvent,
+  within,
+  flushAsync,
+  act,
+} from "./harness";
 import userEvent from "./harness";
 import React, { useEffect } from "react";
 import MultiStep from "../src/MultiStep";
 import {
+  useMultiStep,
   useMultiStepState,
   useMultiStepNavigation,
   useReportValidity,
+  type MultiStepApi,
 } from "../src/MultiStepContext";
-import type { MultiStepProps, StepComponentProps, StepValidity } from "../src/interfaces";
+import { useReducedMotion } from "../src/useReducedMotion";
+import type {
+  MultiStepProps,
+  StepChangeEvent,
+  StepComponentProps,
+  StepValidity,
+} from "../src/interfaces";
 
 // Headless chrome, rendered INSIDE each step so it can read the MultiStep
 // context via the slice hooks. This mirrors the shipped example
@@ -785,6 +804,387 @@ describe("MultiStep", () => {
       // Focus was not moved into the wizard on first render.
       expect(document.activeElement).toBe(outside);
       outside.remove();
+    });
+  });
+
+  describe("beforeStepChange guard", () => {
+    // A step that reports valid and captures the full wizard API so a test can
+    // drive navigation (next/previous/goToStep) and read isNavigating.
+    const makeApiProbe = () => {
+      let captured: MultiStepApi | undefined;
+      const Probe = ({ title }: StepComponentProps<{ title: string }>) => {
+        const report = useReportValidity();
+        useEffect(() => {
+          report({ status: "valid" });
+        }, [report]);
+        captured = useMultiStep();
+        return <p>{title}</p>;
+      };
+      const getApi = (): MultiStepApi => {
+        if (!captured) throw new Error("api probe was never rendered");
+        return captured;
+      };
+      return { Probe, getApi };
+    };
+
+    // A manually-resolvable promise so a test can hold an async guard pending
+    // while it asserts on isNavigating, then settle it on demand.
+    const defer = <T,>() => {
+      let resolve!: (value: T) => void;
+      let reject!: (reason?: unknown) => void;
+      const promise = new Promise<T>((res, rej) => {
+        resolve = res;
+        reject = rej;
+      });
+      return { promise, resolve, reject };
+    };
+
+    // A typed beforeStepChange spy. vi.fn() here would type the prop as Mock
+    // (returning unknown), which is not assignable to the guard signature, so we
+    // wrap a typed impl and record calls/events ourselves.
+    type Guard = NonNullable<MultiStepProps["beforeStepChange"]>;
+    const spyGuard = (impl: Guard) => {
+      const events: StepChangeEvent[] = [];
+      const fn: Guard = (event) => {
+        events.push(event);
+        return impl(event);
+      };
+      return { fn, events, get calls() {
+        return events.length;
+      } };
+    };
+
+    it("vetoes the change when the guard returns false (active step unchanged)", async () => {
+      const guard = spyGuard(() => false);
+      const onStepChange = vi.fn();
+      const { Probe, getApi } = makeApiProbe();
+
+      render(
+        <MultiStep beforeStepChange={guard.fn} onStepChange={onStepChange}>
+          <Probe title="One" />
+          <Probe title="Two" />
+        </MultiStep>
+      );
+
+      await flushAsync();
+      await act(() => getApi().next());
+      await flushAsync();
+
+      // The guard ran but returned false, so the step did not change and
+      // onStepChange never fired.
+      expect(guard.calls).toBe(1);
+      expect(getApi().activeStep).toBe(0);
+      expect(onStepChange.mock.calls).toHaveLength(0);
+      // A synchronous false also leaves isNavigating cleared.
+      expect(getApi().isNavigating).toBe(false);
+    });
+
+    it("passes a StepChangeEvent describing the requested move", async () => {
+      const events: StepChangeEvent[] = [];
+      const beforeStepChange = (event: StepChangeEvent) => {
+        events.push(event);
+      };
+      const { Probe, getApi } = makeApiProbe();
+
+      render(
+        <MultiStep beforeStepChange={beforeStepChange}>
+          <Probe title="One" />
+          <Probe title="Two" />
+          <Probe title="Three" />
+        </MultiStep>
+      );
+
+      await flushAsync();
+      // next(): 0 -> 1 is "next".
+      await act(() => getApi().next());
+      await flushAsync();
+      // previous(): 1 -> 0 is "previous".
+      await act(() => getApi().previous());
+      await flushAsync();
+      // goToStep(2) from 0: a non-adjacent move is "jump".
+      await act(() => getApi().goToStep(2));
+      await flushAsync();
+
+      expect(events).toEqual([
+        { from: 0, to: 1, direction: "next" },
+        { from: 1, to: 0, direction: "previous" },
+        { from: 0, to: 2, direction: "jump" },
+      ]);
+    });
+
+    it("allows the change when the guard returns true", async () => {
+      const guard = spyGuard(() => true);
+      const { Probe, getApi } = makeApiProbe();
+
+      render(
+        <MultiStep beforeStepChange={guard.fn}>
+          <Probe title="One" />
+          <Probe title="Two" />
+        </MultiStep>
+      );
+
+      await flushAsync();
+      await act(() => getApi().next());
+      await flushAsync();
+
+      expect(getApi().activeStep).toBe(1);
+    });
+
+    it("allows the change when the guard returns undefined (void)", async () => {
+      // Returning nothing must be treated as allow, not veto.
+      const guard = spyGuard(() => undefined);
+      const { Probe, getApi } = makeApiProbe();
+
+      render(
+        <MultiStep beforeStepChange={guard.fn}>
+          <Probe title="One" />
+          <Probe title="Two" />
+        </MultiStep>
+      );
+
+      await flushAsync();
+      await act(() => getApi().next());
+      await flushAsync();
+
+      expect(getApi().activeStep).toBe(1);
+    });
+
+    it("toggles isNavigating true-then-false and applies the change after the guard resolves", async () => {
+      const gate = defer<boolean>();
+      const beforeStepChange = () => gate.promise;
+      const { Probe, getApi } = makeApiProbe();
+
+      render(
+        <MultiStep beforeStepChange={beforeStepChange}>
+          <Probe title="One" />
+          <Probe title="Two" />
+        </MultiStep>
+      );
+
+      await flushAsync();
+      expect(getApi().isNavigating).toBe(false);
+
+      // Kick off the navigation; the guard is still pending.
+      await act(() => getApi().next());
+      await flushAsync();
+
+      // While the async guard is in flight, isNavigating is true and the step
+      // has NOT changed yet.
+      expect(getApi().isNavigating).toBe(true);
+      expect(getApi().activeStep).toBe(0);
+
+      // Resolve the guard with true: the change commits and isNavigating clears.
+      await act(async () => {
+        gate.resolve(true);
+        await gate.promise;
+      });
+      await flushAsync();
+
+      expect(getApi().activeStep).toBe(1);
+      expect(getApi().isNavigating).toBe(false);
+    });
+
+    it("aborts the change when an async guard rejects, clearing isNavigating", async () => {
+      const gate = defer<boolean>();
+      const beforeStepChange = () => gate.promise;
+      const onStepChange = vi.fn();
+      const { Probe, getApi } = makeApiProbe();
+
+      render(
+        <MultiStep beforeStepChange={beforeStepChange} onStepChange={onStepChange}>
+          <Probe title="One" />
+          <Probe title="Two" />
+        </MultiStep>
+      );
+
+      await flushAsync();
+      await act(() => getApi().next());
+      await flushAsync();
+      expect(getApi().isNavigating).toBe(true);
+
+      // Reject the guard: the change aborts, the step stays put, isNavigating
+      // clears (the finally block runs), and onStepChange never fires.
+      await act(async () => {
+        gate.reject(new Error("blocked"));
+        await gate.promise.catch(() => {});
+      });
+      await flushAsync();
+
+      expect(getApi().activeStep).toBe(0);
+      expect(getApi().isNavigating).toBe(false);
+      expect(onStepChange.mock.calls).toHaveLength(0);
+    });
+
+    it("aborts the change when a synchronous guard throws", async () => {
+      const beforeStepChange = () => {
+        throw new Error("nope");
+      };
+      const onStepChange = vi.fn();
+      const { Probe, getApi } = makeApiProbe();
+
+      render(
+        <MultiStep beforeStepChange={beforeStepChange} onStepChange={onStepChange}>
+          <Probe title="One" />
+          <Probe title="Two" />
+        </MultiStep>
+      );
+
+      await flushAsync();
+      await act(() => getApi().next());
+      await flushAsync();
+
+      // The throw is caught inside the guard runner: no navigation, no callback,
+      // isNavigating settles back to false.
+      expect(getApi().activeStep).toBe(0);
+      expect(getApi().isNavigating).toBe(false);
+      expect(onStepChange.mock.calls).toHaveLength(0);
+    });
+
+    it("ignores an overlapping goToStep while an async guard is in flight", async () => {
+      const gate = defer<boolean>();
+      const guard = spyGuard(() => gate.promise);
+      const { Probe, getApi } = makeApiProbe();
+
+      render(
+        <MultiStep beforeStepChange={guard.fn}>
+          <Probe title="One" />
+          <Probe title="Two" />
+          <Probe title="Three" />
+        </MultiStep>
+      );
+
+      await flushAsync();
+      // Start a 0 -> 1 navigation; the guard stays pending.
+      await act(() => getApi().goToStep(1));
+      await flushAsync();
+      expect(getApi().isNavigating).toBe(true);
+      expect(guard.calls).toBe(1);
+
+      // A second goToStep while isNavigating is dropped: the guard is not invoked
+      // again and no extra navigation queues up.
+      await act(() => getApi().goToStep(2));
+      await flushAsync();
+      expect(guard.calls).toBe(1);
+
+      // Resolve the first guard: only the original 0 -> 1 move commits.
+      await act(async () => {
+        gate.resolve(true);
+        await gate.promise;
+      });
+      await flushAsync();
+
+      expect(getApi().activeStep).toBe(1);
+      expect(getApi().isNavigating).toBe(false);
+    });
+
+    it("commits synchronously with no isNavigating flip when no guard is provided", async () => {
+      // Without beforeStepChange the navigation is fully synchronous and
+      // isNavigating is never set true.
+      const seen: boolean[] = [];
+      const { Probe, getApi } = makeApiProbe();
+
+      render(
+        <MultiStep>
+          <Probe title="One" />
+          <Probe title="Two" />
+        </MultiStep>
+      );
+
+      await flushAsync();
+      await act(() => {
+        getApi().next();
+        seen.push(getApi().isNavigating);
+      });
+      await flushAsync();
+
+      expect(seen).toEqual([false]);
+      expect(getApi().activeStep).toBe(1);
+      expect(getApi().isNavigating).toBe(false);
+    });
+
+    it("does not run beforeStepChange for complete()", async () => {
+      const guard = spyGuard(() => false);
+      const onComplete = vi.fn();
+      const { Probe, getApi } = makeApiProbe();
+
+      // Start on the last (valid) step so complete() succeeds.
+      render(
+        <MultiStep defaultStep={1} beforeStepChange={guard.fn} onComplete={onComplete}>
+          <Probe title="One" />
+          <Probe title="Two" />
+        </MultiStep>
+      );
+
+      await flushAsync();
+      await act(() => getApi().complete());
+      await flushAsync();
+
+      // complete() is completion, not a step change: the guard must not run, and
+      // onComplete fires despite the guard returning false.
+      expect(guard.calls).toBe(0);
+      expect(onComplete.mock.calls).toHaveLength(1);
+    });
+  });
+
+  describe("useReducedMotion", () => {
+    // A tiny consumer that surfaces the hook's value as text.
+    const MotionProbe = () => {
+      const reduced = useReducedMotion();
+      return <span data-testid="rm">{reduced ? "reduced" : "full"}</span>;
+    };
+
+    // Install a window.matchMedia stub whose `matches` reflects whether the query
+    // is the reduced-motion query. Returns a restore function.
+    const stubMatchMedia = (matches: boolean) => {
+      const original = window.matchMedia;
+      const matchMedia = ((query: string) => ({
+        matches: query === "(prefers-reduced-motion: reduce)" ? matches : false,
+        media: query,
+        onchange: null,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        addListener: () => {},
+        removeListener: () => {},
+        dispatchEvent: () => false,
+      })) as unknown as typeof window.matchMedia;
+      window.matchMedia = matchMedia;
+      return () => {
+        if (original) window.matchMedia = original;
+        else delete (window as { matchMedia?: typeof window.matchMedia }).matchMedia;
+      };
+    };
+
+    it("reflects the matched reduced-motion query (true)", () => {
+      const restore = stubMatchMedia(true);
+      try {
+        render(<MotionProbe />);
+        expect(screen.getByText("reduced")).toBeInTheDocument();
+      } finally {
+        restore();
+      }
+    });
+
+    it("reflects the matched reduced-motion query (false)", () => {
+      const restore = stubMatchMedia(false);
+      try {
+        render(<MotionProbe />);
+        expect(screen.getByText("full")).toBeInTheDocument();
+      } finally {
+        restore();
+      }
+    });
+
+    it("is SSR-safe and returns false when matchMedia is absent", () => {
+      const original = window.matchMedia;
+      // Remove matchMedia entirely to mimic a no-DOM environment. getSnapshot's
+      // getMatcher() returns null, so the hook must not throw and reports false.
+      delete (window as { matchMedia?: typeof window.matchMedia }).matchMedia;
+      try {
+        render(<MotionProbe />);
+        expect(screen.getByText("full")).toBeInTheDocument();
+      } finally {
+        if (original) window.matchMedia = original;
+      }
     });
   });
 });

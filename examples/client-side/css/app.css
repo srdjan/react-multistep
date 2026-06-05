@@ -26,3 +26,21 @@ html {
   font-size: 0.9rem;
   font-weight: 600;
 }
+
+/* Busy pulse on the active nav control while an async beforeStepChange guard is
+   in flight. The class is only attached when useReducedMotion() is false (see
+   WizardChrome), and the package sheet additionally neutralises animations under
+   prefers-reduced-motion - so this never animates for reduced-motion users. */
+.multistep-button.is-busy {
+  animation: multistep-busy-pulse 1s ease-in-out infinite;
+}
+
+@keyframes multistep-busy-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}

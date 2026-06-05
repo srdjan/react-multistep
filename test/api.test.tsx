@@ -95,7 +95,7 @@ describe("public API surface", () => {
   it("exposes exactly the expected runtime exports", () => {
     const keys = Object.keys(publicApi).sort().join(",");
     expect(keys).toBe(
-      "default,useMultiStep,useMultiStepA11y,useMultiStepNavigation,useMultiStepState,useReportValidity"
+      "default,useMultiStep,useMultiStepA11y,useMultiStepNavigation,useMultiStepState,useReducedMotion,useReportValidity"
     );
   });
 

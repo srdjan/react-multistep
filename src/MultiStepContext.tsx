@@ -36,6 +36,8 @@ export interface MultiStepApi {
   completedSteps: number[];
   /** Active step's validity message when its status is "invalid", else undefined. */
   currentStepError?: string;
+  /** True while an async beforeStepChange guard is in flight. */
+  isNavigating: boolean;
   goToStep: (step: number) => void;
   next: () => void;
   previous: () => void;
@@ -57,6 +59,7 @@ type MultiStepStateValue = Pick<
   | "visitedSteps"
   | "completedSteps"
   | "currentStepError"
+  | "isNavigating"
 >;
 
 type MultiStepNavigationValue = Pick<
@@ -97,6 +100,7 @@ export function MultiStepProvider({ value, report, children }: MultiStepProvider
       visitedSteps: value.visitedSteps,
       completedSteps: value.completedSteps,
       currentStepError: value.currentStepError,
+      isNavigating: value.isNavigating,
     }),
     [
       value.activeStep,
@@ -111,6 +115,7 @@ export function MultiStepProvider({ value, report, children }: MultiStepProvider
       value.visitedSteps,
       value.completedSteps,
       value.currentStepError,
+      value.isNavigating,
     ]
   );
 
