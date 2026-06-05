@@ -17,7 +17,7 @@
 
 #### List of contributors :raised_hands:
 
-<a href = "https://github.com/react-multistep/graphs/contributors">
+<a href = "https://github.com/srdjan/react-multistep/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=srdjan/react-multistep" alt="AWESOME CONTRIBUTORS" />
 </a>
 
@@ -49,8 +49,8 @@ npm install react-multistep
 ```
 
 Peer dependency: `react` `^19.2`. The package is ESM only - import it from an ESM
-context (modern bundlers, Node with `"type": "module"`). CommonJS consumers must
-use a dynamic `import()`.
+context (modern bundlers, Node with `"type": "module"`). CommonJS is not
+supported.
 
 ```jsx
 import MultiStep from "react-multistep";
@@ -679,8 +679,9 @@ foundation:
   `import` to `./dist/index.js` with types at `./dist/index.d.ts`. The `react`
   peer is now `^19.2`.
 - **Server module moved.** The `react-multistep/server` export (removed from the
-  package in v7) now lives in a separate package,
-  [react-multistep-server](https://github.com/srdjan/react-multistep-server).
+  package in v7) now lives in a separate repository,
+  [react-multistep-server](https://github.com/srdjan/react-multistep-server) (a
+  Deno-native app).
 
 ## Local development
 

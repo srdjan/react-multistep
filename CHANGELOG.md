@@ -164,9 +164,9 @@ migration notes.
 
 ### Packaging
 
-- **ESM only.** The package no longer ships a CommonJS bundle. `exports` resolves
-  `import` to `./dist/index.js` (ESM) with types at `./dist/index.d.ts`. CommonJS
-  consumers must use a dynamic `import()`.
+- **ESM only.** The package no longer ships a CommonJS bundle and CommonJS is not
+  supported - there is no `require` condition in the exports map. `exports`
+  resolves `import` to `./dist/index.js` (ESM) with types at `./dist/index.d.ts`.
 - **React 19.2+.** `peerDependencies.react` is `^19.2` (see the foundation
   section above for the final peer range).
 - Single `dist/` output (the old `build/` + `dist/` two-tree layout is gone).

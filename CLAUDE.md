@@ -260,8 +260,8 @@ and needs no `MultiStep` ancestor.
 ## Build / packaging facts
 
 - `"type": "module"`; the package is ESM only. `exports["."]` resolves `import`
-  to `./dist/index.js` with `types` at `./dist/index.d.ts`. CommonJS consumers
-  must use dynamic `import()`.
+  to `./dist/index.js` with `types` at `./dist/index.d.ts`. CommonJS is not
+  supported (no `require` condition, no CJS bundle).
 - `peerDependencies.react` is `^19.2`. `engines.node` is `>=20`. `files` is
   `["dist"]`.
 - `tsconfig.json`: target ES2020, module/resolution NodeNext, `jsx: react-jsx`,
