@@ -262,7 +262,7 @@ and needs no `MultiStep` ancestor.
 - `"type": "module"`; the package is ESM only. `exports["."]` resolves `import`
   to `./dist/index.js` with `types` at `./dist/index.d.ts`. CommonJS consumers
   must use dynamic `import()`.
-- `peerDependencies.react` is `^19.2`. `engines.node` is `>=18`. `files` is
+- `peerDependencies.react` is `^19.2`. `engines.node` is `>=20`. `files` is
   `["dist"]`.
 - `tsconfig.json`: target ES2020, module/resolution NodeNext, `jsx: react-jsx`,
   strict + `noUncheckedIndexedAccess`, declaration + declaration maps, `outDir`

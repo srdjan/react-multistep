@@ -10,34 +10,51 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Build and test
+  test:
+    name: Lint, typecheck, test, build (Node ${{ matrix.node }})
     runs-on: ubuntu-latest
-
+    strategy:
+      fail-fast: false
+      matrix:
+        # jsdom (a dev dependency) requires Node >= 20, so the dev gate floor is
+        # 20. The published package's engines.node is >= 20 to match.
+        node: [20, 22]
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+  package:
+    name: Package checks (attw, publint, example)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Typecheck
-        run: npm run typecheck
-
-      - name: Test
-        run: npm test
-
-      - name: Build
-        run: npm run build
-
+      - run: npm ci
+      - run: npm run build
       - name: Pack (dry run)
         run: npm pack --dry-run
+      - name: Validate types resolution (attw)
+        # The CSS subpaths have no types, and the ESM-only entry intentionally
+        # makes CJS use dynamic import; both are excluded/ignored.
+        run: >-
+          npx -y @arethetypeswrong/cli --pack .
+          --ignore-rules cjs-resolves-to-esm
+          --exclude-entrypoints ./styles ./styles/tokens.css ./styles/chrome.css
+      - name: Lint package manifest (publint)
+        run: npx -y publint
+      - name: Build the example app
+        run: |
+          cd examples/client-side
+          npm install --no-audit --no-fund
+          npm run build

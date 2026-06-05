@@ -80,6 +80,7 @@ function NameStep(_props: StepComponentProps<{ title: string }>) {
     report(value.trim().length > 0 ? { status: "valid" } : { status: "invalid" });
   }, [report, value]);
 
+  // WizardChrome is the accessible chrome defined under "Building the chrome" below.
   return (
     <WizardChrome>
       <input value={value} onChange={(e) => setValue(e.target.value)} />
@@ -453,6 +454,16 @@ to index `i` requires every step in `[activeStep, i)` to be `valid`. The
 `pristine`/`visited`/`valid`/`invalid` states in CSS. `useMultiStepA11y` must be
 called inside a `MultiStep` subtree; outside one it throws
 `useMultiStep must be used within a MultiStep component`.
+
+The step list is a `role="list"` of buttons, so it is operated with Tab to reach
+a step and Enter/Space to activate it. There are no arrow keys by design - this
+is the wizard/`aria-current` pattern, not a WAI-ARIA tablist (which would require
+you to add roving tabindex and arrow-key handling yourself).
+
+Note: `getCompleteButtonProps` is the one button getter that sets no `aria-label`
+(a Done/Finish button normally carries visible text). If you render an icon-only
+complete button, pass your own `aria-label` through the overrides, e.g.
+`getCompleteButtonProps({ "aria-label": "Finish" })`.
 
 ## Completion
 

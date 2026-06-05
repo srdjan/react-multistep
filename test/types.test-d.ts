@@ -6,6 +6,7 @@
 // the function is never executed, it exists purely for the type checker.
 import type { ButtonHTMLAttributes } from "react";
 import {
+  useMultiStep,
   useMultiStepState,
   useMultiStepNavigation,
   useMultiStepA11y,
@@ -14,8 +15,11 @@ import {
 import type {
   StepComponentProps,
   StepValidity,
+  StepStatus,
   StepChangeEvent,
   MultiStepProps,
+  MultiStepApi,
+  MultiStepA11y,
   Step,
 } from "../src/index.js";
 
@@ -44,10 +48,19 @@ function useTypeChecks(): void {
   // @ts-expect-error goToStep argument must be a number.
   nav.goToStep("1");
 
-  // --- a11y getStepProps returns button-assignable props ---
-  const a11y = useMultiStepA11y();
+  // --- a11y getStepProps returns button-assignable props; the hook returns the
+  // named MultiStepA11y type ---
+  const a11y: MultiStepA11y = useMultiStepA11y();
   const stepProps = a11y.getStepProps(0);
   expectType<ButtonHTMLAttributes<HTMLButtonElement>>(stepProps);
+
+  // --- useMultiStep returns the full MultiStepApi (state + navigation) ---
+  const api: MultiStepApi = useMultiStep();
+  expectType<number>(api.activeStep);
+  expectType<(step: number) => void>(api.goToStep);
+  expectType<boolean>(api.canComplete);
+  expectType<number>(api.progress);
+  expectType<readonly number[]>(api.completedSteps);
 
   // --- useReducedMotion is a boolean hook ---
   expectType<boolean>(useReducedMotion());
@@ -59,6 +72,7 @@ const stepShape = (step: Step): void => {
   expectType<number>(step.index);
   expectType<boolean>(step.isActive);
   expectType<boolean>(step.isValid);
+  expectType<StepStatus>(step.status);
   // The opaque step-indicator id is exposed as `stepId`.
   expectType<string>(step.stepId);
   expectType<string>(step.panelId);
@@ -66,6 +80,13 @@ const stepShape = (step: Step): void => {
   void step.renamedAwayIndicatorId;
 };
 void stepShape;
+
+// --- StepStatus is the closed four-member union ---
+const statusValues: StepStatus[] = ["pristine", "visited", "valid", "invalid"];
+void statusValues;
+// @ts-expect-error "done" is not a member of StepStatus.
+const badStatus: StepStatus = "done";
+void badStatus;
 
 // --- StepComponentProps requires the extra prop ---
 type EmailStep = StepComponentProps<{ email: string }>;

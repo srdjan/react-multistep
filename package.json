@@ -21,7 +21,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "license": "MIT",
   "author": {
@@ -68,7 +68,8 @@
     "react": "^19.2.0"
   },
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --format=esm --sourcemap=linked --jsx=automatic --external:react --external:react/jsx-runtime --outfile=dist/index.js && tsc --emitDeclarationOnly --outDir dist && node --input-type=commonjs -e \"const fs=require('node:fs');for(const f of ['multistep.css','tokens.css','chrome.css'])fs.copyFileSync('src/styles/'+f,'dist/'+f)\"",
+    "clean": "node --input-type=commonjs -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
+    "build": "npm run clean && esbuild src/index.ts --bundle --format=esm --sourcemap=linked --jsx=automatic --external:react --external:react/jsx-runtime --outfile=dist/index.js && tsc --emitDeclarationOnly --outDir dist && node --input-type=commonjs -e \"const fs=require('node:fs');for(const f of ['multistep.css','tokens.css','chrome.css'])fs.copyFileSync('src/styles/'+f,'dist/'+f)\"",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
     "test": "node test/run.mjs",
     "lint": "eslint src test",
