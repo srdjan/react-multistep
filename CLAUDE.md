@@ -62,7 +62,10 @@ chrome. Its job is to:
   a per-step `StepValidity[]`, a per-step `visited` boolean array, and the total
   step count. Actions: `SYNC_STEPS`, `SET_ACTIVE`, `SET_STEP_VALIDITY`.
 - Support both controlled (`activeStep` + `onStepChange`) and uncontrolled
-  (`defaultStep`) operation, with clamping to the valid range.
+  (`defaultStep`) operation, with clamping to the valid range. Prop-into-state
+  reconciliation (step-count changes, controlled-value sync) happens during
+  render via a `reconcile()` helper and stored previous-value refs, not in
+  effects, so there are no `useEffect` calls for it and no StrictMode double-fire.
 - Derive a `steps: Step[]` metadata array and expose the full `MultiStepApi`
   through context.
 - Render steps according to `mode` (see Render mode below), wrapping each rendered
@@ -103,6 +106,19 @@ calls `onValidationError(activeStep)`. All navigation callbacks (including
 `complete`) read every dynamic value from a ref (`navRef`) so they stay
 referentially stable across renders.
 
+### Step-change guard (`beforeStepChange`)
+
+An optional `beforeStepChange?: (event: StepChangeEvent) => boolean | void |
+Promise<boolean | void>` prop runs after the forward validity gate passes but
+before a step change commits (`StepChangeEvent` = `{ from, to, direction }`,
+`direction` being `"next" | "previous" | "jump"`). Returning `false` (or a
+rejected/throwing guard, which is caught and swallowed) vetoes the change;
+anything else proceeds. The guard is awaited inside `goToStep`; while an async
+guard is in flight `isNavigating` is `true` and overlapping navigation calls are
+dropped. A navigation with no guard commits synchronously and never flips
+`isNavigating`. The public signatures stay `(step: number) => void`; `complete()`
+does not run the guard.
+
 ### Render mode (`keepMounted` / `unmount`)
 
 `mode?: "unmount" | "keepMounted"` defaults to `"keepMounted"`.
@@ -142,8 +158,9 @@ consumers can avoid re-rendering on state changes:
 
 - **`useMultiStep(): MultiStepApi`** - the full API.
 - **`useMultiStepState()`** - read-only slice: `activeStep`, `stepCount`, `steps`,
-  `currentStepValid`, `isStepValid`, plus the derived fields `isFirst`, `isLast`,
-  `progress`, `canComplete`, `visitedSteps`, `completedSteps`, `currentStepError`.
+  `currentStepValid`, `isStepValid`, `isNavigating`, plus the derived fields
+  `isFirst`, `isLast`, `progress`, `canComplete`, `visitedSteps`,
+  `completedSteps`, `currentStepError`.
 - **`useMultiStepNavigation()`** - actions: `goToStep`, `next`, `previous`,
   `complete` (referentially stable).
 
@@ -186,7 +203,7 @@ return type `MultiStepA11y` is exported as a type from the package index.
 
 `MultiStepProvider` takes both a `value: MultiStepApi` and a `report` channel.
 `StepIndexProvider`, `StepIndexContext`, and `ReportValidityContext` exist
-internally; only the four hooks and `MultiStep` are exported from the package
+internally; only the public hooks and `MultiStep` are exported from the package
 index.
 
 ### Step metadata
@@ -205,15 +222,15 @@ base, so they are stable across renders and SSR-safe. Note: React 19 types
 
 Runtime exports (`src/index.ts`): `MultiStep` (default), `useMultiStep`,
 `useMultiStepState`, `useMultiStepNavigation`, `useMultiStepA11y`,
-`useReportValidity`.
+`useReportValidity`, `useReducedMotion`.
 
 Type exports: `MultiStepProps`, `StepComponentProps`, `StepValidity`,
-`StepStatus` (from `src/interfaces.ts`); `MultiStepApi`, `Step`, `MultiStepA11y`
-(from `src/MultiStepContext.tsx`).
+`StepStatus`, `StepChangeEvent` (from `src/interfaces.ts`); `MultiStepApi`,
+`Step`, `MultiStepA11y` (from `src/MultiStepContext.tsx`).
 
 `MultiStepProps`: `children`, `activeStep?`, `defaultStep?` (0),
-`mode?` (`"keepMounted"`), `onStepChange?`, `onValidationError?`,
-`onComplete?`, `focusOnStepChange?` (`"panel"`).
+`mode?` (`"keepMounted"`), `onStepChange?`, `beforeStepChange?`,
+`onValidationError?`, `onComplete?`, `focusOnStepChange?` (`"panel"`).
 
 ## CSS
 
@@ -227,7 +244,14 @@ Source CSS lives in `src/styles/` and is copied verbatim into `dist/`:
   chrome element for these to apply.
 - `multistep.css` - combined back-compat bundle that `@import`s tokens + chrome
   with the canonical `reset, base, components` layer order.
-- `src/base.css` - a one-line `@import` shim to `styles/multistep.css`.
+
+`chrome.css` also carries a top-level `@media (prefers-reduced-motion: reduce)`
+block, scoped under `.multistep-container *`, that neutralizes transitions and
+animations. It is deliberately un-layered so it wins the cascade over the reset
+layer's hover transition (do not move it into a `@layer`). For JS-driven motion,
+the `useReducedMotion(): boolean` hook (`src/useReducedMotion.ts`, a
+`useSyncExternalStore` over `matchMedia`, SSR/no-DOM safe) reports the preference
+and needs no `MultiStep` ancestor.
 
 `package.json` exports map: `./styles` -> `dist/multistep.css`,
 `./styles/tokens.css` -> `dist/tokens.css`, `./styles/chrome.css` ->
@@ -257,8 +281,10 @@ There is no vitest or testing-library. `npm test` runs `test/run.mjs`, which:
    (a shared React instance is required for context/hooks to work).
 3. Imports the bundle (which registers the tests) and runs them.
 
-Test files: `test/MultiStep.test.tsx`, `test/api.test.tsx`, with `test/harness.ts`
-as the assertion/render harness.
+Test files: `test/MultiStep.test.tsx`, `test/api.test.tsx`, and the type-level
+`test/types.test-d.ts` (type-checked by `npm run typecheck`, skipped by the
+runtime runner via its `.test-d.ts` suffix), with `test/harness.ts` as the
+assertion/render harness.
 
 ## Conventions
 
