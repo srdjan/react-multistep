@@ -4,13 +4,13 @@
   :root {
     color-scheme: light dark;
 
-    --multistep-primary: light-dark(#1EAEDB, #4FC3F7);
-    --multistep-inactive: light-dark(silver, #666);
-    --multistep-inactive-light: light-dark(gray, #999);
-    --multistep-bg: light-dark(#f1f1f141, #2a2a2a41);
-    --multistep-border: light-dark(silver, #555);
-    --multistep-button-bg: light-dark(#f7f7f7, #1a1a1a);
-    --multistep-text: light-dark(#333, #e0e0e0);
+    --multistep-primary: #1EAEDB;
+    --multistep-inactive: silver;
+    --multistep-inactive-light: gray;
+    --multistep-bg: #f1f1f141;
+    --multistep-border: silver;
+    --multistep-button-bg: #f7f7f7;
+    --multistep-text: #333;
 
     --multistep-spacing-xs: clamp(0.5rem, 1vw, 1rem);
     --multistep-spacing-sm: clamp(1rem, 2vw, 2rem);
@@ -22,5 +22,19 @@
     --multistep-font-size-step: clamp(0.75rem, 2vw, 0.9rem);
 
     --multistep-tap-target: 44px;
+  }
+
+  /* A custom property accepts any value, so a browser without light-dark()
+     would keep it and lose the plain value above. Set it only where supported. */
+  @supports (color: light-dark(white, black)) {
+    :root {
+      --multistep-primary: light-dark(#1EAEDB, #4FC3F7);
+      --multistep-inactive: light-dark(silver, #666);
+      --multistep-inactive-light: light-dark(gray, #999);
+      --multistep-bg: light-dark(#f1f1f141, #2a2a2a41);
+      --multistep-border: light-dark(silver, #555);
+      --multistep-button-bg: light-dark(#f7f7f7, #1a1a1a);
+      --multistep-text: light-dark(#333, #e0e0e0);
+    }
   }
 }
